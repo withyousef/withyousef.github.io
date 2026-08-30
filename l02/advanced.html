@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="يوسف زكريا التهامى — Yousef Zakaria El-Tohamy">
+<title>تمارين الورق — الأنواع والتحويل</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../assets/lecture.css">
+<style>
+  /* التصميم المشترك فى ../assets/lecture.css — هنا الخاص بصفحة التمارين فقط */
+  body{font-size:17px;}
+
+  /* الصفحة دى بتسيب <strong> على وزنه الافتراضى (٧٠٠) مش ٦٠٠ */
+  strong{font-weight:700;}
+
+  .topbar .row{max-width:52rem;padding:.95rem 1.6rem .85rem;flex-wrap:wrap;}
+
+  .shell{position:relative;z-index:1;max-width:52rem;margin:0 auto;padding:2.6rem 1.6rem 4rem;}
+
+  .head{margin-block-end:2.4rem;}
+
+  /* ── شريط الأدوات ────────────────────────────── */
+  .toolbar{
+    display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;
+    margin:0 0 2.2rem;padding-block-end:1.4rem;
+    border-block-end:1px solid var(--line);
+  }
+  .tool{
+    display:inline-flex;align-items:center;gap:.5rem;font:inherit;font-size:.9rem;font-weight:600;
+    background:var(--surface);color:var(--accent);border:1px solid var(--line);border-radius:999px;
+    padding:.52rem 1.15rem;cursor:pointer;box-shadow:var(--shadow);
+    transition:background 200ms ease, transform 200ms ease;
+  }
+  .tool::before{content:"";width:.4rem;height:.4rem;border-radius:50%;background:var(--accent);}
+  .tool.solid{background:var(--accent);color:#fff;border-color:var(--accent);}
+  .tool.solid::before{background:#fff;}
+  .tool:hover{background:var(--accent-soft);}
+  .tool.solid:hover{background:var(--accent-hover);}
+  .tool:active{transform:scale(.98);}
+  .tool:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+  .tool-note{font-size:.84rem;color:var(--muted);margin-inline-start:.3rem;}
+
+  .zone-label{margin:0 0 1.2rem;}
+  section + section{margin-block-start:3.2rem;}
+  /* margin-block-start:1em = الهامش الافتراضى للفقرة قبل ما القاعدة المشتركة تصفّره */
+  section > .lede{color:var(--muted);margin-block-start:1em;margin-block-end:1.6rem;max-width:70ch;}
+
+  /* ── بطاقة التمرين ───────────────────────────── */
+  .ex{
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:1.35rem 1.5rem 1.45rem;margin:0 0 1.2rem;box-shadow:var(--shadow);
+  }
+  .ex-head{display:flex;align-items:baseline;gap:.9rem;margin-block-end:.85rem;}
+  .ex-num{
+    font-family:var(--mono);font-size:.84rem;font-weight:500;letter-spacing:.1em;color:var(--accent);
+    padding-block-end:.15rem;border-block-end:1px solid var(--line);
+  }
+  .ex h3{font-size:1.06rem;font-weight:600;line-height:1.45;margin:0;}
+  .ex p{margin:0 0 1rem;max-width:66ch;}
+  .ex > :last-child{margin-block-end:0;}
+  .ex-time{
+    margin-inline-start:auto;font-size:.72rem;font-weight:600;letter-spacing:.1em;
+    color:var(--muted);background:var(--paper);border:1px solid var(--line);
+    border-radius:999px;padding:.14rem .6rem;white-space:nowrap;
+  }
+  .ans-space{display:none;}
+  .print-head{display:none;}
+
+  /* ── الكود: لوحة أكبر شوية عشان التتبّع بالقلم ── */
+  pre{padding:1rem 1.2rem;margin:0 0 1.1rem;font-size:1.02rem;}
+
+  /* ── الجداول: خلايا أضيق ومحاذاة رأسية وسط ───── */
+  .tbl-wrap{margin:0 0 1.1rem;}
+  table{border-radius:10px;}
+  th,td{vertical-align:middle;padding:.6rem .8rem;}
+  td.blank{height:2.2rem;}
+
+  /* ── زرار الحل ───────────────────────────────── */
+  .show{
+    display:inline-flex;align-items:center;gap:.55rem;font:inherit;font-size:.92rem;font-weight:600;
+    background:var(--surface);color:var(--accent);border:1px solid var(--line);border-radius:999px;
+    padding:.5rem 1.15rem;cursor:pointer;
+    transition:background 200ms ease, transform 200ms ease;
+  }
+  .show::before{content:"";width:.4rem;height:.4rem;border-radius:50%;background:var(--accent);}
+  .show:hover{background:var(--accent-soft);}
+  .show:active{transform:scale(.98);}
+  .show:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+  .sol{
+    display:none;opacity:0;transform:translateY(8px);
+    transition:opacity 200ms ease, transform 200ms ease;
+    margin-block-start:1.1rem;
+    border-inline-start:2px solid var(--accent);
+    padding-inline-start:1.2rem;
+  }
+  .sol.open{display:block;}
+  .sol.shown{opacity:1;transform:none;}
+  .sol > :last-child{margin-block-end:0;}
+  .sol .who{display:block;font-size:.68rem;font-weight:600;letter-spacing:.14em;color:var(--accent);margin-block-end:.5rem;}
+  .sol ol{margin:0 0 .9rem;padding-inline-start:1.3rem;max-width:66ch;}
+  .sol li{margin-block-end:.4rem;}
+
+  footer.foot{
+    position:relative;
+    z-index:1;
+    margin-block-start:2.8rem;
+    padding-block-start:1.3rem;
+  }
+
+  @media (max-width:560px){
+    .shell{padding:2rem 1.1rem 3rem;}
+    .topbar .row{padding:.8rem 1.1rem .7rem;}
+    .ex{padding:1.15rem 1.1rem 1.25rem;}
+    pre{font-size:.96rem;padding:.9rem 1rem;}
+  }
+
+  @media print{
+    /* هامش صفر = ترويسات المتصفح (المسار والاسم والتاريخ) ملهاش مكان تتطبع فيه */
+    @page{margin:0;}
+    html,body{background:#fff;color:#000;font-size:10.5pt;}
+    .bg-layer,.topbar,.toolbar,.show,footer.foot,.head .eyebrow,.head p,section > .lede{display:none !important;}
+    .shell{max-width:none;padding:12mm 14mm;}
+    .head{margin-block-end:0;}
+    .head h1{font-size:15pt;margin-block-end:2mm;}
+
+    .print-head{display:flex !important;gap:14mm;flex-wrap:wrap;margin-block:0 5mm;padding-block-end:2mm;border-block-end:2px solid #000;}
+    .print-head span{flex:1 1 40%;border-block-end:1px dotted #444;padding-block-end:.6mm;font-size:10pt;}
+
+    .zone-label{color:#000 !important;margin-block:4mm 2.5mm;}
+    .zone-label::after{background:#999;}
+    section + section{margin-block-start:6mm;}
+
+    .ex{
+      box-shadow:none;break-inside:avoid;page-break-inside:avoid;
+      border:1px solid #999;border-radius:0;padding:3mm 4mm 3.5mm;margin-block-end:3.5mm;
+    }
+    .ex-num{color:#000 !important;border-block-end-color:#999;}
+    .ex-time{display:none !important;}
+    .ex p{margin-block-end:2mm;}
+    pre{margin-block:1.5mm 2mm;padding:2.5mm 3.5mm;font-size:9.5pt;line-height:1.55;break-inside:avoid;}
+    pre{background:#fff !important;color:#000 !important;border:1px solid #666 !important;}
+    pre code{background:#fff !important;color:#000 !important;border:0 !important;}
+    pre .st,pre .cm{color:#000 !important;}
+    td.mono{color:#000 !important;}
+    code{background:#fff !important;color:#000 !important;border:1px solid #999 !important;}
+    table{break-inside:avoid;}
+
+    /* نسخة الطلاب: الحلول مخفية ومساحة إجابة مفتوحة */
+    body.p-student .sol{display:none !important;}
+    body.p-student .ans-space{display:block !important;margin-block-start:2mm;}
+    body.p-student .ans-space i{display:block;border-block-end:1px dotted #666;height:6.5mm;}
+
+    /* نسخة المعلم: الحلول ظاهرة */
+    body.p-teacher .sol{display:block !important;opacity:1 !important;transform:none !important;}
+    body.p-teacher .ans-space{display:none !important;}
+    body.p-teacher .print-head{display:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-layer" aria-hidden="true">
+  <span class="glow" style="top:-14%;left:-10%;width:44rem;height:44rem"></span>
+  <span class="glow" style="top:42%;left:66%;width:38rem;height:38rem"></span>
+  <span class="glow" style="top:80%;left:6%;width:30rem;height:30rem"></span>
+  <span class="gl f" style="--r:-12deg;--d:16s;top:6%;left:5%;font-size:2.6rem">{ }</span>
+  <span class="gl" style="--r:8deg;top:12%;left:78%;font-size:2.1rem">&lt;/&gt;</span>
+  <span class="gl a" style="--r:-6deg;top:22%;left:22%;font-size:1.9rem">=&gt;</span>
+  <span class="gl" style="--r:0deg;top:30%;left:62%;font-size:2.8rem">;</span>
+  <span class="gl a f" style="--r:10deg;--d:19s;top:38%;left:8%;font-size:2.2rem">let</span>
+  <span class="gl" style="--r:-16deg;top:18%;left:44%;font-size:2.4rem">if</span>
+  <span class="gl" style="--r:14deg;top:47%;left:86%;font-size:2.5rem">( )</span>
+  <span class="gl a" style="--r:-8deg;top:55%;left:14%;font-size:2rem">==</span>
+  <span class="gl f" style="--r:6deg;--d:14s;top:63%;left:70%;font-size:2.3rem">//</span>
+  <span class="gl a" style="--r:18deg;top:72%;left:34%;font-size:2.7rem">{ }</span>
+  <span class="gl" style="--r:-10deg;top:80%;left:88%;font-size:1.8rem">&lt;/&gt;</span>
+  <span class="gl" style="--r:4deg;top:88%;left:18%;font-size:2.1rem">let</span>
+  <span class="gl a f" style="--r:-14deg;--d:17s;top:92%;left:56%;font-size:2.3rem">=&gt;</span>
+  <span class="gl" style="--r:12deg;top:8%;left:34%;font-size:2.2rem">;</span>
+  <span class="gl a" style="--r:-4deg;top:26%;left:92%;font-size:2rem">( )</span>
+  <span class="gl" style="--r:20deg;top:58%;left:48%;font-size:1.9rem">if</span>
+  <span class="gl f" style="--r:-18deg;--d:20s;top:36%;left:72%;font-size:2.4rem">==</span>
+  <span class="gl a" style="--r:8deg;top:44%;left:38%;font-size:2rem">//</span>
+  <span class="gl" style="--r:-6deg;top:66%;left:4%;font-size:2.2rem">{ }</span>
+  <span class="gl a" style="--r:16deg;top:76%;left:60%;font-size:1.9rem">let</span>
+  <span class="gl f" style="--r:-2deg;--d:13s;top:84%;left:44%;font-size:2.5rem">;</span>
+  <span class="gl a" style="--r:10deg;top:52%;left:26%;font-size:2.1rem">&lt;/&gt;</span>
+  <span class="gl a f" style="--r:-5deg;--d:18s;top:4%;left:58%;font-size:1.7rem">console.log()</span>
+  <span class="gl" style="--r:9deg;top:16%;left:10%;font-size:1.8rem">function</span>
+  <span class="gl a" style="--r:-12deg;top:33%;left:30%;font-size:1.9rem">return</span>
+  <span class="gl f" style="--r:7deg;--d:15s;top:41%;left:54%;font-size:2.4rem">[ ]</span>
+  <span class="gl a" style="--r:-9deg;top:60%;left:88%;font-size:2rem">===</span>
+  <span class="gl" style="--r:15deg;top:69%;left:20%;font-size:1.8rem">i++</span>
+  <span class="gl a f" style="--r:4deg;--d:21s;top:78%;left:76%;font-size:1.8rem">for</span>
+  <span class="gl" style="--r:-7deg;top:87%;left:34%;font-size:1.9rem">&amp;&amp;</span>
+  <span class="gl a" style="--r:11deg;top:95%;left:10%;font-size:1.7rem">"hello"</span>
+  <span class="gl" style="--r:-3deg;top:2%;left:88%;font-size:1.8rem">let x = 5;</span>
+  <span class="grain"></span>
+</div>
+
+<header class="topbar">
+  <div class="row">
+    <a class="back" href="index.html">← مركز المحاضرة</a>
+    <span class="mark">تأسيس البرمجة — بكالوريا ٢٠٢٧</span>
+    <img class="brand-logo" src="../assets/logo.png" width="520" height="361" alt="With Yousef — يوسف زكريا التهامى">
+  </div>
+</header>
+
+<div class="shell">
+
+  <div class="head">
+    <span class="eyebrow">للمعلم والمتقدمين</span>
+    <h1>تمارين الورق — الأنواع والتحويل</h1>
+    <p>التمارين دى تُحلّ بالقلم على الورق، من غير تابلت ومن غير تشغيل. الهدف إن الطالب يقرا السطر ويقول نوعه قبل ناتجه — دى العادة اللى بتمنع نص أخطاء الامتحان. الحلول مخفية؛ افتحها بعد ما تجرّب.</p>
+  </div>
+
+  <p class="by-line">إعداد: يوسف زكريا التهامى · تأسيس البرمجة — بكالوريا ٢٠٢٧</p>
+
+  <div class="print-head" aria-hidden="true"><span>الاسم</span><span>التاريخ</span></div>
+
+  <div class="toolbar">
+    <button class="tool solid" type="button" id="printStudent">اطبع ورقة الطلاب</button>
+    <button class="tool" type="button" id="printTeacher">اطبع نسخة المعلم</button>
+    <button class="tool" type="button" id="toggleAll">اعرض كل الحلول</button>
+    <span class="tool-note">ورقة الطلاب بتطلع بمساحة إجابة وبدون حلول.</span>
+  </div>
+
+  <main>
+
+    <section id="advanced">
+      <span class="zone-label">المستوى المتقدم — للى خلّص بدرى</span>
+
+      <article class="ex">
+        <div class="ex-head"><span class="ex-num">٠٥</span><h3>تتبع بالتحويل</h3><span class="ex-time">٥ دقائق</span></div>
+<pre><code>let a = <span class="st">"7"</span>;
+let b = Number(a);
+let c = String(b);
+
+console.log(a + b);
+console.log(b + b);
+console.log(c + b);
+console.log(typeof c);</code></pre>
+        <p>اكتب نوع كل متغير من الثلاثة، وبعدين ناتج كل سطر طباعة.</p>
+        <div class="ans-space" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <button class="show" type="button" data-target="s5">اعرض الحل</button>
+        <div class="sol" id="s5">
+          <span class="who">الحل</span>
+          <p>الأنواع: <code>a</code> نص <code>string</code> · <code>b</code> رقم <code>number</code> · <code>c</code> نص <code>string</code> تانى.</p>
+          <p><strong>الناتج:</strong> <code>77</code> ثم <code>14</code> ثم <code>77</code> ثم <code>string</code></p>
+          <ol>
+            <li><code>a + b</code> — طرف نص، يبقى لزق: <code>"7"</code> و<code>7</code> يبقوا <code>77</code>.</li>
+            <li><code>b + b</code> — الطرفان رقمان، يبقى جمع: ٧ + ٧ = <code>14</code>.</li>
+            <li><code>c + b</code> — <code>c</code> رجع نصاً تانى، فرجعنا للزق: <code>77</code>.</li>
+          </ol>
+          <p>الفخ هنا: الطالب فاكر إن <code>Number()</code> غيّرت <code>a</code> نفسها. ما غيّرتش حاجة — هى رجّعت قيمة جديدة اتخزّنت فى <code>b</code>، و<code>a</code> لسه نصاً زى ما هو.</p>
+        </div>
+      </article>
+
+      <article class="ex">
+        <div class="ex-head"><span class="ex-num">٠٦</span><h3>فين الغلط؟ ثلاثة أغلاط، حدّدهم وصحّحهم</h3><span class="ex-time">٥ دقائق</span></div>
+<pre><code>let mark = <span class="st">"80"</span>;
+let bonus = 5;
+let total = mark + bonus;
+console.log(<span class="st">"Total = "</span> Total);</code></pre>
+        <p>المطلوب إن الكود يطبع <code>Total = 85</code>.</p>
+        <div class="ans-space" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        <button class="show" type="button" data-target="s6">اعرض الحل</button>
+        <div class="sol" id="s6">
+          <span class="who">الحل</span>
+          <ol>
+            <li><strong>السطر ٣:</strong> <code>mark</code> نص، فالعلامة <code>+</code> بتلزّق والناتج <code>805</code>. الصح: <code>let total = Number(mark) + bonus;</code></li>
+            <li><strong>السطر ٤:</strong> ناقص علامة <code>+</code> بين النص والمتغير. الصح: <code>"Total = " + total</code></li>
+            <li><strong>السطر ٤:</strong> <code>Total</code> بحرف كبير — ده اسم تانى خالص ومش موجود. الصح <code>total</code> بحرف صغير.</li>
+          </ol>
+<pre><code>let mark = <span class="st">"80"</span>;
+let bonus = 5;
+let total = Number(mark) + bonus;
+console.log(<span class="st">"Total = "</span> + total);</code></pre>
+        </div>
+      </article>
+
+      <article class="ex">
+        <div class="ex-head"><span class="ex-num">٠٧</span><h3>اكتب برنامجاً كاملاً</h3><span class="ex-time">٦ دقائق</span></div>
+        <p>طالب جاب ثلاث درجات، وجاتك من خانة إدخال فوصلت كلها <strong>نصوصاً</strong>: <code>"20"</code> و<code>"18"</code> و<code>"25"</code>. اكتب كوداً يحطّ كل درجة فى متغير، ويحسب المجموع صح فى متغير رابع، ويطبع جملة على شكل <code>Total = 63</code>. وفى الآخر اطبع نوع المجموع علشان تتأكد.</p>
+        <div class="ans-space" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <button class="show" type="button" data-target="s7">اعرض الحل</button>
+        <div class="sol" id="s7">
+          <span class="who">الحل</span>
+<pre><code>let mark1 = <span class="st">"20"</span>;
+let mark2 = <span class="st">"18"</span>;
+let mark3 = <span class="st">"25"</span>;
+let total = Number(mark1) + Number(mark2) + Number(mark3);
+console.log(<span class="st">"Total = "</span> + total);
+console.log(typeof total);   <span class="cm">// number</span></code></pre>
+          <p>حل تانٍ مقبول تماماً: يحوّل كل واحدة فى سطر مستقل قبل الجمع — <code>let n1 = Number(mark1);</code> وهكذا. ده أطول بس أوضح، وامدحه لو طالب عمله.</p>
+          <p><strong>الغلط المتوقع:</strong> <code>Number(mark1 + mark2 + mark3)</code> — دى بتلزّق الأول فتطلع <code>"201825"</code> وبعدين بتحوّلها لرقم واحد كبير. اكتبها على السبورة وخلّيهم يشوفوا الناتج، أقوى من أى شرح.</p>
+        </div>
+      </article>
+    </section>
+
+    <section id="basic">
+      <span class="zone-label">المستوى الأساسى — مطلوب من الكل</span>
+      <p class="lede">التمارين دى مكانها الطبيعى فى بلوك الشرح نفسه، بس محطوطة هنا علشان كل ورق المحاضرة يبقى فى صفحة واحدة.</p>
+
+      <article class="ex">
+        <div class="ex-head"><span class="ex-num">٠١</span><h3>إيه النوع؟</h3><span class="ex-time">دقيقتان</span></div>
+<pre><code>console.log(typeof 12);
+console.log(typeof <span class="st">"12"</span>);
+console.log(typeof true);
+console.log(typeof <span class="st">"true"</span>);</code></pre>
+        <div class="ans-space" aria-hidden="true"><i></i><i></i></div>
+        <button class="show" type="button" data-target="s1">اعرض الحل</button>
+        <div class="sol" id="s1">
+          <span class="who">الحل</span>
+          <p><code>number</code> ثم <code>string</code> ثم <code>boolean</code> ثم <code>string</code></p>
+          <p>السطر الأخير هو الفخ: <code>"true"</code> بين تنصيص، يبقى كلمة مكتوبة مش قيمة منطقية. علامتا التنصيص بتغلبا أى حاجة.</p>
+        </div>
+      </article>
+
+      <article class="ex">
+        <div class="ex-head"><span class="ex-num">٠٢</span><h3>جمع ولا لزق؟</h3><span class="ex-time">٣ دقائق</span></div>
+<pre><code>console.log(<span class="st">"3"</span> + 4);
+console.log(3 + 4);
+console.log(<span class="st">"3"</span> + <span class="st">"4"</span>);</code></pre>
+        <p>اكتب ناتج كل سطر، وجنبه كلمة «جمع» أو «لزق».</p>
+        <div class="ans-space" aria-hidden="true"><i></i><i></i></div>
+        <button class="show" type="button" data-target="s2">اعرض الحل</button>
+        <div class="sol" id="s2">
+          <span class="who">الحل</span>
+          <p><code>34</code> لزق · <code>7</code> جمع · <code>34</code> لزق</p>
+          <p>السطر الأول والتالت ناتجهما واحد، والسبب واحد: وجود نص. طرف واحد نص كفاية.</p>
+        </div>
+      </article>
+
+      <article class="ex">
+        <div class="ex-head"><span class="ex-num">٠٣</span><h3>صحّح السطر</h3><span class="ex-time">دقيقتان</span></div>
+        <p>السطر ده بيطبع <code>105</code>، والمطلوب إنه يطبع <code>15</code>. عدّله.</p>
+<pre><code>console.log(<span class="st">"10"</span> + 5);</code></pre>
+        <div class="ans-space" aria-hidden="true"><i></i><i></i></div>
+        <button class="show" type="button" data-target="s3">اعرض الحل</button>
+        <div class="sol" id="s3">
+          <span class="who">الحل</span>
+<pre><code>console.log(Number(<span class="st">"10"</span>) + 5);</code></pre>
+          <p>مقبول كمان: شيل علامتى التنصيص — <code>console.log(10 + 5);</code>. الحلان صح، بس الأول هو اللى بينفع لما الرقم جاى لك من برّه ومش متحكم فيه.</p>
+        </div>
+      </article>
+
+      <article class="ex">
+        <div class="ex-head"><span class="ex-num">٠٤</span><h3>املأ جدول الناتج والنوع</h3><span class="ex-time">٣ دقائق</span></div>
+        <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>السطر</th><th>الناتج</th><th>نوع الناتج</th></tr></thead>
+          <tbody>
+            <tr><td><code>Number("8")</code></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td><code>String(8)</code></td><td class="blank"></td><td class="blank"></td></tr>
+            <tr><td><code>Number("eight")</code></td><td class="blank"></td><td class="blank"></td></tr>
+          </tbody>
+        </table>
+        </div>
+        <button class="show" type="button" data-target="s4">اعرض الحل</button>
+        <div class="sol" id="s4">
+          <span class="who">الحل</span>
+          <p><code>Number("8")</code> بترجّع <code>8</code> ونوعه <code>number</code>.</p>
+          <p><code>String(8)</code> بترجّع <code>"8"</code> ونوعه <code>string</code> — وبتتطبع على الشاشة <code>8</code> من غير تنصيص، وده اللى بيلخبط.</p>
+          <p><code>Number("eight")</code> بترجّع <code>NaN</code> لأن الكلمة مش رقم. وسيبها كده فى الجدول؛ نوعها موضوع تانى مش مطلوب دلوقتى.</p>
+        </div>
+      </article>
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    <span>المحاضرة الثانية · تمارين الورق · إعداد يوسف زكريا التهامى</span>
+    <a href="index.html">← مركز المحاضرة</a>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  var pairs = [];
+
+  function openBox(box, btn) {
+    box.classList.add('open');
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () { box.classList.add('shown'); });
+    });
+    btn.textContent = 'إخفاء الحل';
+    btn.setAttribute('aria-expanded', 'true');
+  }
+
+  function closeBox(box, btn) {
+    box.classList.remove('shown');
+    setTimeout(function () { box.classList.remove('open'); }, 200);
+    btn.textContent = 'اعرض الحل';
+    btn.setAttribute('aria-expanded', 'false');
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('.show'), function (btn) {
+    var box = document.getElementById(btn.getAttribute('data-target'));
+    if (!box) { return; }
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-controls', box.id);
+    pairs.push({ box: box, btn: btn });
+
+    btn.addEventListener('click', function () {
+      if (box.classList.contains('open')) { closeBox(box, btn); } else { openBox(box, btn); }
+      syncToggleLabel();
+    });
+  });
+
+  var toggleAll = document.getElementById('toggleAll');
+
+  function allOpen() {
+    return pairs.length > 0 && pairs.every(function (p) { return p.box.classList.contains('open'); });
+  }
+
+  function syncToggleLabel() {
+    if (!toggleAll) { return; }
+    toggleAll.textContent = allOpen() ? 'اخفى كل الحلول' : 'اعرض كل الحلول';
+  }
+
+  if (toggleAll) {
+    toggleAll.addEventListener('click', function () {
+      var open = !allOpen();
+      pairs.forEach(function (p) {
+        if (open) { openBox(p.box, p.btn); } else { closeBox(p.box, p.btn); }
+      });
+      syncToggleLabel();
+    });
+  }
+
+  function printAs(mode) {
+    document.body.classList.add(mode);
+    window.print();
+    setTimeout(function () { document.body.classList.remove(mode); }, 400);
+  }
+
+  var ps = document.getElementById('printStudent');
+  var pt = document.getElementById('printTeacher');
+  if (ps) { ps.addEventListener('click', function () { printAs('p-student'); }); }
+  if (pt) { pt.addEventListener('click', function () { printAs('p-teacher'); }); }
+
+  window.addEventListener('afterprint', function () {
+    document.body.classList.remove('p-student');
+    document.body.classList.remove('p-teacher');
+  });
+})();
+</script>
+
+</body>
+</html>

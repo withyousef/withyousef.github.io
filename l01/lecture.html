@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="يوسف زكريا التهامى — Yousef Zakaria El-Tohamy">
+<title>المحاضرة الأولى — البداية وأول كود حقيقى</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../assets/lecture.css">
+<style>
+  /* التصميم المشترك فى ../assets/lecture.css — هنا الخاص بالعرض التقديمى فقط */
+  html{scroll-snap-type:y proximity;}
+
+  /* ═══ الترويسة الثابتة وشريط التقدّم ══════════ */
+  .topbar{
+    position:fixed;
+    z-index:40;
+    inset-block-start:0;
+    inset-inline:0;
+    background:var(--paper);
+    background:color-mix(in srgb, var(--paper) 90%, transparent);
+    backdrop-filter:saturate(1.1) blur(8px);
+    border-block-end:1px solid var(--line);
+  }
+  .topbar .row{max-width:74rem;padding:.7rem 1.6rem .6rem;}
+  .back{font-size:.86rem;}
+  .mark{font-size:.7rem;}
+  .scrollbar{height:2px;background:transparent;}
+  .scrollbar span{display:block;height:100%;width:0%;background:var(--accent);}
+
+  /* ═══ سكة النقاط ══════════════════════════════ */
+  .rail{
+    position:fixed;
+    z-index:35;
+    inset-inline-start:.85rem;
+    inset-block-start:50%;
+    transform:translateY(-50%);
+    display:flex;
+    flex-direction:column;
+    gap:.55rem;
+  }
+  .rail button{
+    width:1.4rem;height:1.4rem;
+    display:grid;place-items:center;
+    padding:0;border:0;background:transparent;cursor:pointer;
+    border-radius:50%;
+  }
+  .rail button::before{
+    content:"";
+    width:.42rem;height:.42rem;border-radius:50%;
+    background:var(--line);
+    transition:transform 200ms ease, background 200ms ease;
+  }
+  .rail button:hover::before{background:var(--muted);}
+  .rail button:active::before{transform:scale(.98);}
+  .rail button:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+  .rail button[aria-current="true"]::before{background:var(--accent);transform:scale(1.7);}
+
+  /* ═══ الأقسام ═════════════════════════════════ */
+  main{position:relative;z-index:1;}
+  section.sc{
+    min-height:100dvh;
+    scroll-snap-align:start;
+    display:grid;
+    place-items:center;
+    padding:6rem 5vw 5rem;
+  }
+  .inner{width:100%;max-width:54rem;}
+  .inner.wide{max-width:62rem;}
+
+  .rise{opacity:0;transform:translateY(14px);}
+  .in .rise{opacity:1;transform:none;transition:opacity 250ms ease, transform 250ms ease;}
+
+  /* ═══ التيبوغرافيا ════════════════════════════ */
+  .label{
+    display:block;font-size:.74rem;font-weight:600;letter-spacing:.16em;
+    color:var(--accent);margin-block-end:1.1rem;
+  }
+  .label.plain{color:var(--muted);}
+  .marker{
+    display:block;font-family:var(--mono);font-size:.88rem;font-weight:500;
+    letter-spacing:.1em;color:var(--muted);margin-block-end:.9rem;
+  }
+  h1{
+    font-size:clamp(2.4rem,6.4vw,4.4rem);font-weight:700;line-height:1.18;
+    letter-spacing:-.015em;margin:0 0 1.3rem;
+  }
+  h2{
+    font-size:clamp(1.85rem,4.4vw,3rem);font-weight:700;line-height:1.22;
+    letter-spacing:-.008em;margin:0 0 1.2rem;
+  }
+  h3{font-size:clamp(1.3rem,2.5vw,1.75rem);font-weight:600;line-height:1.32;margin:0 0 .85rem;}
+  p{margin:0 0 1.05rem;max-width:64ch;font-size:clamp(1rem,1.5vw,1.12rem);}
+  .lead{font-size:clamp(1.08rem,1.9vw,1.32rem);}
+  .sub{color:var(--muted);}
+  .tiny{font-size:.95rem;color:var(--muted);}
+  .hr{height:1px;background:var(--line);border:0;margin:1.7rem 0;max-width:14rem;}
+
+  ul.clean{list-style:none;padding:0;margin:0 0 1.1rem;max-width:64ch;}
+  ul.clean li{
+    position:relative;padding-inline-start:1.5rem;margin-block-end:.8rem;
+    font-size:clamp(1.02rem,1.7vw,1.2rem);
+  }
+  ul.clean li::before{
+    content:"";position:absolute;inset-inline-start:0;inset-block-start:.85em;
+    width:.5rem;height:1px;background:var(--accent);
+  }
+
+  .statement{
+    font-size:clamp(1.55rem,3.6vw,2.5rem);font-weight:600;line-height:1.32;
+    max-width:24ch;margin:0 0 1.2rem;
+  }
+  .statement em{font-style:normal;color:var(--accent);}
+  .quote{border-inline-start:2px solid var(--accent);padding-inline-start:1.4rem;}
+
+  /* ═══ بطاقات الحقائق ══════════════════════════ */
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));
+    gap:1rem;
+    margin:0 0 1.4rem;
+  }
+  .stat{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:1.4rem 1.4rem 1.5rem;
+    box-shadow:var(--shadow-md);
+  }
+  .stat .big{
+    display:block;
+    font-size:clamp(2.4rem,5.4vw,3.4rem);
+    font-weight:700;line-height:1;letter-spacing:-.02em;
+    color:var(--accent);
+    margin-block-end:.5rem;
+  }
+  .stat .big.sm{font-size:clamp(1.5rem,3.2vw,2.1rem);}
+  .stat h3{font-size:1.02rem;font-weight:600;line-height:1.4;margin:0 0 .3rem;}
+  .stat p{margin:0;font-size:.96rem;line-height:1.7;color:var(--muted);}
+
+  /* ═══ لوحة الكود ══════════════════════════════ */
+  pre.code{
+    direction:ltr;text-align:left;
+    background:var(--panel);
+    color:var(--panel-ink);
+    border-radius:14px;
+    padding:1.5rem 1.7rem;
+    margin:0 0 1.2rem;
+    overflow-x:auto;
+    font-family:var(--mono);
+    font-size:clamp(1.3rem,2.2vw,1.65rem);
+    font-weight:400;
+    line-height:1.7;
+    box-shadow:var(--shadow-lg);
+  }
+  pre.code code{background:transparent;color:var(--panel-ink);font-family:inherit;font-size:inherit;padding:0;border:0;}
+  pre.code .cm{color:var(--panel-muted);}
+  pre.code .st{color:var(--panel-accent);}
+
+  .frag{opacity:0;transform:translateY(8px);transition:opacity 200ms ease, transform 200ms ease;pointer-events:none;}
+  .frag.shown{opacity:1;transform:none;pointer-events:auto;}
+
+  .out{
+    display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;
+    background:var(--panel);color:var(--panel-ink);
+    border-radius:12px;padding:1rem 1.5rem;box-shadow:var(--shadow-lg);
+  }
+  .out .out-label{font-size:.7rem;font-weight:600;letter-spacing:.16em;color:var(--panel-muted);}
+  .out .out-val{
+    direction:ltr;text-align:left;font-family:var(--mono);
+    font-size:clamp(1.25rem,2.1vw,1.6rem);font-weight:500;
+    color:var(--panel-accent);white-space:pre;
+  }
+  .note{margin-block-start:1rem;color:var(--muted);font-size:1.02rem;max-width:62ch;}
+
+  .reveal{
+    display:inline-flex;align-items:center;gap:.6rem;font:inherit;
+    background:var(--surface);color:var(--accent);
+    border:1px solid var(--line);border-radius:999px;
+    padding:.62rem 1.3rem;font-size:.95rem;font-weight:600;cursor:pointer;
+    box-shadow:var(--shadow);
+    transition:background 200ms ease, transform 200ms ease, opacity 200ms ease;
+  }
+  .reveal::before{content:"";width:.45rem;height:.45rem;border-radius:50%;background:var(--accent);}
+  .reveal:hover{background:var(--accent-soft);}
+  .reveal:active{transform:scale(.98);}
+  .reveal:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .reveal[hidden]{display:none;}
+
+  .split{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:2rem 2.6rem;
+    align-items:center;
+  }
+  @media (max-width:860px){
+    .split{grid-template-columns:1fr;gap:1.2rem;}
+  }
+
+  /* ═══ جدول التسمية ════════════════════════════ */
+  /* الجدول هنا مقاسه أكبر من جدول الصفحات التانية، فبيحيّد قواعد
+     الجدول العامة (line-height / vertical-align / white-space). */
+  table.naming{width:100%;border-collapse:collapse;font-size:clamp(.98rem,1.6vw,1.14rem);line-height:1.8;background:var(--surface);border:1px solid var(--line);border-radius:12px;}
+  table.naming th,table.naming td{text-align:start;vertical-align:middle;padding:.62rem .85rem;border-block-end:1px solid var(--line);}
+  table.naming thead th{font-size:.72rem;font-weight:600;letter-spacing:.14em;color:var(--muted);white-space:normal;}
+  table.naming tbody tr:last-child td{border-block-end:0;}
+  table.naming td.ok code{background:var(--accent-soft);color:var(--accent-hover);}
+  table.naming td.no code{background:#fdf3f1;color:#9a3d2c;border-color:#f0dcd6;}
+
+  /* ═══ الواجب ══════════════════════════════════ */
+  .hw{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:1rem;margin:0 0 1.3rem;}
+  .cell{
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:1.15rem 1.3rem 1.25rem;box-shadow:var(--shadow);
+  }
+  .cell .marker{margin-block-end:.45rem;}
+  .cell h3{font-size:1.02rem;font-weight:600;line-height:1.45;margin:0 0 .35rem;}
+  .cell p{margin:0;font-size:.98rem;line-height:1.7;color:var(--muted);}
+  .cell pre.code{font-size:1rem;padding:.85rem 1rem;margin:.7rem 0 0;box-shadow:none;border-radius:10px;}
+
+  .side{
+    border-inline-start:2px solid var(--accent);
+    background:var(--accent-soft);
+    border-radius:0 12px 12px 0;
+    padding:1rem 1.3rem;
+    margin:0 0 1.6rem;
+  }
+  .side > :last-child{margin-block-end:0;}
+  .side b{display:block;font-size:.68rem;font-weight:600;letter-spacing:.14em;color:var(--accent);margin-block-end:.35rem;}
+
+  footer.foot{
+    padding-block-start:1.3rem;
+    margin-block-start:1rem;
+  }
+
+  .title-meta{
+    display:flex;flex-wrap:wrap;gap:.6rem 2rem;color:var(--muted);font-size:1rem;
+    margin-block-start:2.2rem;padding-block-start:1.4rem;border-block-start:1px solid var(--line);
+  }
+
+  @media (max-width:640px){
+    .rail{display:none;}
+    section.sc{padding:5.2rem 1.3rem 4rem;}
+    pre.code{padding:1.1rem 1.2rem;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;scroll-snap-type:none;}
+    *{transition:none !important;}
+    .bg-layer .gl.f{animation:none;transform:rotate(var(--r,0deg));}
+    .rise{opacity:1;transform:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-layer" aria-hidden="true">
+  <span class="glow" style="top:-14%;left:-10%;width:44rem;height:44rem"></span>
+  <span class="glow" style="top:40%;left:68%;width:38rem;height:38rem"></span>
+  <span class="glow" style="top:80%;left:8%;width:30rem;height:30rem"></span>
+  <span class="gl f" style="--r:-12deg;--d:16s;top:6%;left:5%;font-size:2.6rem">{ }</span>
+  <span class="gl" style="--r:8deg;top:12%;left:78%;font-size:2.1rem">&lt;/&gt;</span>
+  <span class="gl a" style="--r:-6deg;top:22%;left:22%;font-size:1.9rem">=&gt;</span>
+  <span class="gl" style="--r:0deg;top:30%;left:62%;font-size:2.8rem">;</span>
+  <span class="gl a f" style="--r:10deg;--d:19s;top:38%;left:8%;font-size:2.2rem">let</span>
+  <span class="gl" style="--r:-16deg;top:18%;left:44%;font-size:2.4rem">if</span>
+  <span class="gl" style="--r:14deg;top:47%;left:86%;font-size:2.5rem">( )</span>
+  <span class="gl a" style="--r:-8deg;top:55%;left:14%;font-size:2rem">==</span>
+  <span class="gl f" style="--r:6deg;--d:14s;top:63%;left:70%;font-size:2.3rem">//</span>
+  <span class="gl a" style="--r:18deg;top:72%;left:34%;font-size:2.7rem">{ }</span>
+  <span class="gl" style="--r:-10deg;top:80%;left:88%;font-size:1.8rem">&lt;/&gt;</span>
+  <span class="gl" style="--r:4deg;top:88%;left:18%;font-size:2.1rem">let</span>
+  <span class="gl a f" style="--r:-14deg;--d:17s;top:92%;left:56%;font-size:2.3rem">=&gt;</span>
+  <span class="gl" style="--r:12deg;top:8%;left:34%;font-size:2.2rem">;</span>
+  <span class="gl a" style="--r:-4deg;top:26%;left:92%;font-size:2rem">( )</span>
+  <span class="gl" style="--r:20deg;top:58%;left:48%;font-size:1.9rem">if</span>
+  <span class="gl f" style="--r:-18deg;--d:20s;top:36%;left:72%;font-size:2.4rem">==</span>
+  <span class="gl a" style="--r:8deg;top:44%;left:38%;font-size:2rem">//</span>
+  <span class="gl" style="--r:-6deg;top:66%;left:4%;font-size:2.2rem">{ }</span>
+  <span class="gl a" style="--r:16deg;top:76%;left:60%;font-size:1.9rem">let</span>
+  <span class="gl f" style="--r:-2deg;--d:13s;top:84%;left:44%;font-size:2.5rem">;</span>
+  <span class="gl a" style="--r:10deg;top:52%;left:26%;font-size:2.1rem">&lt;/&gt;</span>
+  <span class="gl a f" style="--r:-5deg;--d:18s;top:4%;left:58%;font-size:1.7rem">console.log()</span>
+  <span class="gl" style="--r:9deg;top:16%;left:10%;font-size:1.8rem">function</span>
+  <span class="gl a" style="--r:-12deg;top:33%;left:30%;font-size:1.9rem">return</span>
+  <span class="gl f" style="--r:7deg;--d:15s;top:41%;left:54%;font-size:2.4rem">[ ]</span>
+  <span class="gl a" style="--r:-9deg;top:60%;left:88%;font-size:2rem">===</span>
+  <span class="gl" style="--r:15deg;top:69%;left:20%;font-size:1.8rem">i++</span>
+  <span class="gl a f" style="--r:4deg;--d:21s;top:78%;left:76%;font-size:1.8rem">for</span>
+  <span class="gl" style="--r:-7deg;top:87%;left:34%;font-size:1.9rem">&amp;&amp;</span>
+  <span class="gl a" style="--r:11deg;top:95%;left:10%;font-size:1.7rem">"hello"</span>
+  <span class="gl" style="--r:-3deg;top:2%;left:88%;font-size:1.8rem">let x = 5;</span>
+  <span class="grain"></span>
+</div>
+
+<header class="topbar">
+  <div class="row">
+    <a class="back" href="index.html">← مركز المحاضرة</a>
+    <span class="mark">تأسيس البرمجة — بكالوريا ٢٠٢٧</span>
+    <img class="brand-logo" src="../assets/logo.png" width="520" height="361" alt="With Yousef — يوسف زكريا التهامى">
+  </div>
+  <div class="scrollbar" aria-hidden="true"><span id="scrollFill"></span></div>
+</header>
+
+<nav class="rail" id="rail" aria-label="التنقّل بين الأقسام"></nav>
+
+<main id="deck">
+
+  <!-- ٠١ الافتتاحية -->
+  <section class="sc" id="open" data-title="الافتتاحية">
+    <div class="inner">
+      <span class="label rise">تأسيس البرمجة · بكالوريا ٢٠٢٧</span>
+      <h1 class="rise">المحاضرة الأولى<br>البداية، وأول كود حقيقى</h1>
+      <p class="lead sub rise">ليه إحنا هنا، وإيه هو المتغير.</p>
+      <div class="title-meta rise">
+        <span>تانية ثانوى — مسار الهندسة وعلوم الحاسب</span>
+        <span>مرّر لتحت علشان تبدأ</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ٠٢ حقائق البكالوريا -->
+  <section class="sc" id="facts" data-title="حقائق المادة">
+    <div class="inner wide">
+      <span class="label rise">المادة دى إيه</span>
+      <h2 class="rise">أربع حقائق قبل ما نبدأ</h2>
+      <div class="stats rise">
+        <article class="stat">
+          <span class="big">١٠٠</span>
+          <h3>درجة فى المجموع التراكمى</h3>
+          <p>مش نجاح ورسوب زى السنة اللى فاتت. دى درجات حقيقية بتتجمع مع تانية وتالتة فى الـ٦٠٠.</p>
+        </article>
+        <article class="stat">
+          <span class="big sm">بدل الكيمياء</span>
+          <h3>اختيارك إنت</h3>
+          <p>إنت فى مسار الهندسة وعلوم الحاسب، واخترت البرمجة بدل الكيمياء بإيدك. وهى مادة بتتفهم مش بتتحفظ.</p>
+        </article>
+        <article class="stat">
+          <span class="big">٢</span>
+          <h3>فرصتان مع إمكانية التحسين</h3>
+          <p>الامتحان مركزى، وليك أكتر من فرصة على مدار العامين. اللى بيتعب من أول مرة بيرتاح بدرى.</p>
+        </article>
+        <article class="stat">
+          <span class="big sm">يونيو ٢٠٢٧</span>
+          <h3>أول امتحان</h3>
+          <p>إحنا قبله بحوالى عشر شهور، وبدون أعمال سنة — الدرجة كلها من الامتحان.</p>
+        </article>
+      </div>
+      <p class="lead rise">الوقت ده كتير جداً لو اتقسّم صح، وقليل جداً لو استنينا الكتاب.</p>
+    </div>
+  </section>
+
+  <!-- ٠٣ إعادة الضبط -->
+  <section class="sc" id="reset" data-title="صفحة بيضا">
+    <div class="inner">
+      <span class="label rise">إعادة الضبط</span>
+      <h2 class="rise">صفحة بيضا لكل الناس</h2>
+      <p class="lead rise">السنة اللى فاتت المادة كانت <strong>نجاح ورسوب وخارج المجموع</strong>، يعنى الدرجة فيها مكانتش بتفرق فى حاجة. طبيعى إن معظم الناس ما ركّزتش، وطبيعى إن اللى ذاكر قبل الامتحان بيوم نسى تانى يوم.</p>
+      <p class="lead rise"><strong>ده مش تقصير منك.</strong> ده رد فعل منطقى لنظام قال لك: المادة دى مش مهمة. وكمان اللى اتدرس كان مقسوم على مصدرين ما اتقابلوش أبداً:</p>
+      <ul class="clean rise">
+        <li>منصة بتعلّمك كود على شاشة سودا.</li>
+        <li>وكتاب بيتكلم عن شبكات وأمن وصفحات ويب.</li>
+      </ul>
+      <hr class="hr rise">
+      <p class="statement rise">إحنا هنبدأ من الصفر. مش مراجعة سريعة ولا تنشيط ذاكرة — <em>من الصفر بجد</em>.</p>
+      <p class="lead rise"><strong>محدش متأخر عن حد.</strong> اللى فاكر حاجة هيفتكرها أسرع، وبس. الفرق هيتحدد بعد كام أسبوع بحاجة واحدة: مين كتب كود بإيده أكتر.</p>
+    </div>
+  </section>
+
+  <!-- ٠٤ أول أمر: الطباعة -->
+  <section class="sc" id="output" data-title="أول أمر">
+    <div class="inner">
+      <span class="marker rise">مثال ٠١ — أول كود فى حياتك</span>
+      <h3 class="rise">إزاى نخلّى الكمبيوتر يقول لنا حاجة</h3>
+      <pre class="code rise"><code>console.log(<span class="st">"Hello World"</span>);</code></pre>
+      <button class="reveal rise" type="button">إظهار الناتج</button>
+      <div class="frag">
+        <div class="out"><span class="out-label">الناتج</span><span class="out-val">Hello World</span></div>
+        <p class="note"><code>console.log</code> معناها «اطبع لى». اللى بين القوسين هو اللى هيتطبع، والفاصلة المنقوطة <code>;</code> فى الآخر معناها: السطر ده خلص.</p>
+        <p class="note">وعلامتا التنصيص <code>" "</code> معناهما: اللى جواهما <strong>نص</strong>، اطبعه زى ما هو حرف بحرف.</p>
+      </div>
+      <p class="tiny rise" style="margin-block-start:1.4rem">السطر ده تقليد فى كل لغات البرمجة — أول برنامج بيكتبه أى مبرمج فى الدنيا.</p>
+    </div>
+  </section>
+
+  <!-- ٠٥ الطباعة بدون تنصيص -->
+  <section class="sc" id="calc" data-title="من غير تنصيص">
+    <div class="inner">
+      <span class="marker rise">مثال ٠٢</span>
+      <h3 class="rise">وطيب من غير علامتى التنصيص؟</h3>
+      <pre class="code rise"><code>console.log(<span class="st">"5 + 8"</span>);
+console.log(5 + 8);</code></pre>
+      <button class="reveal rise" type="button">إظهار الناتج</button>
+      <div class="frag">
+        <div class="out"><span class="out-label">الناتج</span><span class="out-val">5 + 8
+13</span></div>
+        <p class="note">السطر الأول بين تنصيص، فالكمبيوتر شايفه <strong>نصاً</strong> وبيطبعه حرفياً زى ما هو. والسطر التانى من غير تنصيص، فشايفه <strong>عملية حسابية</strong> وبيحلّها الأول وبعدين يطبع الناتج.</p>
+      </div>
+      <p class="statement rise" style="margin-block-start:1.6rem">علامتا التنصيص بتحوّلا أى حاجة إلى <em>نص</em>. من غيرهما بتبقى رقماً أو أمراً.</p>
+    </div>
+  </section>
+
+  <!-- ٠٦ إيه المتغير -->
+  <section class="sc" id="variable" data-title="إيه المتغير">
+    <div class="inner wide">
+      <span class="label rise">المتغير</span>
+      <h2 class="rise">تخيّل دولاب فيه أدراج</h2>
+      <div class="split">
+        <div class="rise">
+          <svg class="ill" viewBox="0 0 520 356" role="img" aria-label="رسم توضيحى لدولاب فيه أربعة أدراج، كل درج مكتوب عليه اسم، والدرج المميّز مكتوب عليه score وجواه القيمة عشرة">
+            <text class="cap" x="260" y="24" text-anchor="middle">دولاب فيه أدراج كتير، وكل درج ليه اسم مكتوب عليه</text>
+
+            <rect class="cab" x="92" y="42" width="336" height="286" rx="16"/>
+
+            <rect class="drawer" x="108" y="56" width="304" height="48" rx="10"/>
+            <text class="name fade" x="260" y="86" text-anchor="middle" font-size="17">count</text>
+            <path class="handle" d="M238 94 H282"/>
+
+            <rect class="box" x="108" y="116" width="304" height="118" rx="12"/>
+            <rect class="plate" x="176" y="132" width="168" height="40" rx="9"/>
+            <text class="name" x="260" y="160" text-anchor="middle" font-size="21">score</text>
+            <text class="val" x="260" y="208" text-anchor="middle" font-size="44">10</text>
+            <path class="handle on" d="M232 222 H288"/>
+
+            <rect class="drawer" x="108" y="246" width="304" height="48" rx="10"/>
+            <text class="name fade" x="260" y="276" text-anchor="middle" font-size="17">city</text>
+            <path class="handle" d="M238 284 H282"/>
+
+            <rect class="drawer" x="108" y="304" width="304" height="16" rx="6"/>
+
+            <path class="ln" d="M496 178 H418"/>
+            <path class="ln" d="M432 170 L418 178 L432 186"/>
+            <text class="cap b" x="468" y="160" text-anchor="middle" font-size="15">ده المتغير</text>
+
+            <text class="cap" x="260" y="348" text-anchor="middle">الاسم ثابت، واللى جوه بيتغيّر</text>
+          </svg>
+        </div>
+        <div class="rise">
+          <ul class="clean">
+            <li>الدرج اللى مكتوب عليه <code>score</code> جواه الرقم ١٠.</li>
+            <li>عايز تعرف الدرجة؟ افتح الدرج اللى اسمه <code>score</code> وشوف اللى جواه.</li>
+            <li>عايز تغيّرها؟ شيل اللى جوه وحط غيره — وعشان كده اسمه «متغير».</li>
+          </ul>
+          <p class="sub">وليه محتاجينه أصلاً؟ لأن البرنامج بينسى. لو كتبت رقماً كده على طول، هيستخدمه مرة ويرميه. لكن لو حطيته فى درج بإسم، تقدر تستخدمه عشر مرات وتغيّره وتزوّده.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ٠٥ let -->
+  <section class="sc" id="declare" data-title="التصريح">
+    <div class="inner">
+      <span class="marker rise">مثال ٠٣</span>
+      <h3 class="rise">الكلمة اللى بتعمل الدرج</h3>
+      <pre class="code rise"><code>let score;</code></pre>
+      <p class="lead rise">السطر ده معناه: جهّزلى درجاً فاضياً واكتب عليه <code>score</code>. ده <strong>التصريح</strong>، وبيتكتب <strong>مرة واحدة بس</strong> لكل متغير.</p>
+      <p class="lead sub rise">كلمة <code>let</code> هى اللى بتعمل الدرج. لو كتبتها تانى لنفس الاسم، الكمبيوتر بيقول لك: الدرج ده موجود خلاص.</p>
+      <p class="tiny rise">والفاصلة المنقوطة <code>;</code> فى آخر السطر معناها: السطر ده خلص.</p>
+    </div>
+  </section>
+
+  <!-- ٠٦ الإسناد -->
+  <section class="sc" id="assign" data-title="الإسناد">
+    <div class="inner wide">
+      <span class="marker rise">مثال ٠٤</span>
+      <h3 class="rise">الإسناد — نحطّ قيمة جوه الدرج</h3>
+      <div class="split">
+        <div class="rise">
+          <svg class="ill" viewBox="0 0 520 250" role="img" aria-label="رسم توضيحى: القيمة عشرة بتتحرّك بسهم ناحية درج اسمه score وبتستقر جواه">
+            <text class="cap" x="260" y="30" text-anchor="middle">القيمة بتتحرّك ناحية الدرج</text>
+            <rect class="box" x="40" y="62" width="220" height="140" rx="12"/>
+            <rect class="plate" x="70" y="78" width="160" height="36" rx="8"/>
+            <text class="name" x="150" y="103" text-anchor="middle" font-size="19">score</text>
+            <rect class="ghost" x="100" y="130" width="100" height="48" rx="8"/>
+            <text class="name" x="325" y="134" text-anchor="middle" font-size="28">=</text>
+            <path class="ln" d="M378 154 H274"/>
+            <path class="ln" d="M290 144 L274 154 L290 164"/>
+            <text class="cap b" x="325" y="192" text-anchor="middle">حُطّ فى</text>
+            <rect class="plate" x="388" y="122" width="106" height="64" rx="12"/>
+            <text class="val" x="441" y="165" text-anchor="middle" font-size="34">10</text>
+            <text class="cap" x="260" y="232" text-anchor="middle">من غير let، لأن الدرج موجود خلاص</text>
+          </svg>
+        </div>
+        <div class="rise">
+          <pre class="code"><code>let score;
+score = 10;
+console.log(score);</code></pre>
+          <button class="reveal" type="button">إظهار الناتج</button>
+          <div class="frag">
+            <div class="out"><span class="out-label">الناتج</span><span class="out-val">10</span></div>
+            <p class="note">السطر التانى بيحطّ ١٠ جوه الدرج — وده <strong>الإسناد</strong>، من غير <code>let</code> لأن الدرج موجود.</p>
+          </div>
+        </div>
+      </div>
+      <p class="statement rise" style="margin-block-start:1.6rem">علامة <code style="font-size:.8em">=</code> مش معناها «يساوى». معناها <em>حُطّ فى</em>.</p>
+    </div>
+  </section>
+
+  <!-- ٠٧ إعادة الإسناد -->
+  <section class="sc" id="reassign" data-title="إعادة الإسناد">
+    <div class="inner wide">
+      <span class="marker rise">مثال ٠٥</span>
+      <h3 class="rise">إعادة الإسناد — القديم بيضيع</h3>
+      <div class="split">
+        <div class="rise">
+          <svg class="ill" viewBox="0 0 520 312" role="img" aria-label="رسم توضيحى: نفس الدرج score قبل السطر جواه عشرة، وبعد تنفيذ السطر score يساوى خمسة وعشرين بقى جواه خمسة وعشرين والقيمة القديمة اتشالت وضاعت">
+            <text class="cap" x="260" y="28" text-anchor="middle">نفس الدرج — قبل السطر وبعده</text>
+
+            <text class="cap b" x="415" y="100" text-anchor="middle">قبل</text>
+            <rect class="box" x="330" y="114" width="170" height="126" rx="12"/>
+            <rect class="plate" x="352" y="130" width="126" height="32" rx="8"/>
+            <text class="name" x="415" y="152" text-anchor="middle" font-size="16">score</text>
+            <text class="val" x="415" y="212" text-anchor="middle" font-size="36">10</text>
+
+            <text class="name" x="260" y="158" text-anchor="middle" font-size="17">score = 25;</text>
+            <path class="ln" d="M322 186 H202"/>
+            <path class="ln" d="M216 178 L202 186 L216 194"/>
+
+            <text class="cap b" x="105" y="100" text-anchor="middle">بعد</text>
+            <rect class="box" x="20" y="114" width="170" height="126" rx="12"/>
+            <rect class="plate" x="42" y="130" width="126" height="32" rx="8"/>
+            <text class="name" x="105" y="152" text-anchor="middle" font-size="16">score</text>
+            <text class="val" x="105" y="212" text-anchor="middle" font-size="36">25</text>
+
+            <path class="ghost" d="M62 110 C 50 92 44 80 48 68"/>
+            <text class="val gone" x="48" y="58" text-anchor="middle" font-size="30">10</text>
+            <path class="strike" d="M25 48 L71 48"/>
+            <text class="cap" x="124" y="60" text-anchor="middle" font-size="14">اتشالت وضاعت</text>
+
+            <text class="cap" x="260" y="288" text-anchor="middle">الدرج نفسه ما اتعملش تانى — بس اللى جواه اتغيّر</text>
+          </svg>
+        </div>
+        <div class="rise">
+          <pre class="code"><code>let score = 10;
+console.log(score);
+
+score = 25;
+console.log(score);</code></pre>
+          <button class="reveal" type="button">إظهار الناتج</button>
+          <div class="frag">
+            <div class="out"><span class="out-label">الناتج</span><span class="out-val">10
+25</span></div>
+            <p class="note">السطر الأخير من غير <code>let</code>، لأن الدرج اتعمل خلاص فى السطر الأول. <code>let</code> بتتكتب <strong>مرة واحدة بس</strong> لكل درج.</p>
+            <p class="note">واللى بيحصل فى السطر ده خطوتان: الـ<strong>١٠</strong> بتتشال من الدرج، وبعدين الـ<strong>٢٥</strong> بتتحطّ مكانها. الدرج بيسع حاجة واحدة بس.</p>
+          </div>
+        </div>
+      </div>
+      <p class="statement rise" style="margin-block-start:1.6rem">القيمة القديمة <em>بتضيع خالص</em>. مفيش طريقة ترجّعها.</p>
+    </div>
+  </section>
+
+  <!-- ٠٨ التراكم -->
+  <section class="sc" id="accum" data-title="التراكم">
+    <div class="inner wide">
+      <span class="marker rise">مثال ٠٦ — أهم سطر فى المحاضرة</span>
+      <h3 class="rise">التراكم: احسب اليمين الأول</h3>
+      <div class="split">
+        <div class="rise">
+          <svg class="ill" viewBox="0 0 520 320" role="img" aria-label="رسم توضيحى بثلاث خطوات: اقرا القيمة من الدرج، احسب صفر زائد ثلاثة، خزّن الناتج ثلاثة فى الدرج">
+            <text class="cap" x="430" y="34" text-anchor="middle">اقرا القيمة</text>
+            <text class="cap" x="260" y="34" text-anchor="middle">احسب اليمين</text>
+            <text class="cap" x="90" y="34" text-anchor="middle">خزّن الناتج</text>
+            <text class="name ar" x="430" y="58" text-anchor="middle" font-size="15">٠١</text>
+            <text class="name ar" x="260" y="58" text-anchor="middle" font-size="15">٠٢</text>
+            <text class="name ar" x="90" y="58" text-anchor="middle" font-size="15">٠٣</text>
+
+            <rect class="box" x="360" y="80" width="140" height="112" rx="12"/>
+            <rect class="plate" x="382" y="94" width="96" height="30" rx="7"/>
+            <text class="name" x="430" y="115" text-anchor="middle" font-size="16">fish</text>
+            <text class="val" x="430" y="170" text-anchor="middle" font-size="36">0</text>
+
+            <path class="ln" d="M352 136 H322"/>
+            <path class="ln" d="M336 127 L322 136 L336 145"/>
+
+            <rect class="plate" x="205" y="108" width="110" height="58" rx="12"/>
+            <text class="val" x="260" y="146" text-anchor="middle" font-size="26">0 + 3</text>
+
+            <path class="ln" d="M197 136 H167"/>
+            <path class="ln" d="M181 127 L167 136 L181 145"/>
+
+            <rect class="box" x="20" y="80" width="140" height="112" rx="12"/>
+            <rect class="plate" x="42" y="94" width="96" height="30" rx="7"/>
+            <text class="name" x="90" y="115" text-anchor="middle" font-size="16">fish</text>
+            <text class="val" x="90" y="170" text-anchor="middle" font-size="36">3</text>
+
+            <path class="thin" d="M40 226 H480"/>
+            <text class="name" x="260" y="262" text-anchor="middle" font-size="20">fish = fish + 3;</text>
+            <text class="cap" x="260" y="294" text-anchor="middle">احسب اللى على اليمين الأول، وبعدين حُطّ الناتج فى الدرج</text>
+          </svg>
+        </div>
+        <div class="rise">
+          <pre class="code"><code>let fish = 0;
+fish = fish + 3;
+fish = fish + 3;
+console.log(fish);</code></pre>
+          <button class="reveal" type="button">إظهار الناتج</button>
+          <div class="frag">
+            <div class="out"><span class="out-label">الناتج</span><span class="out-val">6</span></div>
+            <p class="note">شكله غلط رياضياً — مفيش رقم بيساوى نفسه زائد ٣. بس افتكر إن <code>=</code> معناها «حُطّ فى»، والكمبيوتر بيشتغل بترتيب ثابت.</p>
+          </div>
+        </div>
+      </div>
+      <ul class="clean rise" style="margin-block-start:1.4rem">
+        <li>المرة الأولى: الدرج فيه ٠ ← ٠ + ٣ = ٣ ← الدرج بقى ٣.</li>
+        <li>المرة التانية: الدرج فيه ٣ ← ٣ + ٣ = ٦ ← الدرج بقى ٦.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ٠٩ قواعد التسمية -->
+  <section class="sc" id="naming" data-title="قواعد التسمية">
+    <div class="inner">
+      <span class="label rise">قواعد التسمية</span>
+      <h2 class="rise">اسم الدرج ليه شروط</h2>
+      <div class="rise">
+        <table class="naming">
+          <thead>
+            <tr><th>القاعدة</th><th>صح</th><th>غلط</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>ما يبدأش برقم</td><td class="ok"><code>score1</code></td><td class="no"><code>1score</code></td></tr>
+            <tr><td>من غير مسافات</td><td class="ok"><code>totalPrice</code></td><td class="no"><code>total price</code></td></tr>
+            <tr><td>حروف وأرقام وشرطة سفلية بس</td><td class="ok"><code>my_score</code></td><td class="no"><code>my-score</code></td></tr>
+            <tr><td>حساس لحالة الحرف</td><td class="ok"><code>score</code></td><td class="no"><code>Score</code></td></tr>
+            <tr><td>اسم مفهوم</td><td class="ok"><code>studentAge</code></td><td class="no"><code>a</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note rise">العُرف السائد فى <code>JavaScript</code>: أول كلمة صغيرة واللى بعدها بحرف كبير. مش إجبارى، بس اتعوّد عليه من دلوقتى.</p>
+    </div>
+  </section>
+
+  <!-- ١١ متغيرات مع بعض -->
+  <section class="sc" id="together" data-title="متغيرات مع بعض">
+    <div class="inner">
+      <span class="marker rise">مثال ٠٧</span>
+      <h3 class="rise">متغيرات بتشتغل مع بعض</h3>
+      <pre class="code rise"><code>let price = 20;
+let count = 3;
+let total = price * count;
+console.log(<span class="st">"Total = "</span> + total);</code></pre>
+      <button class="reveal rise" type="button">إظهار الناتج</button>
+      <div class="frag">
+        <div class="out"><span class="out-label">الناتج</span><span class="out-val">Total = 60</span></div>
+        <p class="note">اليمين الأول: <code>price * count</code> يساوى ٦٠، وبيتحط فى درج جديد اسمه <code>total</code>. وفى السطر الأخير العلامة <code>+</code> بتلزّق نصاً برقم — لاحظ المسافة اللى سيبناها جوه التنصيص قبل ما يقفل.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ١٢ الفخ -->
+  <section class="sc" id="trap" data-title="الفخ">
+    <div class="inner wide">
+      <span class="marker rise">مثال ٠٨ — الفخ</span>
+      <h3 class="rise">الناتج كام؟</h3>
+      <div class="split">
+        <div class="rise">
+          <svg class="ill" viewBox="0 0 520 310" role="img" aria-label="رسم توضيحى بطريقين: اتنين زائد خمسة يساوى سبعة لأنهما رقمان، ونص اتنين زائد خمسة يساوى خمسة وعشرين لأن النص بيلزّق">
+            <text class="cap" x="260" y="28" text-anchor="middle">نفس العلامة، طريقان مختلفان</text>
+
+            <rect class="plate" x="420" y="52" width="70" height="56" rx="10"/>
+            <text class="val" x="455" y="90" text-anchor="middle" font-size="30">2</text>
+            <text class="name" x="400" y="90" text-anchor="middle" font-size="26">+</text>
+            <rect class="plate" x="310" y="52" width="70" height="56" rx="10"/>
+            <text class="val" x="345" y="90" text-anchor="middle" font-size="30">5</text>
+            <path class="ln" d="M298 80 H244"/>
+            <path class="ln" d="M260 70 L244 80 L260 90"/>
+            <rect class="box" x="150" y="52" width="80" height="56" rx="10"/>
+            <text class="val" x="190" y="90" text-anchor="middle" font-size="32">7</text>
+            <text class="cap b" x="300" y="136" text-anchor="middle">رقم مع رقم: جمع</text>
+
+            <path class="thin" d="M40 162 H480"/>
+
+            <rect class="plate" x="420" y="192" width="70" height="56" rx="10"/>
+            <text class="val" x="455" y="229" text-anchor="middle" font-size="26">"2"</text>
+            <text class="name" x="400" y="230" text-anchor="middle" font-size="26">+</text>
+            <rect class="plate" x="310" y="192" width="70" height="56" rx="10"/>
+            <text class="val" x="345" y="230" text-anchor="middle" font-size="30">5</text>
+            <path class="ln" d="M298 220 H244"/>
+            <path class="ln" d="M260 210 L244 220 L260 230"/>
+            <rect class="box" x="150" y="192" width="80" height="56" rx="10"/>
+            <path class="ghost" d="M190 198 V242"/>
+            <text class="val" x="172" y="230" text-anchor="middle" font-size="28">2</text>
+            <text class="val" x="209" y="230" text-anchor="middle" font-size="28">5</text>
+            <text class="cap b" x="300" y="276" text-anchor="middle">نص مع أى حاجة: لزق</text>
+          </svg>
+        </div>
+        <div class="rise">
+          <pre class="code"><code>let a = <span class="st">"2"</span>;
+let b = 5;
+console.log(a + b);
+console.log(2 + 5);</code></pre>
+          <button class="reveal" type="button">إظهار الناتج</button>
+          <div class="frag">
+            <div class="out"><span class="out-label">الناتج</span><span class="out-val">25
+7</span></div>
+            <p class="note">الـ<code>"2"</code> بين تنصيص، يعنى نص مش رقم. والعلامة <code>+</code> لما تلاقى نصاً على أى ناحية بتوقف عن الجمع وتبدأ تلزّق.</p>
+          </div>
+        </div>
+      </div>
+      <p class="lead rise" style="margin-block-start:1.6rem">الفرق ده مسؤول عن أكتر من نص أخطاء المبتدئين فى الدنيا كلها — والمحاضرة الجاية كلها عنه: أنواع البيانات وإزاى نحوّل بينها.</p>
+    </div>
+  </section>
+
+  <!-- ١٣ الختام -->
+  <section class="sc" id="close" data-title="الختام">
+    <div class="inner">
+      <div class="quote rise">
+        <p class="statement">المادة دى ممكن تبقى <em>أسهل ١٠٠ درجة</em> فى مجموعك — لو اشتغلنا صح من النهارده.</p>
+      </div>
+      <p class="lead sub rise">الفرق الوحيد بين اللى بياخد ٩٥ واللى بياخد ٥٠: إنه كتب كود بإيده بدل ما يتفرّج عليه.</p>
+      <hr class="hr rise">
+      <p class="lead rise">المحاضرة الجاية: أنواع البيانات، والتحويل بينها.</p>
+    </div>
+  </section>
+
+  <!-- ١٤ الواجب -->
+  <section class="sc" id="homework" data-title="الواجب">
+    <div class="inner wide">
+      <span class="label rise">الواجب</span>
+      <h2 class="rise">أربع تمارين — من ١٥ لـ٢٠ دقيقة</h2>
+      <p class="lead sub rise">يتسلّم مكتوباً بخط اليد فى أول المحاضرة الجاية. اكتب الحل على ورق، مش على التابلت.</p>
+
+      <div class="hw rise">
+        <article class="cell">
+          <span class="marker">٠١</span>
+          <h3>تتبع</h3>
+          <p>اكتب قيمة <code>cats</code> بعد كل سطر، وبعدين الناتج المطبوع.</p>
+          <pre class="code"><code>let cats = 1;
+cats = cats + 4;
+cats = cats * 2;
+console.log(cats);</code></pre>
+        </article>
+
+        <article class="cell">
+          <span class="marker">٠٢</span>
+          <h3>اكتب كوداً</h3>
+          <p>اعمل متغيرين: <code>width</code> قيمته ٨ و<code>height</code> قيمته ٥. احسب المساحة فى متغير اسمه <code>area</code> واطبعها على شكل <code>Area = 40</code>.</p>
+        </article>
+
+        <article class="cell">
+          <span class="marker">٠٣</span>
+          <h3>فين الغلط؟</h3>
+          <p>فيه غلطتان. حدّدهما واكتب الصح.</p>
+          <pre class="code"><code>let money = 50;
+let money = money + 20;
+console.log(<span class="st">"money"</span>);</code></pre>
+        </article>
+
+        <article class="cell">
+          <span class="marker">٠٤</span>
+          <h3>التراكم من الصفر</h3>
+          <p>اعمل متغيراً اسمه <code>points</code> قيمته ٠. زوّده ٥، بعدين زوّده ٥ تانى، بعدين زوّده ١٠. اطبعه فى الآخر على شكل <code>Points = 20</code>.</p>
+        </article>
+      </div>
+
+      <div class="side rise">
+        <b>مهمة جانبية — دقيقتان، لا تُسلّم</b>
+        <p>اتأكد إن حسابك على منصة <code>Qureo</code> شغال. لو نسيت بياناتك، اسأل مدرسة الكمبيوتر فى مدرستك.</p>
+      </div>
+
+      <footer class="foot rise">
+        <span>المحاضرة الأولى · تأسيس البرمجة · إعداد يوسف زكريا التهامى</span>
+        <a href="index.html">← مركز المحاضرة</a>
+      </footer>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  var sections = Array.prototype.slice.call(document.querySelectorAll('section.sc'));
+  var rail = document.getElementById('rail');
+  var scrollFill = document.getElementById('scrollFill');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── سكة النقاط ───────────────────────────────── */
+  var dots = sections.map(function (s, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', s.getAttribute('data-title') || ('القسم ' + (i + 1)));
+    b.setAttribute('aria-current', 'false');
+    b.addEventListener('click', function () {
+      s.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    });
+    rail.appendChild(b);
+    return b;
+  });
+
+  function setCurrent(i) {
+    dots.forEach(function (d, k) { d.setAttribute('aria-current', k === i ? 'true' : 'false'); });
+  }
+  setCurrent(0);
+
+  /* ── شريط التقدّم ─────────────────────────────── */
+  var ticking = false;
+  function updateBar() {
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    var p = h > 0 ? (window.scrollY / h) * 100 : 0;
+    scrollFill.style.width = Math.max(0, Math.min(100, p)) + '%';
+    ticking = false;
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; window.requestAnimationFrame(updateBar); }
+  }, { passive: true });
+  updateBar();
+
+  /* ── دخول الأقسام: ظهور متدرّج ───────────────── */
+  function enter(section) {
+    if (section.classList.contains('in')) { return; }
+    var kids = Array.prototype.slice.call(section.querySelectorAll('.rise'));
+    kids.forEach(function (el, i) { el.style.transitionDelay = (i * 70) + 'ms'; });
+    section.classList.add('in');
+  }
+
+  if ('IntersectionObserver' in window) {
+    var ioEnter = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { enter(e.target); ioEnter.unobserve(e.target); }
+      });
+    }, { threshold: 0.15 });
+    sections.forEach(function (s) { ioEnter.observe(s); });
+
+    var ioCurrent = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) { return; }
+        var i = sections.indexOf(e.target);
+        if (i !== -1) { setCurrent(i); }
+      });
+    }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+    sections.forEach(function (s) { ioCurrent.observe(s); });
+  } else {
+    sections.forEach(enter);
+  }
+
+  /* ── إظهار الناتج ─────────────────────────────── */
+  Array.prototype.forEach.call(document.querySelectorAll('.reveal'), function (btn) {
+    var scope = btn.parentNode;
+    var frag = scope.querySelector('.frag');
+    if (!frag) { btn.hidden = true; return; }
+    btn.setAttribute('aria-expanded', 'false');
+    btn.addEventListener('click', function () {
+      frag.classList.add('shown');
+      btn.setAttribute('aria-expanded', 'true');
+      btn.hidden = true;
+    });
+  });
+
+  /* ── الدخول من رابط مباشر ─────────────────────── */
+  if (location.hash) {
+    var target = document.querySelector(location.hash);
+    if (target && target.classList.contains('sc')) { enter(target); }
+  }
+})();
+</script>
+
+</body>
+</html>

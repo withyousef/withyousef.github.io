@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="يوسف زكريا التهامى — Yousef Zakaria El-Tohamy">
+<title>المحاضرة الثالثة — الشروط</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../assets/lecture.css">
+<style>
+  /* التصميم المشترك فى ../assets/lecture.css — هنا الخاص بالعرض التقديمى فقط */
+  html{scroll-snap-type:y proximity;}
+
+  /* ═══ الترويسة الثابتة وشريط التقدّم ══════════ */
+  .topbar{
+    position:fixed;
+    z-index:40;
+    inset-block-start:0;
+    inset-inline:0;
+    background:var(--paper);
+    background:color-mix(in srgb, var(--paper) 90%, transparent);
+    backdrop-filter:saturate(1.1) blur(8px);
+    border-block-end:1px solid var(--line);
+  }
+  .topbar .row{max-width:74rem;padding:.7rem 1.6rem .6rem;}
+  .back{font-size:.86rem;}
+  .mark{font-size:.7rem;}
+  .scrollbar{height:2px;background:transparent;}
+  .scrollbar span{display:block;height:100%;width:0%;background:var(--accent);}
+
+  /* ═══ سكة النقاط ══════════════════════════════ */
+  .rail{
+    position:fixed;
+    z-index:35;
+    inset-inline-start:.85rem;
+    inset-block-start:50%;
+    transform:translateY(-50%);
+    display:flex;
+    flex-direction:column;
+    gap:.55rem;
+  }
+  .rail button{
+    width:1.4rem;height:1.4rem;
+    display:grid;place-items:center;
+    padding:0;border:0;background:transparent;cursor:pointer;
+    border-radius:50%;
+  }
+  .rail button::before{
+    content:"";
+    width:.42rem;height:.42rem;border-radius:50%;
+    background:var(--line);
+    transition:transform 200ms ease, background 200ms ease;
+  }
+  .rail button:hover::before{background:var(--muted);}
+  .rail button:active::before{transform:scale(.98);}
+  .rail button:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+  .rail button[aria-current="true"]::before{background:var(--accent);transform:scale(1.7);}
+
+  /* ═══ الأقسام ═════════════════════════════════ */
+  main{position:relative;z-index:1;}
+  section.sc{
+    min-height:100dvh;
+    scroll-snap-align:start;
+    display:grid;
+    place-items:center;
+    padding:6rem 5vw 5rem;
+  }
+  .inner{width:100%;max-width:54rem;}
+  .inner.wide{max-width:62rem;}
+
+  .rise{opacity:0;transform:translateY(14px);}
+  .in .rise{opacity:1;transform:none;transition:opacity 250ms ease, transform 250ms ease;}
+
+  /* ═══ التيبوغرافيا ════════════════════════════ */
+  .label{
+    display:block;font-size:.74rem;font-weight:600;letter-spacing:.16em;
+    color:var(--accent);margin-block-end:1.1rem;
+  }
+  .label.plain{color:var(--muted);}
+  .marker{
+    display:block;font-family:var(--mono);font-size:.88rem;font-weight:500;
+    letter-spacing:.1em;color:var(--muted);margin-block-end:.9rem;
+  }
+  h1{
+    font-size:clamp(2.4rem,6.4vw,4.4rem);font-weight:700;line-height:1.18;
+    letter-spacing:-.015em;margin:0 0 1.3rem;
+  }
+  h2{
+    font-size:clamp(1.85rem,4.4vw,3rem);font-weight:700;line-height:1.22;
+    letter-spacing:-.008em;margin:0 0 1.2rem;
+  }
+  h3{font-size:clamp(1.3rem,2.5vw,1.75rem);font-weight:600;line-height:1.32;margin:0 0 .85rem;}
+  p{margin:0 0 1.05rem;max-width:64ch;font-size:clamp(1rem,1.5vw,1.12rem);}
+  .lead{font-size:clamp(1.08rem,1.9vw,1.32rem);}
+  .sub{color:var(--muted);}
+  .tiny{font-size:.95rem;color:var(--muted);}
+  .hr{height:1px;background:var(--line);border:0;margin:1.7rem 0;max-width:14rem;}
+
+  ul.clean{list-style:none;padding:0;margin:0 0 1.1rem;max-width:64ch;}
+  ul.clean li{
+    position:relative;padding-inline-start:1.5rem;margin-block-end:.8rem;
+    font-size:clamp(1.02rem,1.7vw,1.2rem);
+  }
+  ul.clean li::before{
+    content:"";position:absolute;inset-inline-start:0;inset-block-start:.85em;
+    width:.5rem;height:1px;background:var(--accent);
+  }
+
+  .statement{
+    font-size:clamp(1.55rem,3.6vw,2.5rem);font-weight:600;line-height:1.32;
+    max-width:24ch;margin:0 0 1.2rem;
+  }
+  .statement em{font-style:normal;color:var(--accent);}
+  .quote{border-inline-start:2px solid var(--accent);padding-inline-start:1.4rem;}
+
+  /* ═══ بطاقات الحقائق ══════════════════════════ */
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));
+    gap:1rem;
+    margin:0 0 1.4rem;
+  }
+  .stat{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:1.4rem 1.4rem 1.5rem;
+    box-shadow:var(--shadow-md);
+  }
+  .stat .big{
+    display:block;
+    font-family:var(--mono);
+    font-size:clamp(1.5rem,3.2vw,2.1rem);
+    font-weight:600;line-height:1.2;letter-spacing:-.02em;
+    color:var(--accent);
+    direction:ltr;
+    margin-block-end:.5rem;
+  }
+  .stat h3{font-size:1.02rem;font-weight:600;line-height:1.4;margin:0 0 .3rem;}
+  .stat p{margin:0;font-size:.96rem;line-height:1.7;color:var(--muted);}
+
+  /* ═══ لوحة الكود ══════════════════════════════ */
+  pre.code{
+    direction:ltr;text-align:left;
+    background:var(--panel);
+    color:var(--panel-ink);
+    border-radius:14px;
+    padding:1.5rem 1.7rem;
+    margin:0 0 1.2rem;
+    overflow-x:auto;
+    font-family:var(--mono);
+    font-size:clamp(1.3rem,2.2vw,1.65rem);
+    font-weight:400;
+    line-height:1.7;
+    box-shadow:var(--shadow-lg);
+  }
+  pre.code code{background:transparent;color:var(--panel-ink);font-family:inherit;font-size:inherit;padding:0;border:0;}
+  pre.code .cm{color:var(--panel-muted);}
+  pre.code .st{color:var(--panel-accent);}
+  /* لوحة أصغر: للأقسام اللى الكود فيها طويل (التعشيش والتتبّع) */
+  pre.code.sm{font-size:clamp(1.05rem,1.6vw,1.22rem);padding:1.15rem 1.35rem;}
+
+  .frag{opacity:0;transform:translateY(8px);transition:opacity 200ms ease, transform 200ms ease;pointer-events:none;}
+  .frag.shown{opacity:1;transform:none;pointer-events:auto;}
+
+  .out{
+    display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;
+    background:var(--panel);color:var(--panel-ink);
+    border-radius:12px;padding:1rem 1.5rem;box-shadow:var(--shadow-lg);
+  }
+  .out .out-label{font-size:.7rem;font-weight:600;letter-spacing:.16em;color:var(--panel-muted);}
+  .out .out-val{
+    direction:ltr;text-align:left;font-family:var(--mono);
+    font-size:clamp(1.25rem,2.1vw,1.6rem);font-weight:500;
+    color:var(--panel-accent);white-space:pre;
+  }
+  .note{margin-block-start:1rem;color:var(--muted);font-size:1.02rem;max-width:62ch;}
+
+  .reveal{
+    display:inline-flex;align-items:center;gap:.6rem;font:inherit;
+    background:var(--surface);color:var(--accent);
+    border:1px solid var(--line);border-radius:999px;
+    padding:.62rem 1.3rem;font-size:.95rem;font-weight:600;cursor:pointer;
+    box-shadow:var(--shadow);
+    transition:background 200ms ease, transform 200ms ease, opacity 200ms ease;
+  }
+  .reveal::before{content:"";width:.45rem;height:.45rem;border-radius:50%;background:var(--accent);}
+  .reveal:hover{background:var(--accent-soft);}
+  .reveal:active{transform:scale(.98);}
+  .reveal:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .reveal[hidden]{display:none;}
+
+  .split{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:2rem 2.6rem;
+    align-items:center;
+  }
+  @media (max-width:860px){
+    .split{grid-template-columns:1fr;gap:1.2rem;}
+  }
+
+  /* ═══ الجداول (جدول الحقيقة وجدول التتبّع) ════ */
+  /* الجداول هنا مقاسها أكبر من جداول الصفحات التانية، فبتحيّد القواعد العامة. */
+  table.naming{width:100%;border-collapse:collapse;font-size:clamp(.98rem,1.6vw,1.14rem);line-height:1.8;background:var(--surface);border:1px solid var(--line);border-radius:12px;}
+  table.naming th,table.naming td{text-align:start;vertical-align:middle;padding:.62rem .85rem;border-block-end:1px solid var(--line);}
+  table.naming thead th{font-size:.72rem;font-weight:600;letter-spacing:.14em;color:var(--muted);white-space:normal;}
+  table.naming tbody tr:last-child td{border-block-end:0;}
+  table.naming td.ok code{background:var(--accent-soft);color:var(--accent-hover);}
+  table.naming td.no code{background:#fdf3f1;color:#9a3d2c;border-color:#f0dcd6;}
+
+  table.trace{width:100%;border-collapse:collapse;font-size:clamp(.92rem,1.4vw,1.04rem);line-height:1.7;background:var(--surface);border:1px solid var(--line);border-radius:12px;}
+  table.trace th,table.trace td{text-align:start;vertical-align:middle;padding:.5rem .7rem;border-block-end:1px solid var(--line);}
+  table.trace thead th{font-size:.68rem;font-weight:600;letter-spacing:.12em;color:var(--muted);white-space:nowrap;}
+  table.trace tbody tr:last-child td{border-block-end:0;}
+  table.trace td.ln{font-family:var(--mono);font-size:.9em;direction:ltr;text-align:left;white-space:nowrap;color:var(--accent-hover);}
+  table.trace td.v{font-family:var(--mono);font-weight:600;direction:ltr;text-align:center;width:4.2rem;}
+  table.trace td.v.chg{background:var(--accent-soft);color:var(--accent-hover);}
+  table.trace td.note{color:var(--muted);font-size:.94em;}
+  .tbl-scroll{overflow-x:auto;margin:0 0 1rem;}
+
+  /* ═══ الواجب ══════════════════════════════════ */
+  .hw{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:1rem;margin:0 0 1.3rem;}
+  .cell{
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:1.15rem 1.3rem 1.25rem;box-shadow:var(--shadow);
+  }
+  .cell .marker{margin-block-end:.45rem;}
+  .cell h3{font-size:1.02rem;font-weight:600;line-height:1.45;margin:0 0 .35rem;}
+  .cell p{margin:0;font-size:.98rem;line-height:1.7;color:var(--muted);}
+  .cell ul{margin:.6rem 0 0;padding-inline-start:1.2rem;font-size:.98rem;color:var(--muted);}
+  .cell li{margin-block-end:.3rem;}
+  .cell pre.code{font-size:1rem;padding:.85rem 1rem;margin:.7rem 0 0;box-shadow:none;border-radius:10px;}
+
+  .side{
+    border-inline-start:2px solid var(--accent);
+    background:var(--accent-soft);
+    border-radius:0 12px 12px 0;
+    padding:1rem 1.3rem;
+    margin:0 0 1.6rem;
+  }
+  .side > :last-child{margin-block-end:0;}
+  .side b{display:block;font-size:.68rem;font-weight:600;letter-spacing:.14em;color:var(--accent);margin-block-end:.35rem;}
+
+  footer.foot{
+    padding-block-start:1.3rem;
+    margin-block-start:1rem;
+  }
+
+  .title-meta{
+    display:flex;flex-wrap:wrap;gap:.6rem 2rem;color:var(--muted);font-size:1rem;
+    margin-block-start:2.2rem;padding-block-start:1.4rem;border-block-start:1px solid var(--line);
+  }
+
+  @media (max-width:640px){
+    .rail{display:none;}
+    section.sc{padding:5.2rem 1.3rem 4rem;}
+    pre.code{padding:1.1rem 1.2rem;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;scroll-snap-type:none;}
+    *{transition:none !important;}
+    .bg-layer .gl.f{animation:none;transform:rotate(var(--r,0deg));}
+    .rise{opacity:1;transform:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-layer" aria-hidden="true">
+  <span class="glow" style="top:-14%;left:-10%;width:44rem;height:44rem"></span>
+  <span class="glow" style="top:40%;left:68%;width:38rem;height:38rem"></span>
+  <span class="glow" style="top:80%;left:8%;width:30rem;height:30rem"></span>
+  <span class="gl f" style="--r:-12deg;--d:16s;top:6%;left:5%;font-size:2.6rem">{ }</span>
+  <span class="gl" style="--r:8deg;top:12%;left:78%;font-size:2.1rem">&lt;/&gt;</span>
+  <span class="gl a" style="--r:-6deg;top:22%;left:22%;font-size:1.9rem">=&gt;</span>
+  <span class="gl" style="--r:0deg;top:30%;left:62%;font-size:2.8rem">;</span>
+  <span class="gl a f" style="--r:10deg;--d:19s;top:38%;left:8%;font-size:2.2rem">let</span>
+  <span class="gl" style="--r:-16deg;top:18%;left:44%;font-size:2.4rem">if</span>
+  <span class="gl" style="--r:14deg;top:47%;left:86%;font-size:2.5rem">( )</span>
+  <span class="gl a" style="--r:-8deg;top:55%;left:14%;font-size:2rem">==</span>
+  <span class="gl f" style="--r:6deg;--d:14s;top:63%;left:70%;font-size:2.3rem">//</span>
+  <span class="gl a" style="--r:18deg;top:72%;left:34%;font-size:2.7rem">{ }</span>
+  <span class="gl" style="--r:-10deg;top:80%;left:88%;font-size:1.8rem">&lt;/&gt;</span>
+  <span class="gl" style="--r:4deg;top:88%;left:18%;font-size:2.1rem">let</span>
+  <span class="gl a f" style="--r:-14deg;--d:17s;top:92%;left:56%;font-size:2.3rem">=&gt;</span>
+  <span class="gl" style="--r:12deg;top:8%;left:34%;font-size:2.2rem">;</span>
+  <span class="gl a" style="--r:-4deg;top:26%;left:92%;font-size:2rem">( )</span>
+  <span class="gl" style="--r:20deg;top:58%;left:48%;font-size:1.9rem">if</span>
+  <span class="gl f" style="--r:-18deg;--d:20s;top:36%;left:72%;font-size:2.4rem">==</span>
+  <span class="gl a" style="--r:8deg;top:44%;left:38%;font-size:2rem">//</span>
+  <span class="gl" style="--r:-6deg;top:66%;left:4%;font-size:2.2rem">{ }</span>
+  <span class="gl a" style="--r:16deg;top:76%;left:60%;font-size:1.9rem">let</span>
+  <span class="gl f" style="--r:-2deg;--d:13s;top:84%;left:44%;font-size:2.5rem">;</span>
+  <span class="gl a" style="--r:10deg;top:52%;left:26%;font-size:2.1rem">&lt;/&gt;</span>
+  <span class="gl a f" style="--r:-5deg;--d:18s;top:4%;left:58%;font-size:1.7rem">console.log()</span>
+  <span class="gl" style="--r:9deg;top:16%;left:10%;font-size:1.8rem">function</span>
+  <span class="gl a" style="--r:-12deg;top:33%;left:30%;font-size:1.9rem">return</span>
+  <span class="gl f" style="--r:7deg;--d:15s;top:41%;left:54%;font-size:2.4rem">[ ]</span>
+  <span class="gl a" style="--r:-9deg;top:60%;left:88%;font-size:2rem">===</span>
+  <span class="gl" style="--r:15deg;top:69%;left:20%;font-size:1.8rem">i++</span>
+  <span class="gl a f" style="--r:4deg;--d:21s;top:78%;left:76%;font-size:1.8rem">for</span>
+  <span class="gl" style="--r:-7deg;top:87%;left:34%;font-size:1.9rem">&amp;&amp;</span>
+  <span class="gl a" style="--r:11deg;top:95%;left:10%;font-size:1.7rem">"hello"</span>
+  <span class="gl" style="--r:-3deg;top:2%;left:88%;font-size:1.8rem">let x = 5;</span>
+  <span class="grain"></span>
+</div>
+
+<header class="topbar">
+  <div class="row">
+    <a class="back" href="index.html">← مركز المحاضرة</a>
+    <span class="mark">تأسيس البرمجة — بكالوريا ٢٠٢٧</span>
+    <img class="brand-logo" src="../assets/logo.png" width="520" height="361" alt="With Yousef — يوسف زكريا التهامى">
+  </div>
+  <div class="scrollbar" aria-hidden="true"><span id="scrollFill"></span></div>
+</header>
+
+<nav class="rail" id="rail" aria-label="التنقّل بين الأقسام"></nav>
+
+<main id="deck">
+
+  <!-- ٠١ الافتتاحية -->
+  <section class="sc" id="open" data-title="الافتتاحية">
+    <div class="inner">
+      <span class="label rise">تأسيس البرمجة · بكالوريا ٢٠٢٧</span>
+      <h1 class="rise">المحاضرة الثالثة<br>الشروط</h1>
+      <p class="lead sub rise">من الاختيار للإنتاج: إزاى البرنامج ياخد قراراً بنفسه.</p>
+      <div class="title-meta rise">
+        <span>تانية ثانوى — مسار الهندسة وعلوم الحاسب</span>
+        <span>مرّر لتحت علشان تبدأ</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ٠٢ ربط بالمحاضرة السابقة -->
+  <section class="sc" id="recap" data-title="إيه اللى وصلنا له">
+    <div class="inner wide">
+      <span class="label rise">إيه اللى وصلنا له</span>
+      <h2 class="rise">قفلنا المحاضرة اللى فاتت على قيمة</h2>
+      <div class="stats rise">
+        <article class="stat">
+          <span class="big">number</span>
+          <h3>الأنواع الثلاثة</h3>
+          <p>رقم ونص وقيمة منطقية. والكمبيوتر بيسأل عن النوع قبل ما ينفّذ أى علامة.</p>
+        </article>
+        <article class="stat">
+          <span class="big">===</span>
+          <h3>المقارنة الصارمة</h3>
+          <p>بتقارن القيمة والنوع مع بعض، و<code>==</code> بتتساهل مع اختلاف النوع.</p>
+        </article>
+        <article class="stat">
+          <span class="big">true</span>
+          <h3>ودى نقطة البداية</h3>
+          <p>كل مقارنة بترجّع <code>true</code> أو <code>false</code> — قيمة من نوع <code>boolean</code>.</p>
+        </article>
+      </div>
+      <p class="lead rise">وقفنا عند سؤال: عرفنا إن البرنامج بيقدر <strong>يقول</strong> صح أو غلط. طيب إيه اللى يخلّيه <strong>يتصرّف</strong> على أساسها — ينفّذ سطراً لو الإجابة <code>true</code> ويتخطّاه لو <code>false</code>؟</p>
+      <p class="statement rise">الـ<code style="font-size:.62em">boolean</code> هو الجسر. والنهارده <em>هنعدّى عليه</em>.</p>
+    </div>
+  </section>
+
+  <!-- ٠٣ المقارنات بترجّع قيمة -->
+  <section class="sc" id="compare" data-title="المقارنة بترجّع قيمة">
+    <div class="inner">
+      <span class="marker rise">مثال ٠١</span>
+      <h3 class="rise">كل مقارنة بترجّع <code>true</code> أو <code>false</code></h3>
+      <pre class="code rise"><code>let mark = 72;
+
+console.log(mark &gt; 50);
+console.log(mark === 100);
+console.log(mark &lt;= 72);</code></pre>
+      <button class="reveal rise" type="button">إظهار الناتج</button>
+      <div class="frag">
+        <div class="out"><span class="out-label">الناتج</span><span class="out-val">true
+false
+true</span></div>
+        <p class="note">مفيش حاجة جديدة هنا — ده بالظبط اللى قفلنا بيه المحاضرة اللى فاتت. المقارنة سؤال، والسؤال ليه إجابة، والإجابة قيمة من نوع <code>boolean</code>.</p>
+        <p class="note">الجديد هو السؤال التالى: القيمة دى بتروح فين؟ لحد دلوقتى إحنا بس بنطبعها. النهارده هنحطّها فى مكان بيغيّر مسار البرنامج كله.</p>
+      </div>
+      <p class="tiny rise" style="margin-block-start:1.4rem">كل شرط هتكتبه طول عمرك هو فى الآخر تعبير بيرجّع <code>true</code> أو <code>false</code>. لو عرفت تحسب ناتج المقارنة، عرفت تقرا أى شرط.</p>
+    </div>
+  </section>
+
+  <!-- ٠٤ أول if -->
+  <section class="sc" id="first-if" data-title="أول if">
+    <div class="inner wide">
+      <span class="marker rise">مثال ٠٢ — أول قرار</span>
+      <h3 class="rise">أول <code>if</code> فى حياتك</h3>
+      <div class="split">
+        <div class="rise">
+          <svg class="ill" viewBox="0 0 520 384" role="img" aria-label="رسم توضيحى للشرط كبوابة: السطر if بيفحص الشرط، لو رجع صح الكود اللى بين القوسين المعقوفين بيشتغل، ولو رجع غلط بيتخطاه بالكامل، وفى الحالتين البرنامج بيكمّل من السطر اللى بعد القوس المعقوف">
+            <text class="cap" x="260" y="24" text-anchor="middle">الشرط بوابة — واللى جوّاها ممكن ما يشتغلش خالص</text>
+
+            <rect class="plate" x="150" y="40" width="220" height="44" rx="12"/>
+            <text class="name" x="260" y="70" text-anchor="middle" font-size="20">if (mark &gt;= 50)</text>
+
+            <path class="ln" d="M260 84 V104"/>
+
+            <rect class="box" x="130" y="104" width="260" height="48" rx="12"/>
+            <text class="cap b" x="260" y="134" text-anchor="middle">الشرط رجّع إيه؟</text>
+
+            <path class="ln" d="M356 158 V196"/>
+            <path class="ln" d="M348 184 L356 196 L364 184"/>
+            <text class="cap b" x="322" y="182" text-anchor="middle" font-size="15">صح</text>
+
+            <path class="ln" d="M164 158 V196"/>
+            <path class="ln" d="M156 184 L164 196 L172 184"/>
+            <text class="cap b" x="198" y="182" text-anchor="middle" font-size="15">غلط</text>
+
+            <rect class="box" x="272" y="204" width="168" height="78" rx="12"/>
+            <text class="cap b" x="356" y="234" text-anchor="middle" font-size="15">بيدخل جوّه الأقواس</text>
+            <text class="val" x="356" y="266" text-anchor="middle" font-size="22">Pass</text>
+
+            <rect class="ghost" x="80" y="204" width="168" height="78" rx="12"/>
+            <text class="cap" x="164" y="234" text-anchor="middle" font-size="15">بيتخطّاها بالكامل</text>
+            <text class="cap" x="164" y="264" text-anchor="middle" font-size="15">مفيش أى ناتج</text>
+
+            <path class="thin" d="M60 308 H460"/>
+            <text class="cap b" x="260" y="336" text-anchor="middle">وفى الحالتين البرنامج بيكمّل</text>
+            <text class="cap" x="260" y="362" text-anchor="middle">من السطر اللى بعد القوس المعقوف</text>
+          </svg>
+        </div>
+        <div class="rise">
+          <pre class="code sm"><code>let mark = 72;
+
+if (mark &gt;= 50) {
+  console.log(<span class="st">"Pass"</span>);
+}
+
+console.log(<span class="st">"Done"</span>);</code></pre>
+          <button class="reveal" type="button">إظهار الناتج</button>
+          <div class="frag">
+            <div class="out"><span class="out-label">الناتج</span><span class="out-val">Pass
+Done</span></div>
+            <p class="note">البنية ثلاث قطع: كلمة <code>if</code>، ثم <strong>قوس عادى</strong> جوّاه الشرط، ثم <strong>قوس معقوف</strong> جوّاه الكود اللى هيشتغل. ومفيش فاصلة منقوطة بعد القوس العادى.</p>
+          </div>
+        </div>
+      </div>
+      <p class="lead rise" style="margin-block-start:1.4rem">لو غيّرنا <code>mark</code> لـ<code>30</code>، السطر <code>Pass</code> مش هيتطبع خالص — لكن <code>Done</code> هيتطبع زى ما هو، لأنه برّه الأقواس.</p>
+    </div>
+  </section>
+
+  <!-- ٠٥ if / else -->
+  <section class="sc" id="ifelse" data-title="if / else">
+    <div class="inner wide">
+      <span class="marker rise">مثال ٠٣ — الطريقان</span>
+      <h3 class="rise"><code>else</code> — وطيب لو الشرط غلط؟</h3>
+      <div class="split">
+        <div class="rise">
+          <svg class="ill" viewBox="0 0 520 336" role="img" aria-label="رسم توضيحى: الشرط بيفتح طريقين، لو رجع صح البرنامج بيمشى فى فرع if، ولو رجع غلط بيمشى فى فرع else، وواحد منهما بس بيشتغل">
+            <text class="cap" x="260" y="24" text-anchor="middle">الشرط بيفتح طريقين، والبرنامج بيمشى فى واحد بس</text>
+
+            <rect class="plate" x="150" y="40" width="220" height="44" rx="12"/>
+            <text class="name" x="260" y="70" text-anchor="middle" font-size="20">if (mark &gt;= 50)</text>
+
+            <path class="ln" d="M260 84 V114"/>
+
+            <path class="ln" d="M260 114 H380 V158"/>
+            <path class="ln" d="M372 146 L380 158 L388 146"/>
+            <text class="cap b" x="322" y="106" text-anchor="middle" font-size="15">صح</text>
+
+            <path class="ln" d="M260 114 H140 V158"/>
+            <path class="ln" d="M132 146 L140 158 L148 146"/>
+            <text class="cap b" x="198" y="106" text-anchor="middle" font-size="15">غلط</text>
+
+            <rect class="box" x="296" y="168" width="168" height="92" rx="12"/>
+            <text class="cap b" x="380" y="198" text-anchor="middle" font-size="15">فرع if</text>
+            <text class="val" x="380" y="234" text-anchor="middle" font-size="22">Pass</text>
+
+            <rect class="box" x="56" y="168" width="168" height="92" rx="12"/>
+            <text class="cap b" x="140" y="198" text-anchor="middle" font-size="15">فرع else</text>
+            <text class="val" x="140" y="234" text-anchor="middle" font-size="22">Fail</text>
+
+            <path class="thin" d="M40 286 H480"/>
+            <text class="cap b" x="260" y="316" text-anchor="middle">واحد منهما بيشتغل، ومستحيل الاتنين مع بعض</text>
+          </svg>
+        </div>
+        <div class="rise">
+          <pre class="code sm"><code>let mark = 38;
+
+if (mark &gt;= 50) {
+  console.log(<span class="st">"Pass"</span>);
+} else {
+  console.log(<span class="st">"Fail"</span>);
+}</code></pre>
+          <button class="reveal" type="button">إظهار الناتج</button>
+          <div class="frag">
+            <div class="out"><span class="out-label">الناتج</span><span class="out-val">Fail</span></div>
+            <p class="note">كلمة <code>else</code> بتتكتب بعد القوس المعقوف اللى قفل، ومالهاش شرط بين قوسين — لأن شرطها هو «أى حاجة تانية».</p>
+          </div>
+        </div>
+      </div>
+      <p class="lead rise" style="margin-block-start:1.4rem">مع <code>else</code> بقى عندك ضمان: لازم سطر واحد يتنفّذ. من غيرها كان ممكن البرنامج يعدّى من غير ما يعمل أى حاجة.</p>
+    </div>
+  </section>
+
+  <!-- ٠٦ else if -->
+  <section class="sc" id="elseif" data-title="else if">
+    <div class="inner wide">
+      <span class="marker rise">مثال ٠٤ — أهم فكرة فى الحصة</span>
+      <h3 class="rise"><code>else if</code> — سلسلة، مش قائمة</h3>
+      <div class="split">
+        <div class="rise">
+          <svg class="ill" viewBox="0 0 520 412" role="img" aria-label="رسم توضيحى لسلسلة else if كسلّم: القيمة اثنان وسبعون، الشرط الأول رجع غلط فالبرنامج نزل للتانى، والتانى رجع صح فاشتغل ووقف، والشرطان الباقيان ما اتفحصوش أصلاً رغم إن أحدهما صحيح">
+            <text class="cap" x="260" y="26" text-anchor="middle">القيمة ٧٢ — والفحص بيمشى من فوق لتحت</text>
+
+            <rect class="plate" x="76" y="46" width="368" height="62" rx="12"/>
+            <path class="thin" d="M260 46 V108"/>
+            <text class="name" x="352" y="84" text-anchor="middle" font-size="19">mark &gt;= 85</text>
+            <text class="cap b" x="168" y="84" text-anchor="middle" font-size="15">غلط — ينزل تحت</text>
+
+            <rect class="box" x="76" y="130" width="368" height="62" rx="12"/>
+            <path class="thin" d="M260 130 V192"/>
+            <text class="name" x="352" y="168" text-anchor="middle" font-size="19">mark &gt;= 70</text>
+            <text class="cap b" x="168" y="168" text-anchor="middle" font-size="15">صح — ينفّذ ويقف</text>
+
+            <rect class="ghost" x="76" y="214" width="368" height="62" rx="12"/>
+            <path class="thin" d="M260 214 V276"/>
+            <text class="name fade" x="352" y="252" text-anchor="middle" font-size="19">mark &gt;= 50</text>
+            <text class="cap" x="168" y="252" text-anchor="middle" font-size="15">ما اتفحصش أصلاً</text>
+
+            <rect class="ghost" x="76" y="298" width="368" height="62" rx="12"/>
+            <path class="thin" d="M260 298 V360"/>
+            <text class="name fade" x="352" y="336" text-anchor="middle" font-size="19">else</text>
+            <text class="cap" x="168" y="336" text-anchor="middle" font-size="15">ما اتفحصش أصلاً</text>
+
+            <path class="ln" d="M478 60 V162 H456"/>
+            <path class="ln" d="M468 154 L456 162 L468 170"/>
+            <path class="ghost" d="M478 178 V352"/>
+            <path class="strike" d="M466 250 L490 274"/>
+            <path class="strike" d="M490 250 L466 274"/>
+
+            <text class="cap b" x="260" y="398" text-anchor="middle">أول شرط يتحقق بيقفل السلسلة كلها</text>
+          </svg>
+        </div>
+        <div class="rise">
+          <pre class="code sm"><code>let mark = 72;
+
+if (mark &gt;= 85) {
+  console.log(<span class="st">"A"</span>);
+} else if (mark &gt;= 70) {
+  console.log(<span class="st">"B"</span>);
+} else if (mark &gt;= 50) {
+  console.log(<span class="st">"C"</span>);
+} else {
+  console.log(<span class="st">"F"</span>);
+}</code></pre>
+          <button class="reveal" type="button">إظهار الناتج</button>
+          <div class="frag">
+            <div class="out"><span class="out-label">الناتج</span><span class="out-val">B</span></div>
+            <p class="note">لاحظ إن <code>72 &gt;= 50</code> صحيحة كمان. ومع ذلك <code>C</code> ما اتطبعتش — لأن السلسلة وقفت عند أول تطابق ومكمّلتش.</p>
+          </div>
+        </div>
+      </div>
+      <p class="lead rise" style="margin-block-start:1.4rem">وعلشان كده <strong>الترتيب بيغيّر النتيجة</strong>. لو حطّينا <code>mark &gt;= 50</code> فى الأول، كل طالب ناجح هياخد <code>C</code> والباقى مش هيتفحص. القاعدة: ابدأ بالأضيق وانزل للأوسع.</p>
+    </div>
+  </section>
+
+  <!-- ٠٧ && و || -->
+  <section class="sc" id="andor" data-title="الربط بين شرطين">
+    <div class="inner wide">
+      <span class="marker rise">مثال ٠٥</span>
+      <h3 class="rise">شرطان مع بعض: <code>&amp;&amp;</code> و<code>||</code></h3>
+      <div class="split">
+        <div class="rise">
+          <table class="naming">
+            <thead>
+              <tr><th>الشرط الأول</th><th>الشرط التانى</th><th><code>&amp;&amp;</code></th><th><code>||</code></th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>true</code></td><td><code>true</code></td><td class="ok"><code>true</code></td><td class="ok"><code>true</code></td></tr>
+              <tr><td><code>true</code></td><td><code>false</code></td><td class="no"><code>false</code></td><td class="ok"><code>true</code></td></tr>
+              <tr><td><code>false</code></td><td><code>true</code></td><td class="no"><code>false</code></td><td class="ok"><code>true</code></td></tr>
+              <tr><td><code>false</code></td><td><code>false</code></td><td class="no"><code>false</code></td><td class="no"><code>false</code></td></tr>
+            </tbody>
+          </table>
+          <p class="note"><code>&amp;&amp;</code> بتقول «الاتنين»، و<code>||</code> بتقول «واحد على الأقل». وده كل الجدول فى سطر.</p>
+        </div>
+        <div class="rise">
+          <pre class="code sm"><code>let mark = 72;
+let attend = 90;
+
+if (mark &gt;= 50 &amp;&amp; attend &gt;= 75) {
+  console.log(<span class="st">"Full pass"</span>);
+}
+
+if (mark &gt;= 90 || attend &gt;= 90) {
+  console.log(<span class="st">"Honor"</span>);
+}</code></pre>
+          <button class="reveal" type="button">إظهار الناتج</button>
+          <div class="frag">
+            <div class="out"><span class="out-label">الناتج</span><span class="out-val">Full pass
+Honor</span></div>
+            <p class="note">الشرط الأول: الدرجة كويسة <strong>و</strong>الحضور كويس، فالاتنين صح والناتج صح. والتانى: الدرجة مش ٩٠، لكن الحضور ٩٠ — وواحد يكفى مع <code>||</code>.</p>
+          </div>
+        </div>
+      </div>
+      <p class="tiny rise" style="margin-block-start:1.4rem">العلامتان بيتكتبوا مرتين: <code>&amp;&amp;</code> مش <code>&amp;</code>، و<code>||</code> مش <code>|</code>. والعلامة الواحدة ليها معنى تانى خالص مش هنستخدمه.</p>
+    </div>
+  </section>
+
+  <!-- ٠٨ عامل عدم التساوى — الجديد الأول -->
+  <section class="sc" id="noteq" data-title="!=">
+    <div class="inner">
+      <span class="marker rise">مثال ٠٦ — جديد تماماً</span>
+      <h3 class="rise">وطيب لو عايز أسأل «مش يساوى»؟</h3>
+      <p class="lead sub rise">العلامة دى ما شفتوهاش قبل كده خالص — لا فى المنصة ولا فى الكتاب. وهى أكتر علامة هتحتاجها من غير ما تتوقّع.</p>
+      <pre class="code rise sm"><code>let city = <span class="st">"Cairo"</span>;
+
+console.log(city != <span class="st">"Giza"</span>);
+console.log(city != <span class="st">"Cairo"</span>);
+
+if (city !== <span class="st">"Giza"</span>) {
+  console.log(<span class="st">"Not Giza"</span>);
+}</code></pre>
+      <button class="reveal rise" type="button">إظهار الناتج</button>
+      <div class="frag">
+        <div class="out"><span class="out-label">الناتج</span><span class="out-val">true
+false
+Not Giza</span></div>
+        <p class="note">علامة التعجّب هنا معناها <strong>النفى</strong>. فـ<code>!=</code> تُقرأ «مش يساوى»، وبترجّع <code>true</code> لما القيمتان يكونوا مختلفين — بالظبط عكس <code>==</code>.</p>
+        <p class="note">وزى ما عندنا <code>==</code> و<code>===</code>، عندنا <code>!=</code> و<code>!==</code>. المتساهلة بتقارن القيمة بس، والصارمة بتقارن القيمة والنوع. <strong>والقاعدة نفسها: استخدم الصارمة <code>!==</code> دايماً.</strong></p>
+      </div>
+      <p class="tiny rise" style="margin-block-start:1.4rem">من غير <code>!=</code> كنت هتضطر تكتب <code>if</code> فاضية و<code>else</code> فيها الشغل. العلامة دى بتوفّر عليك السخافة دى.</p>
+    </div>
+  </section>
+
+  <!-- ٠٩ عامل النفى — الجديد التانى -->
+  <section class="sc" id="not" data-title="النفى">
+    <div class="inner">
+      <span class="marker rise">مثال ٠٧ — جديد تماماً كمان</span>
+      <h3 class="rise">العلامة <code>!</code> لوحدها: القلّاب</h3>
+      <pre class="code rise sm"><code>let isOpen = false;
+
+console.log(isOpen);
+console.log(!isOpen);
+
+if (!isOpen) {
+  console.log(<span class="st">"Closed"</span>);
+}</code></pre>
+      <button class="reveal rise" type="button">إظهار الناتج</button>
+      <div class="frag">
+        <div class="out"><span class="out-label">الناتج</span><span class="out-val">false
+true
+Closed</span></div>
+        <p class="note">علامة التعجّب قدام قيمة منطقية بتقلبها: <code>!true</code> بتبقى <code>false</code>، و<code>!false</code> بتبقى <code>true</code>. وبس — مالهاش أى وظيفة تانية.</p>
+        <p class="note">ليه دى مفيدة؟ لأن أسماء المتغيرات المنطقية بتتكتب بالإيجاب عادةً — <code>isOpen</code> مش <code>isClosed</code>. فلما تحتاج تسأل عن العكس، بتحط <code>!</code> قدامها بدل ما تعمل متغيراً تانياً.</p>
+      </div>
+      <p class="tiny rise" style="margin-block-start:1.4rem">اقراها بصوت عالٍ كده: <code>!isOpen</code> يعنى «مش مفتوح». وده أقرب للغة البشر من <code>isOpen == false</code>.</p>
+    </div>
+  </section>
+
+  <!-- ١٠ التعشيش -->
+  <section class="sc" id="nest" data-title="التعشيش">
+    <div class="inner wide">
+      <span class="marker rise">مثال ٠٨</span>
+      <h3 class="rise">شرط جوّه شرط</h3>
+      <div class="split">
+        <div class="rise">
+          <pre class="code sm"><code>let mark = 72;
+let attend = 60;
+
+if (mark &gt;= 50) {
+  if (attend &gt;= 75) {
+    console.log(<span class="st">"Pass"</span>);
+  } else {
+    console.log(<span class="st">"Low attendance"</span>);
+  }
+} else {
+  console.log(<span class="st">"Fail"</span>);
+}</code></pre>
+          <button class="reveal" type="button">إظهار الناتج</button>
+          <div class="frag">
+            <div class="out"><span class="out-label">الناتج</span><span class="out-val">Low attendance</span></div>
+            <p class="note">الشرط الخارجى صح، فدخلنا جوّه. وجوّه لقينا شرطاً تانى، وهو غلط، فمشينا فى <code>else</code> بتاعه. الشرط الخارجى <code>else</code> ما اتفتحش أصلاً.</p>
+          </div>
+        </div>
+        <div class="rise">
+          <ul class="clean">
+            <li>كل <code>if</code> جوّه <code>if</code> بيزيد <strong>مستوى إزاحة</strong> جديداً. الإزاحة مش زينة — هى اللى بتوريك أنت جوه أنهى قوس.</li>
+            <li>القوس المعقوف اللى بيقفل بيقابل آخر واحد فتح. عُدّهم بإصبعك لو اتلخبطت.</li>
+            <li>الكود ده ممكن يتكتب بـ<code>&amp;&amp;</code> فى سطر واحد — لكن ساعتها هتخسر رسالة «الحضور قليل»، لأن التعشيش بيفرّق بين نوعى الرسوب.</li>
+          </ul>
+          <div class="side">
+            <b>تحذير</b>
+            <p>مستويان كفاية. لو لقيت نفسك بتكتب <code>if</code> جوه <code>if</code> جوه <code>if</code>، وقّف — الكود ده هيبقى صعب عليك أنت شخصياً بعد أسبوع. أعِد ترتيب الشروط أو استخدم <code>&amp;&amp;</code>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ١١ التتبع اليدوى -->
+  <section class="sc" id="trace" data-title="التتبع اليدوى">
+    <div class="inner wide">
+      <span class="marker rise">المهارة — مش معلومة</span>
+      <h3 class="rise">التتبّع اليدوى: تمشى مكان الكمبيوتر سطراً بسطر</h3>
+      <div class="split">
+        <div class="rise">
+          <pre class="code sm"><code>let a = 5;
+let b = 12;
+
+a = a + 3;
+
+if (a &gt; b) {
+  b = b - a;
+} else {
+  b = b + a;
+}
+
+console.log(a);
+console.log(b);</code></pre>
+          <button class="reveal" type="button">إظهار الناتج</button>
+          <div class="frag">
+            <div class="out"><span class="out-label">الناتج</span><span class="out-val">8
+20</span></div>
+            <p class="note">الجدول جنبه هو الطريقة. عمود لكل متغير، وسطر لكل خطوة، وما تكتبش الناتج قبل ما توصل لآخر سطر.</p>
+          </div>
+        </div>
+        <div class="rise">
+          <div class="tbl-scroll">
+          <table class="trace">
+            <thead>
+              <tr><th>السطر</th><th>a</th><th>b</th><th>اللى حصل</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="ln">let a = 5;</td><td class="v chg">5</td><td class="v">—</td><td class="note">اتعمل درج فيه ٥</td></tr>
+              <tr><td class="ln">let b = 12;</td><td class="v">5</td><td class="v chg">12</td><td class="note">اتعمل درج فيه ١٢</td></tr>
+              <tr><td class="ln">a = a + 3;</td><td class="v chg">8</td><td class="v">12</td><td class="note">٥ زائد ٣ يبقى ٨</td></tr>
+              <tr><td class="ln">if (a &gt; b)</td><td class="v">8</td><td class="v">12</td><td class="note">٨ أكبر من ١٢؟ غلط</td></tr>
+              <tr><td class="ln">b = b + a;</td><td class="v">8</td><td class="v chg">20</td><td class="note">مشينا فى else</td></tr>
+              <tr><td class="ln">console.log</td><td class="v">8</td><td class="v">20</td><td class="note">اتطبع ٨ وبعده ٢٠</td></tr>
+            </tbody>
+          </table>
+          </div>
+          <ul class="clean">
+            <li>القيمة الجديدة بتتكتب فى سطر جديد، والقديمة <strong>ما تتمسحش</strong> — علشان تشوف الحكاية كلها.</li>
+            <li>سطر الشرط ما بيغيّرش أى قيمة. بيغيّر <strong>السطر اللى بعده</strong> بس.</li>
+            <li>لو الشرط غلط، اشطب الفرع اللى ما اتنفّذش بخط واحد وكمّل.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="lead rise" style="margin-block-start:1.4rem">المهارة دى هى الفرق بين طالب بيخمّن الإجابة وطالب بيوصل لها. وهى مطلوبة صراحةً فى الامتحان لما يقولوا «تتبّع الكود التالى».</p>
+    </div>
+  </section>
+
+  <!-- ١٢ فخ = مقابل == -->
+  <section class="sc" id="trap" data-title="فخ الإسناد">
+    <div class="inner">
+      <span class="marker rise">مثال ٠٩ — الفخ</span>
+      <h3 class="rise">علامة يساوى واحدة جوّه الشرط</h3>
+      <pre class="code rise sm"><code>let mark = 40;
+
+if (mark = 50) {
+  console.log(<span class="st">"Pass"</span>);
+}
+
+console.log(mark);</code></pre>
+      <button class="reveal rise" type="button">إظهار الناتج</button>
+      <div class="frag">
+        <div class="out"><span class="out-label">الناتج</span><span class="out-val">Pass
+50</span></div>
+        <p class="note">الدرجة ٤٠ والشرط بيقول ٥٠، ومع ذلك طبع <code>Pass</code>. والأسوأ: <code>mark</code> نفسها اتغيّرت لـ<code>50</code> من غير ما حد يطلب.</p>
+        <p class="note">السبب إن <code>=</code> معناها «حُطّ فى» زى ما اتعلّمنا فى المحاضرة الأولى. فالسطر ده مش بيسأل — هو <strong>بيحطّ</strong> ٥٠ فى <code>mark</code>، والشرط بياخد الناتج ويعتبره صح.</p>
+        <p class="note">والصح إنك تسأل بعلامتين أو تلاتة، مش بواحدة:</p>
+        <pre class="code sm"><code>if (mark === 50) {
+  console.log(<span class="st">"Pass"</span>);
+}</code></pre>
+      </div>
+      <p class="tiny rise" style="margin-block-start:1.4rem">وده <strong>خطأ منطقى صامت</strong>: مفيش رسالة خطأ، والبرنامج بيشتغل لآخره، وبيدّى نتايج غلط بهدوء. اسأل نفسك قبل كل شرط: أنا بسأل ولا بحطّ؟</p>
+    </div>
+  </section>
+
+  <!-- ١٣ الختام -->
+  <section class="sc" id="close" data-title="الختام">
+    <div class="inner">
+      <div class="quote rise">
+        <p class="statement">الشرط مش بيحسب حاجة. هو بيختار <em>أنهى سطر</em> يشتغل.</p>
+      </div>
+      <p class="lead sub rise">لحد المحاضرة اللى فاتت كان البرنامج بيمشى فى خط واحد من فوق لتحت، ما بيفوّتش سطراً ولا بيرجع. النهارده بقى ليه خرائط — وأنت اللى بترسمها بالشرط.</p>
+      <hr class="hr rise">
+      <ul class="clean rise">
+        <li>قرار واحد: <code>if</code>.</li>
+        <li>طريقان: <code>if</code> و<code>else</code>.</li>
+        <li>سلّم بيقف عند أول تطابق: <code>else if</code>.</li>
+        <li>ربط وقلب: <code>&amp;&amp;</code> و<code>||</code> و<code>!</code> و<code>!==</code>.</li>
+        <li>ومهارة واحدة تحت كل ده: التتبّع اليدوى.</li>
+      </ul>
+      <p class="lead rise">المحاضرة الجاية: الحلقات — إزاى نخلّى البرنامج يكرّر الشغل من غير ما نكتبه مية مرة.</p>
+    </div>
+  </section>
+
+  <!-- ١٤ الواجب -->
+  <section class="sc" id="homework" data-title="الواجب">
+    <div class="inner wide">
+      <span class="label rise">الواجب</span>
+      <h2 class="rise">أربع تمارين — من ١٥ لـ٢٠ دقيقة</h2>
+      <p class="lead sub rise">يتسلّم مكتوباً بخط اليد فى أول المحاضرة الجاية. اكتب الحل على ورق، مش على التابلت.</p>
+
+      <div class="hw rise">
+        <article class="cell">
+          <span class="marker">٠١</span>
+          <h3>تتبّع بالورقة والقلم</h3>
+          <p>اعمل جدولاً بعمودين <code>a</code> و<code>b</code>، واكتب قيمة كل واحد <strong>بعد كل سطر</strong>، وفى الآخر اكتب اللى هيتطبع.</p>
+          <pre class="code"><code>let a = 10;
+let b = 4;
+
+if (a &gt; b) {
+  a = a - b;
+} else {
+  b = b - a;
+}
+
+console.log(a);
+console.log(b);</code></pre>
+        </article>
+
+        <article class="cell">
+          <span class="marker">٠٢</span>
+          <h3>اكتب سلسلة شروط</h3>
+          <p>عندك متغير <code>temp</code> فيه درجة الحرارة. اكتب سلسلة تطبع <code>Hot</code> لو أكبر من ٣٥، و<code>Warm</code> لو من ٢٥ لـ٣٥، و<code>Cool</code> لو أقل من ٢٥. وجرّبها بثلاث قيم من عندك.</p>
+        </article>
+
+        <article class="cell">
+          <span class="marker">٠٣</span>
+          <h3>فين الغلط؟</h3>
+          <p>فيه غلطتان. حدّدهما واكتب الصح، والمطلوب إن الكود يطبع <code>Fail</code> للقيمة دى.</p>
+          <pre class="code"><code>let mark = 30;
+
+if (mark = 50) {
+  console.log(<span class="st">"Pass"</span>);
+}
+  console.log(<span class="st">"Fail"</span>);</code></pre>
+        </article>
+
+        <article class="cell">
+          <span class="marker">٠٤</span>
+          <h3>صح ولا غلط</h3>
+          <p>اكتب قدام كل تعبير <code>true</code> أو <code>false</code>، وجملة واحدة تشرح ليه.</p>
+          <ul>
+            <li><code>7 != 7</code></li>
+            <li><code>"a" !== "b"</code></li>
+            <li><code>!(5 &gt; 3)</code></li>
+            <li><code>10 &gt; 5 &amp;&amp; 3 &gt; 8</code></li>
+            <li><code>10 &gt; 5 || 3 &gt; 8</code></li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="side rise">
+        <b>مهمة جانبية — دقيقتان، لا تُسلّم</b>
+        <p>افتح منصة <code>Qureo</code> على أى فصل فيه شرط، وبص على الشروط اللى كتبتها زمان بعين النهارده. هتلاقى نفسك بتقرا الترتيب مش الكلمات.</p>
+      </div>
+
+      <footer class="foot rise">
+        <span>المحاضرة الثالثة · تأسيس البرمجة · إعداد يوسف زكريا التهامى</span>
+        <a href="index.html">← مركز المحاضرة</a>
+      </footer>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  var sections = Array.prototype.slice.call(document.querySelectorAll('section.sc'));
+  var rail = document.getElementById('rail');
+  var scrollFill = document.getElementById('scrollFill');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── سكة النقاط ───────────────────────────────── */
+  var dots = sections.map(function (s, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', s.getAttribute('data-title') || ('القسم ' + (i + 1)));
+    b.setAttribute('aria-current', 'false');
+    b.addEventListener('click', function () {
+      s.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    });
+    rail.appendChild(b);
+    return b;
+  });
+
+  function setCurrent(i) {
+    dots.forEach(function (d, k) { d.setAttribute('aria-current', k === i ? 'true' : 'false'); });
+  }
+  setCurrent(0);
+
+  /* ── شريط التقدّم ─────────────────────────────── */
+  var ticking = false;
+  function updateBar() {
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    var p = h > 0 ? (window.scrollY / h) * 100 : 0;
+    scrollFill.style.width = Math.max(0, Math.min(100, p)) + '%';
+    ticking = false;
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; window.requestAnimationFrame(updateBar); }
+  }, { passive: true });
+  updateBar();
+
+  /* ── دخول الأقسام: ظهور متدرّج ───────────────── */
+  function enter(section) {
+    if (section.classList.contains('in')) { return; }
+    var kids = Array.prototype.slice.call(section.querySelectorAll('.rise'));
+    kids.forEach(function (el, i) { el.style.transitionDelay = (i * 70) + 'ms'; });
+    section.classList.add('in');
+  }
+
+  if ('IntersectionObserver' in window) {
+    var ioEnter = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { enter(e.target); ioEnter.unobserve(e.target); }
+      });
+    }, { threshold: 0.15 });
+    sections.forEach(function (s) { ioEnter.observe(s); });
+
+    var ioCurrent = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) { return; }
+        var i = sections.indexOf(e.target);
+        if (i !== -1) { setCurrent(i); }
+      });
+    }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+    sections.forEach(function (s) { ioCurrent.observe(s); });
+  } else {
+    sections.forEach(enter);
+  }
+
+  /* ── إظهار الناتج ─────────────────────────────── */
+  Array.prototype.forEach.call(document.querySelectorAll('.reveal'), function (btn) {
+    var scope = btn.parentNode;
+    var frag = scope.querySelector('.frag');
+    if (!frag) { btn.hidden = true; return; }
+    btn.setAttribute('aria-expanded', 'false');
+    btn.addEventListener('click', function () {
+      frag.classList.add('shown');
+      btn.setAttribute('aria-expanded', 'true');
+      btn.hidden = true;
+    });
+  });
+
+  /* ── الدخول من رابط مباشر ─────────────────────── */
+  if (location.hash) {
+    var target = document.querySelector(location.hash);
+    if (target && target.classList.contains('sc')) { enter(target); }
+  }
+})();
+</script>
+
+</body>
+</html>

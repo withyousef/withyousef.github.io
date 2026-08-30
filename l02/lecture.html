@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="يوسف زكريا التهامى — Yousef Zakaria El-Tohamy">
+<title>المحاضرة الثانية — الأنواع والتحويل</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../assets/lecture.css">
+<style>
+  /* التصميم المشترك فى ../assets/lecture.css — هنا الخاص بالعرض التقديمى فقط */
+  html{scroll-snap-type:y proximity;}
+
+  /* ═══ الترويسة الثابتة وشريط التقدّم ══════════ */
+  .topbar{
+    position:fixed;
+    z-index:40;
+    inset-block-start:0;
+    inset-inline:0;
+    background:var(--paper);
+    background:color-mix(in srgb, var(--paper) 90%, transparent);
+    backdrop-filter:saturate(1.1) blur(8px);
+    border-block-end:1px solid var(--line);
+  }
+  .topbar .row{max-width:74rem;padding:.7rem 1.6rem .6rem;}
+  .back{font-size:.86rem;}
+  .mark{font-size:.7rem;}
+  .scrollbar{height:2px;background:transparent;}
+  .scrollbar span{display:block;height:100%;width:0%;background:var(--accent);}
+
+  /* ═══ سكة النقاط ══════════════════════════════ */
+  .rail{
+    position:fixed;
+    z-index:35;
+    inset-inline-start:.85rem;
+    inset-block-start:50%;
+    transform:translateY(-50%);
+    display:flex;
+    flex-direction:column;
+    gap:.55rem;
+  }
+  .rail button{
+    width:1.4rem;height:1.4rem;
+    display:grid;place-items:center;
+    padding:0;border:0;background:transparent;cursor:pointer;
+    border-radius:50%;
+  }
+  .rail button::before{
+    content:"";
+    width:.42rem;height:.42rem;border-radius:50%;
+    background:var(--line);
+    transition:transform 200ms ease, background 200ms ease;
+  }
+  .rail button:hover::before{background:var(--muted);}
+  .rail button:active::before{transform:scale(.98);}
+  .rail button:focus-visible{outline:2px solid var(--accent);outline-offset:1px;}
+  .rail button[aria-current="true"]::before{background:var(--accent);transform:scale(1.7);}
+
+  /* ═══ الأقسام ═════════════════════════════════ */
+  main{position:relative;z-index:1;}
+  section.sc{
+    min-height:100dvh;
+    scroll-snap-align:start;
+    display:grid;
+    place-items:center;
+    padding:6rem 5vw 5rem;
+  }
+  .inner{width:100%;max-width:54rem;}
+  .inner.wide{max-width:62rem;}
+
+  .rise{opacity:0;transform:translateY(14px);}
+  .in .rise{opacity:1;transform:none;transition:opacity 250ms ease, transform 250ms ease;}
+
+  /* ═══ التيبوغرافيا ════════════════════════════ */
+  .label{
+    display:block;font-size:.74rem;font-weight:600;letter-spacing:.16em;
+    color:var(--accent);margin-block-end:1.1rem;
+  }
+  .label.plain{color:var(--muted);}
+  .marker{
+    display:block;font-family:var(--mono);font-size:.88rem;font-weight:500;
+    letter-spacing:.1em;color:var(--muted);margin-block-end:.9rem;
+  }
+  h1{
+    font-size:clamp(2.4rem,6.4vw,4.4rem);font-weight:700;line-height:1.18;
+    letter-spacing:-.015em;margin:0 0 1.3rem;
+  }
+  h2{
+    font-size:clamp(1.85rem,4.4vw,3rem);font-weight:700;line-height:1.22;
+    letter-spacing:-.008em;margin:0 0 1.2rem;
+  }
+  h3{font-size:clamp(1.3rem,2.5vw,1.75rem);font-weight:600;line-height:1.32;margin:0 0 .85rem;}
+  p{margin:0 0 1.05rem;max-width:64ch;font-size:clamp(1rem,1.5vw,1.12rem);}
+  .lead{font-size:clamp(1.08rem,1.9vw,1.32rem);}
+  .sub{color:var(--muted);}
+  .tiny{font-size:.95rem;color:var(--muted);}
+  .hr{height:1px;background:var(--line);border:0;margin:1.7rem 0;max-width:14rem;}
+
+  ul.clean{list-style:none;padding:0;margin:0 0 1.1rem;max-width:64ch;}
+  ul.clean li{
+    position:relative;padding-inline-start:1.5rem;margin-block-end:.8rem;
+    font-size:clamp(1.02rem,1.7vw,1.2rem);
+  }
+  ul.clean li::before{
+    content:"";position:absolute;inset-inline-start:0;inset-block-start:.85em;
+    width:.5rem;height:1px;background:var(--accent);
+  }
+
+  .statement{
+    font-size:clamp(1.55rem,3.6vw,2.5rem);font-weight:600;line-height:1.32;
+    max-width:24ch;margin:0 0 1.2rem;
+  }
+  .statement em{font-style:normal;color:var(--accent);}
+  .quote{border-inline-start:2px solid var(--accent);padding-inline-start:1.4rem;}
+
+  /* ═══ بطاقات الحقائق ══════════════════════════ */
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(13rem,1fr));
+    gap:1rem;
+    margin:0 0 1.4rem;
+  }
+  .stat{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:1.4rem 1.4rem 1.5rem;
+    box-shadow:var(--shadow-md);
+  }
+  .stat .big{
+    display:block;
+    font-family:var(--mono);
+    font-size:clamp(1.5rem,3.2vw,2.1rem);
+    font-weight:600;line-height:1.2;letter-spacing:-.02em;
+    color:var(--accent);
+    direction:ltr;
+    margin-block-end:.5rem;
+  }
+  .stat h3{font-size:1.02rem;font-weight:600;line-height:1.4;margin:0 0 .3rem;}
+  .stat p{margin:0;font-size:.96rem;line-height:1.7;color:var(--muted);}
+
+  /* ═══ لوحة الكود ══════════════════════════════ */
+  pre.code{
+    direction:ltr;text-align:left;
+    background:var(--panel);
+    color:var(--panel-ink);
+    border-radius:14px;
+    padding:1.5rem 1.7rem;
+    margin:0 0 1.2rem;
+    overflow-x:auto;
+    font-family:var(--mono);
+    font-size:clamp(1.3rem,2.2vw,1.65rem);
+    font-weight:400;
+    line-height:1.7;
+    box-shadow:var(--shadow-lg);
+  }
+  pre.code code{background:transparent;color:var(--panel-ink);font-family:inherit;font-size:inherit;padding:0;border:0;}
+  pre.code .cm{color:var(--panel-muted);}
+  pre.code .st{color:var(--panel-accent);}
+
+  .frag{opacity:0;transform:translateY(8px);transition:opacity 200ms ease, transform 200ms ease;pointer-events:none;}
+  .frag.shown{opacity:1;transform:none;pointer-events:auto;}
+
+  .out{
+    display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;
+    background:var(--panel);color:var(--panel-ink);
+    border-radius:12px;padding:1rem 1.5rem;box-shadow:var(--shadow-lg);
+  }
+  .out .out-label{font-size:.7rem;font-weight:600;letter-spacing:.16em;color:var(--panel-muted);}
+  .out .out-val{
+    direction:ltr;text-align:left;font-family:var(--mono);
+    font-size:clamp(1.25rem,2.1vw,1.6rem);font-weight:500;
+    color:var(--panel-accent);white-space:pre;
+  }
+  .note{margin-block-start:1rem;color:var(--muted);font-size:1.02rem;max-width:62ch;}
+
+  .reveal{
+    display:inline-flex;align-items:center;gap:.6rem;font:inherit;
+    background:var(--surface);color:var(--accent);
+    border:1px solid var(--line);border-radius:999px;
+    padding:.62rem 1.3rem;font-size:.95rem;font-weight:600;cursor:pointer;
+    box-shadow:var(--shadow);
+    transition:background 200ms ease, transform 200ms ease, opacity 200ms ease;
+  }
+  .reveal::before{content:"";width:.45rem;height:.45rem;border-radius:50%;background:var(--accent);}
+  .reveal:hover{background:var(--accent-soft);}
+  .reveal:active{transform:scale(.98);}
+  .reveal:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .reveal[hidden]{display:none;}
+
+  .split{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+    gap:2rem 2.6rem;
+    align-items:center;
+  }
+  @media (max-width:860px){
+    .split{grid-template-columns:1fr;gap:1.2rem;}
+  }
+
+  /* ═══ جدول المقارنة ═══════════════════════════ */
+  /* الجدول هنا مقاسه أكبر من جدول الصفحات التانية، فبيحيّد قواعد
+     الجدول العامة (line-height / vertical-align / white-space). */
+  table.naming{width:100%;border-collapse:collapse;font-size:clamp(.98rem,1.6vw,1.14rem);line-height:1.8;background:var(--surface);border:1px solid var(--line);border-radius:12px;}
+  table.naming th,table.naming td{text-align:start;vertical-align:middle;padding:.62rem .85rem;border-block-end:1px solid var(--line);}
+  table.naming thead th{font-size:.72rem;font-weight:600;letter-spacing:.14em;color:var(--muted);white-space:normal;}
+  table.naming tbody tr:last-child td{border-block-end:0;}
+  table.naming td.ok code{background:var(--accent-soft);color:var(--accent-hover);}
+  table.naming td.no code{background:#fdf3f1;color:#9a3d2c;border-color:#f0dcd6;}
+
+  /* ═══ الواجب ══════════════════════════════════ */
+  .hw{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:1rem;margin:0 0 1.3rem;}
+  .cell{
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:1.15rem 1.3rem 1.25rem;box-shadow:var(--shadow);
+  }
+  .cell .marker{margin-block-end:.45rem;}
+  .cell h3{font-size:1.02rem;font-weight:600;line-height:1.45;margin:0 0 .35rem;}
+  .cell p{margin:0;font-size:.98rem;line-height:1.7;color:var(--muted);}
+  .cell ul{margin:.6rem 0 0;padding-inline-start:1.2rem;font-size:.98rem;color:var(--muted);}
+  .cell li{margin-block-end:.3rem;}
+  .cell pre.code{font-size:1rem;padding:.85rem 1rem;margin:.7rem 0 0;box-shadow:none;border-radius:10px;}
+
+  .side{
+    border-inline-start:2px solid var(--accent);
+    background:var(--accent-soft);
+    border-radius:0 12px 12px 0;
+    padding:1rem 1.3rem;
+    margin:0 0 1.6rem;
+  }
+  .side > :last-child{margin-block-end:0;}
+  .side b{display:block;font-size:.68rem;font-weight:600;letter-spacing:.14em;color:var(--accent);margin-block-end:.35rem;}
+
+  footer.foot{
+    padding-block-start:1.3rem;
+    margin-block-start:1rem;
+  }
+
+  .title-meta{
+    display:flex;flex-wrap:wrap;gap:.6rem 2rem;color:var(--muted);font-size:1rem;
+    margin-block-start:2.2rem;padding-block-start:1.4rem;border-block-start:1px solid var(--line);
+  }
+
+  @media (max-width:640px){
+    .rail{display:none;}
+    section.sc{padding:5.2rem 1.3rem 4rem;}
+    pre.code{padding:1.1rem 1.2rem;}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;scroll-snap-type:none;}
+    *{transition:none !important;}
+    .bg-layer .gl.f{animation:none;transform:rotate(var(--r,0deg));}
+    .rise{opacity:1;transform:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-layer" aria-hidden="true">
+  <span class="glow" style="top:-14%;left:-10%;width:44rem;height:44rem"></span>
+  <span class="glow" style="top:40%;left:68%;width:38rem;height:38rem"></span>
+  <span class="glow" style="top:80%;left:8%;width:30rem;height:30rem"></span>
+  <span class="gl f" style="--r:-12deg;--d:16s;top:6%;left:5%;font-size:2.6rem">{ }</span>
+  <span class="gl" style="--r:8deg;top:12%;left:78%;font-size:2.1rem">&lt;/&gt;</span>
+  <span class="gl a" style="--r:-6deg;top:22%;left:22%;font-size:1.9rem">=&gt;</span>
+  <span class="gl" style="--r:0deg;top:30%;left:62%;font-size:2.8rem">;</span>
+  <span class="gl a f" style="--r:10deg;--d:19s;top:38%;left:8%;font-size:2.2rem">let</span>
+  <span class="gl" style="--r:-16deg;top:18%;left:44%;font-size:2.4rem">if</span>
+  <span class="gl" style="--r:14deg;top:47%;left:86%;font-size:2.5rem">( )</span>
+  <span class="gl a" style="--r:-8deg;top:55%;left:14%;font-size:2rem">==</span>
+  <span class="gl f" style="--r:6deg;--d:14s;top:63%;left:70%;font-size:2.3rem">//</span>
+  <span class="gl a" style="--r:18deg;top:72%;left:34%;font-size:2.7rem">{ }</span>
+  <span class="gl" style="--r:-10deg;top:80%;left:88%;font-size:1.8rem">&lt;/&gt;</span>
+  <span class="gl" style="--r:4deg;top:88%;left:18%;font-size:2.1rem">let</span>
+  <span class="gl a f" style="--r:-14deg;--d:17s;top:92%;left:56%;font-size:2.3rem">=&gt;</span>
+  <span class="gl" style="--r:12deg;top:8%;left:34%;font-size:2.2rem">;</span>
+  <span class="gl a" style="--r:-4deg;top:26%;left:92%;font-size:2rem">( )</span>
+  <span class="gl" style="--r:20deg;top:58%;left:48%;font-size:1.9rem">if</span>
+  <span class="gl f" style="--r:-18deg;--d:20s;top:36%;left:72%;font-size:2.4rem">==</span>
+  <span class="gl a" style="--r:8deg;top:44%;left:38%;font-size:2rem">//</span>
+  <span class="gl" style="--r:-6deg;top:66%;left:4%;font-size:2.2rem">{ }</span>
+  <span class="gl a" style="--r:16deg;top:76%;left:60%;font-size:1.9rem">let</span>
+  <span class="gl f" style="--r:-2deg;--d:13s;top:84%;left:44%;font-size:2.5rem">;</span>
+  <span class="gl a" style="--r:10deg;top:52%;left:26%;font-size:2.1rem">&lt;/&gt;</span>
+  <span class="gl a f" style="--r:-5deg;--d:18s;top:4%;left:58%;font-size:1.7rem">console.log()</span>
+  <span class="gl" style="--r:9deg;top:16%;left:10%;font-size:1.8rem">function</span>
+  <span class="gl a" style="--r:-12deg;top:33%;left:30%;font-size:1.9rem">return</span>
+  <span class="gl f" style="--r:7deg;--d:15s;top:41%;left:54%;font-size:2.4rem">[ ]</span>
+  <span class="gl a" style="--r:-9deg;top:60%;left:88%;font-size:2rem">===</span>
+  <span class="gl" style="--r:15deg;top:69%;left:20%;font-size:1.8rem">i++</span>
+  <span class="gl a f" style="--r:4deg;--d:21s;top:78%;left:76%;font-size:1.8rem">for</span>
+  <span class="gl" style="--r:-7deg;top:87%;left:34%;font-size:1.9rem">&amp;&amp;</span>
+  <span class="gl a" style="--r:11deg;top:95%;left:10%;font-size:1.7rem">"hello"</span>
+  <span class="gl" style="--r:-3deg;top:2%;left:88%;font-size:1.8rem">let x = 5;</span>
+  <span class="grain"></span>
+</div>
+
+<header class="topbar">
+  <div class="row">
+    <a class="back" href="index.html">← مركز المحاضرة</a>
+    <span class="mark">تأسيس البرمجة — بكالوريا ٢٠٢٧</span>
+    <img class="brand-logo" src="../assets/logo.png" width="520" height="361" alt="With Yousef — يوسف زكريا التهامى">
+  </div>
+  <div class="scrollbar" aria-hidden="true"><span id="scrollFill"></span></div>
+</header>
+
+<nav class="rail" id="rail" aria-label="التنقّل بين الأقسام"></nav>
+
+<main id="deck">
+
+  <!-- ٠١ الافتتاحية -->
+  <section class="sc" id="open" data-title="الافتتاحية">
+    <div class="inner">
+      <span class="label rise">تأسيس البرمجة · بكالوريا ٢٠٢٧</span>
+      <h1 class="rise">المحاضرة الثانية<br>الأنواع والتحويل</h1>
+      <p class="lead sub rise">ليه <code>"2" + 5</code> بتطلع <code>25</code>، وإزاى نخلّيها <code>7</code>.</p>
+      <div class="title-meta rise">
+        <span>تانية ثانوى — مسار الهندسة وعلوم الحاسب</span>
+        <span>مرّر لتحت علشان تبدأ</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ٠٢ ربط بالمحاضرة السابقة -->
+  <section class="sc" id="recap" data-title="إيه اللى وصلنا له">
+    <div class="inner wide">
+      <span class="label rise">إيه اللى وصلنا له</span>
+      <h2 class="rise">قفلنا المحاضرة اللى فاتت على سؤال</h2>
+      <div class="stats rise">
+        <article class="stat">
+          <span class="big">let</span>
+          <h3>المتغير درج ليه اسم</h3>
+          <p>الاسم ثابت واللى جواه بيتغيّر، و<code>let</code> بتتكتب مرة واحدة بس لكل درج.</p>
+        </article>
+        <article class="stat">
+          <span class="big">=</span>
+          <h3>معناها «حُطّ فى»</h3>
+          <p>مش «يساوى». احسب اللى على اليمين الأول، وبعدين خزّن الناتج فى اللى على الشمال.</p>
+        </article>
+        <article class="stat">
+          <span class="big">"2" + 5</span>
+          <h3>وطلعت ٢٥ مش ٧</h3>
+          <p>ودى النقطة اللى وقفنا عندها بالظبط، ومنها بادئين النهارده.</p>
+        </article>
+      </div>
+      <p class="lead rise">السطر ده مش غلط، ومش عطل فى الكمبيوتر. هو بيشتغل صح مية فى المية — بس بقاعدة إحنا لسه ما اتعلمناهاش. القاعدة دى اسمها <strong>النوع</strong>، وهى موضوع الحصة كلها.</p>
+      <p class="statement rise">الكمبيوتر مش بيبص للقيمة بس. بيبص <em>لنوعها</em> الأول.</p>
+    </div>
+  </section>
+
+  <!-- ٠٣ إيه هو النوع -->
+  <section class="sc" id="what" data-title="إيه هو النوع">
+    <div class="inner wide">
+      <span class="label rise">المفهوم</span>
+      <h2 class="rise">إيه هو «النوع»؟</h2>
+      <div class="split">
+        <div class="rise">
+          <svg class="ill" viewBox="0 0 520 396" role="img" aria-label="رسم توضيحى لدولاب فيه ثلاثة أدراج، كل درج مكتوب عليه اسم وجواه قيمة من نوع مختلف: رقم ونص وقيمة منطقية، وجنب كل درج بطاقة مكتوب عليها اسم النوع">
+            <text class="cap" x="260" y="26" text-anchor="middle">نفس الدولاب — بس اللى جوه كل درج ليه نوع</text>
+
+            <rect class="cab" x="56" y="44" width="408" height="308" rx="16"/>
+
+            <rect class="drawer" x="70" y="58" width="380" height="86" rx="12"/>
+            <rect class="plate" x="312" y="84" width="126" height="34" rx="8"/>
+            <text class="name" x="375" y="108" text-anchor="middle" font-size="17">age</text>
+            <text class="val" x="250" y="112" text-anchor="middle" font-size="30">19</text>
+            <rect class="box" x="84" y="86" width="104" height="30" rx="15"/>
+            <text class="name" x="136" y="107" text-anchor="middle" font-size="14">number</text>
+
+            <rect class="drawer" x="70" y="154" width="380" height="86" rx="12"/>
+            <rect class="plate" x="312" y="180" width="126" height="34" rx="8"/>
+            <text class="name" x="375" y="204" text-anchor="middle" font-size="17">city</text>
+            <text class="val" x="250" y="208" text-anchor="middle" font-size="24">"Cairo"</text>
+            <rect class="box" x="84" y="182" width="104" height="30" rx="15"/>
+            <text class="name" x="136" y="203" text-anchor="middle" font-size="14">string</text>
+
+            <rect class="drawer" x="70" y="250" width="380" height="86" rx="12"/>
+            <rect class="plate" x="312" y="276" width="126" height="34" rx="8"/>
+            <text class="name" x="375" y="300" text-anchor="middle" font-size="17">isOpen</text>
+            <text class="val" x="250" y="304" text-anchor="middle" font-size="24">true</text>
+            <rect class="box" x="84" y="278" width="104" height="30" rx="15"/>
+            <text class="name" x="136" y="299" text-anchor="middle" font-size="14">boolean</text>
+
+            <text class="cap b" x="260" y="376" text-anchor="middle">الاسم مكتوب على الدرج، والنوع صفة للى جواه</text>
+          </svg>
+        </div>
+        <div class="rise">
+          <ul class="clean">
+            <li>الدرج ما بيهموش شكله — اللى بيفرق هو <strong>نوع الحاجة اللى جواه</strong>.</li>
+            <li>درج فيه <strong>رقم</strong> تقدر تجمعه وتضربه.</li>
+            <li>درج فيه <strong>نص</strong> تقدر تلزّقه بنص تانى، لكن الضرب فيه ملوش معنى.</li>
+            <li>درج فيه <strong>صح أو غلط</strong> — دى الحاجة اللى الشروط هتشتغل بيها فى المحاضرة الجاية.</li>
+          </ul>
+          <p class="sub">تشبيه من الحياة: علبة فيها فلوس وعلبة فيها ورق ملزّق. الاتنين علب، بس اللى تعمله بالفلوس مش اللى تعمله بالورق. والكمبيوتر بيسأل عن نوع اللى جوه <strong>قبل</strong> ما ينفّذ أى علامة.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ٠٤ الأنواع الثلاثة -->
+  <section class="sc" id="three" data-title="الأنواع الثلاثة">
+    <div class="inner">
+      <span class="marker rise">مثال ٠١</span>
+      <h3 class="rise">ثلاثة أنواع بس، وهما اللى هيمشوا معانا</h3>
+      <pre class="code rise"><code>let age = 19;
+let city = <span class="st">"Cairo"</span>;
+let isOpen = true;
+
+console.log(age);
+console.log(city);
+console.log(isOpen);</code></pre>
+      <button class="reveal rise" type="button">إظهار الناتج</button>
+      <div class="frag">
+        <div class="out"><span class="out-label">الناتج</span><span class="out-val">19
+Cairo
+true</span></div>
+        <p class="note"><code>number</code> رقم — بيتكتب من غير أى حاجة حواليه. و<code>string</code> نص — بيتكتب <strong>بين علامتى تنصيص</strong>. و<code>boolean</code> قيمة منطقية — ليها احتمالان بس: <code>true</code> أو <code>false</code>، من غير تنصيص.</p>
+        <p class="note">لاحظ إن <code>"Cairo"</code> اتطبعت من غير علامتى التنصيص. العلامتان بتقولا للكمبيوتر «ده نص» — وهو بيفهم ومش بيطبعهما.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ٠٥ typeof -->
+  <section class="sc" id="typeof" data-title="typeof">
+    <div class="inner">
+      <span class="marker rise">مثال ٠٢</span>
+      <h3 class="rise">وإزاى أسأل الكمبيوتر عن النوع؟</h3>
+      <pre class="code rise"><code>console.log(typeof 19);
+console.log(typeof <span class="st">"Cairo"</span>);
+console.log(typeof true);</code></pre>
+      <button class="reveal rise" type="button">إظهار الناتج</button>
+      <div class="frag">
+        <div class="out"><span class="out-label">الناتج</span><span class="out-val">number
+string
+boolean</span></div>
+        <p class="note"><code>typeof</code> معناها «إيه نوع الحاجة دى». بتكتبها وتسيب مسافة وتحط اللى عايز تسأل عنه — من غير أقواس. ودى أول أداة فى حياتك بتسأل بيها الكمبيوتر سؤالاً بدل ما تأمره بأمر.</p>
+        <p class="note">وبتشتغل على المتغيرات برضه: <code>typeof age</code> بترجّع <code>number</code>، لأنها بتبص على اللى <strong>جوه</strong> الدرج مش على اسمه.</p>
+      </div>
+      <p class="tiny rise" style="margin-block-start:1.4rem">لما تحتار فى أى تمرين، اكتب <code>typeof</code> قدام الحاجة وشوف. دى بوصلتك.</p>
+    </div>
+  </section>
+
+  <!-- ٠٦ علامتا التنصيص -->
+  <section class="sc" id="quotes" data-title="علامتا التنصيص">
+    <div class="inner wide">
+      <span class="marker rise">مثال ٠٣ — الفارق كله</span>
+      <h3 class="rise"><code>5</code> مقابل <code>"5"</code></h3>
+      <div class="split">
+        <div class="rise">
+          <svg class="ill" viewBox="0 0 520 306" role="img" aria-label="رسم توضيحى: صندوقان متجاوران، الأول فيه خمسة من غير تنصيص ونوعه number، والتانى فيه خمسة بين تنصيص ونوعه string">
+            <text class="cap" x="260" y="26" text-anchor="middle">نفس الرقم على الورق، نوعان مختلفان جوه الكمبيوتر</text>
+
+            <rect class="box" x="278" y="52" width="204" height="158" rx="14"/>
+            <text class="val" x="380" y="132" text-anchor="middle" font-size="52">5</text>
+            <text class="cap b" x="380" y="176" text-anchor="middle">من غير تنصيص</text>
+            <rect class="plate" x="318" y="228" width="124" height="36" rx="9"/>
+            <text class="name" x="380" y="253" text-anchor="middle" font-size="16">number</text>
+
+            <path class="thin" d="M260 52 V264"/>
+
+            <rect class="box" x="38" y="52" width="204" height="158" rx="14"/>
+            <text class="val" x="140" y="132" text-anchor="middle" font-size="44">"5"</text>
+            <text class="cap b" x="140" y="176" text-anchor="middle">بين تنصيص</text>
+            <rect class="plate" x="78" y="228" width="124" height="36" rx="9"/>
+            <text class="name" x="140" y="253" text-anchor="middle" font-size="16">string</text>
+
+            <text class="cap" x="260" y="292" text-anchor="middle">العلامتان بتغيّرا النوع، مش الشكل</text>
+          </svg>
+        </div>
+        <div class="rise">
+          <pre class="code"><code>let a = 5;
+let b = <span class="st">"5"</span>;
+
+console.log(typeof a);
+console.log(typeof b);</code></pre>
+          <button class="reveal" type="button">إظهار الناتج</button>
+          <div class="frag">
+            <div class="out"><span class="out-label">الناتج</span><span class="out-val">number
+string</span></div>
+            <p class="note">الاتنين بيتطبعوا <code>5</code> على الشاشة، فالطالب بيفتكرهما نفس الحاجة. لكن <code>a</code> رقم تقدر تحسب بيه، و<code>b</code> نص فيه حرف اسمه «خمسة» — زى ما الحرف <code>A</code> اسمه «إيه».</p>
+          </div>
+        </div>
+      </div>
+      <p class="statement rise" style="margin-block-start:1.6rem">علامتا التنصيص مش زينة. هما <em>إعلان نوع</em>.</p>
+    </div>
+  </section>
+
+  <!-- ٠٧ الجمع مقابل اللزق -->
+  <section class="sc" id="plus" data-title="جمع أم لزق">
+    <div class="inner wide">
+      <span class="marker rise">مثال ٠٤ — الفخ اتفكّ</span>
+      <h3 class="rise">العلامة <code>+</code> بتعمل حاجتين مختلفتين</h3>
+      <div class="split">
+        <div class="rise">
+          <svg class="ill" viewBox="0 0 520 340" role="img" aria-label="رسم توضيحى لقاعدة القرار: العلامة زائد بتسأل هل فيه نص فى أى طرف؟ لو نعم بتلزّق والناتج نص، ولو لأ بتجمع والناتج رقم">
+            <text class="cap" x="260" y="24" text-anchor="middle">العلامة + بتسأل سؤالاً واحداً قبل ما تشتغل</text>
+
+            <rect class="plate" x="180" y="40" width="160" height="46" rx="12"/>
+            <text class="name" x="260" y="71" text-anchor="middle" font-size="22">a + b</text>
+
+            <rect class="box" x="130" y="104" width="260" height="52" rx="12"/>
+            <text class="cap b" x="260" y="136" text-anchor="middle">فيه نص فى أى طرف؟</text>
+
+            <path class="ln" d="M164 160 V196"/>
+            <path class="ln" d="M156 184 L164 196 L172 184"/>
+            <text class="cap b" x="196" y="184" text-anchor="middle" font-size="15">نعم</text>
+
+            <path class="ln" d="M356 160 V196"/>
+            <path class="ln" d="M348 184 L356 196 L364 184"/>
+            <text class="cap b" x="324" y="184" text-anchor="middle" font-size="15">لأ</text>
+
+            <rect class="box" x="80" y="204" width="168" height="70" rx="12"/>
+            <text class="cap b" x="164" y="230" text-anchor="middle" font-size="15">لزق — الناتج نص</text>
+            <text class="val" x="164" y="260" text-anchor="middle" font-size="22">"25"</text>
+
+            <rect class="box" x="272" y="204" width="168" height="70" rx="12"/>
+            <text class="cap b" x="356" y="230" text-anchor="middle" font-size="15">جمع — الناتج رقم</text>
+            <text class="val" x="356" y="260" text-anchor="middle" font-size="22">7</text>
+
+            <path class="thin" d="M60 292 H460"/>
+            <text class="cap" x="260" y="322" text-anchor="middle">طرف واحد نص يكفى علشان تبقى لزق</text>
+          </svg>
+        </div>
+        <div class="rise">
+          <pre class="code"><code>let x = <span class="st">"2"</span>;
+let y = 5;
+
+console.log(x + y);
+console.log(2 + 5);
+console.log(<span class="st">"2"</span> + <span class="st">"5"</span>);</code></pre>
+          <button class="reveal" type="button">إظهار الناتج</button>
+          <div class="frag">
+            <div class="out"><span class="out-label">الناتج</span><span class="out-val">25
+7
+25</span></div>
+            <p class="note">السطر الأول والتالت بيطبعوا نفس الحاجة — لأن الاتنين <strong>لزق</strong>. الفرق إن التالت الطرفان فيه نصان، والأول طرف واحد بس نص. وطرف واحد كفاية.</p>
+          </div>
+        </div>
+      </div>
+      <p class="lead rise" style="margin-block-start:1.6rem">وده مش عيب فى اللغة. العلامة <code>+</code> فى الرياضيات ليها معنى واحد، لكن فى البرمجة ليها معنيان — والنوع هو اللى بيختار.</p>
+    </div>
+  </section>
+
+  <!-- ٠٨ Number -->
+  <section class="sc" id="tonumber" data-title="Number()">
+    <div class="inner">
+      <span class="marker rise">مثال ٠٥ — أول أداة تحويل</span>
+      <h3 class="rise">وطيب لو مقدرش أشيل التنصيص؟</h3>
+      <p class="lead sub rise">فى الحياة الحقيقية الرقم بيجى لك من برّه — من خانة كتب فيها المستخدم، أو من ملف. وبييجى دايماً <strong>كنص</strong>، وإنت مش متحكم فيه.</p>
+      <pre class="code rise"><code>let price = <span class="st">"40"</span>;
+
+console.log(price + 5);
+console.log(Number(price) + 5);</code></pre>
+      <button class="reveal rise" type="button">إظهار الناتج</button>
+      <div class="frag">
+        <div class="out"><span class="out-label">الناتج</span><span class="out-val">405
+45</span></div>
+        <p class="note"><code>Number()</code> بتاخد اللى بين قوسيها وترجّعه <strong>رقماً</strong>. الأول لزق <code>"40"</code> بـ<code>5</code> فطلع <code>405</code>، والتانى حوّل النص لرقم الأول فبقى جمعاً عادياً.</p>
+        <p class="note">وخد بالك: <code>Number(price)</code> <strong>ما غيّرتش</strong> الدرج <code>price</code> — هو لسه فيه <code>"40"</code> كنص. هى بترجّع نسخة محوّلة بس. لو عايز تغيّر الدرج نفسه، اكتب <code>price = Number(price);</code></p>
+      </div>
+      <p class="tiny rise" style="margin-block-start:1.4rem">الحرف الأول <code>N</code> كبير. <code>number()</code> بحرف صغير ما بتشتغلش — والكمبيوتر حساس لحالة الحرف زى ما شفنا فى أسماء المتغيرات.</p>
+    </div>
+  </section>
+
+  <!-- ٠٩ String -->
+  <section class="sc" id="tostring" data-title="String()">
+    <div class="inner">
+      <span class="marker rise">مثال ٠٦ — والاتجاه العكسى</span>
+      <h3 class="rise"><code>String()</code> بتحوّل الرقم لنص</h3>
+      <pre class="code rise"><code>let n = 500;
+
+console.log(n + 1);
+console.log(String(n) + 1);</code></pre>
+      <button class="reveal rise" type="button">إظهار الناتج</button>
+      <div class="frag">
+        <div class="out"><span class="out-label">الناتج</span><span class="out-val">501
+5001</span></div>
+        <p class="note">السطر الأول رقمان، فالعلامة <code>+</code> جمعت. والسطر التانى حوّلنا <code>500</code> لنص، فالعلامة لزقت الواحد جنبه وطلع <code>5001</code>.</p>
+        <p class="note">وإمتى نحتاجها؟ لما تكون عايز تلزّق بجدّ — زى ما بنعمل فى <code>console.log("Total = " + total)</code>. هناك اللزق بيحصل تلقائى، بس <code>String()</code> بتخلّى نيّتك واضحة لأى حد بيقرا الكود.</p>
+      </div>
+      <p class="statement rise" style="margin-block-start:1.6rem"><code style="font-size:.62em">Number()</code> بتفتح باب الحساب، و<code style="font-size:.62em">String()</code> بتفتح باب <em>اللزق</em>.</p>
+    </div>
+  </section>
+
+  <!-- ١٠ NaN -->
+  <section class="sc" id="nan" data-title="فخ NaN">
+    <div class="inner">
+      <span class="marker rise">مثال ٠٧ — الفخ</span>
+      <h3 class="rise">وطيب لو النص مش رقم أصلاً؟</h3>
+      <pre class="code rise"><code>console.log(Number(<span class="st">"40"</span>));
+console.log(Number(<span class="st">"abc"</span>));</code></pre>
+      <button class="reveal rise" type="button">إظهار الناتج</button>
+      <div class="frag">
+        <div class="out"><span class="out-label">الناتج</span><span class="out-val">40
+NaN</span></div>
+        <p class="note"><code>NaN</code> اختصار لـ<strong>Not a Number</strong>، يعنى «مش رقم». الكمبيوتر حاول يحوّل كلمة <code>abc</code> لرقم، ملقاش رقم، فرجّع العلامة دى.</p>
+        <p class="note">و<code>NaN</code> مش رسالة خطأ — البرنامج بيكمّل شغل عادى. وده اللى بيخلّيها غدّارة: لو جمعت حاجة على <code>NaN</code>، الناتج هيفضل <code>NaN</code> لآخر البرنامج، وإنت مش هتلاقى سطر خطأ يقولّك إيه حصل.</p>
+      </div>
+      <p class="tiny rise" style="margin-block-start:1.4rem">لو شفت <code>NaN</code> فى أى تمرين، دوّر على نص حاولت تحوّله لرقم وهو مش رقم. ده السبب فى تسعة من كل عشرة.</p>
+    </div>
+  </section>
+
+  <!-- ١١ == مقابل === -->
+  <section class="sc" id="equals" data-title="== مقابل ===">
+    <div class="inner wide">
+      <span class="marker rise">مثال ٠٨ — مراجعة زائد</span>
+      <h3 class="rise"><code>==</code> مقابل <code>===</code></h3>
+      <div class="split">
+        <div class="rise">
+          <svg class="ill" viewBox="0 0 520 290" role="img" aria-label="رسم توضيحى: مقارنة العشرة الرقم بالعشرة النص، علامة يساوى مزدوجة بترجّع true لأنها بتقارن القيمة بس، وعلامة يساوى ثلاثية بترجّع false لأنها بتقارن القيمة والنوع">
+            <text class="cap" x="260" y="26" text-anchor="middle">المقارنة بين الرقم 10 والنص "10"</text>
+
+            <rect class="plate" x="352" y="48" width="110" height="46" rx="10"/>
+            <text class="name" x="407" y="79" text-anchor="middle" font-size="24">==</text>
+            <text class="cap" x="407" y="116" text-anchor="middle" font-size="15">بيقارن القيمة بس</text>
+
+            <path class="ln" d="M338 71 H278"/>
+            <path class="ln" d="M294 61 L278 71 L294 81"/>
+
+            <rect class="box" x="140" y="48" width="128" height="46" rx="10"/>
+            <text class="val" x="204" y="80" text-anchor="middle" font-size="24">true</text>
+            <text class="cap" x="204" y="116" text-anchor="middle" font-size="15">القيمتان واحدة</text>
+
+            <path class="thin" d="M40 138 H480"/>
+
+            <rect class="plate" x="352" y="158" width="110" height="46" rx="10"/>
+            <text class="name" x="407" y="189" text-anchor="middle" font-size="22">===</text>
+            <text class="cap" x="407" y="226" text-anchor="middle" font-size="15">بيقارن القيمة والنوع</text>
+
+            <path class="ln" d="M338 181 H278"/>
+            <path class="ln" d="M294 171 L278 181 L294 191"/>
+
+            <rect class="box" x="140" y="158" width="128" height="46" rx="10"/>
+            <text class="val" x="204" y="190" text-anchor="middle" font-size="24">false</text>
+            <text class="cap" x="204" y="226" text-anchor="middle" font-size="15">النوع مختلف</text>
+
+            <text class="cap b" x="260" y="268" text-anchor="middle">القيمة واحدة، والنوع مش واحد</text>
+          </svg>
+        </div>
+        <div class="rise">
+          <pre class="code"><code>console.log(10 == <span class="st">"10"</span>);
+console.log(10 === <span class="st">"10"</span>);
+console.log(10 === 10);</code></pre>
+          <button class="reveal" type="button">إظهار الناتج</button>
+          <div class="frag">
+            <div class="out"><span class="out-label">الناتج</span><span class="out-val">true
+false
+true</span></div>
+            <p class="note">علامتا يساوى <code>==</code> بتتساهل: بتحوّل قبل ما تقارن، فبتشوف العشرة زى العشرة. وثلاث علامات <code>===</code> بتتشدّد: القيمة والنوع لازم يتطابقا.</p>
+          </div>
+        </div>
+      </div>
+      <div class="rise" style="margin-block-start:1.4rem">
+        <table class="naming">
+          <thead>
+            <tr><th>المقارنة</th><th><code>==</code></th><th><code>===</code></th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>10</code> مع <code>10</code></td><td class="ok"><code>true</code></td><td class="ok"><code>true</code></td></tr>
+            <tr><td><code>10</code> مع <code>"10"</code></td><td class="ok"><code>true</code></td><td class="no"><code>false</code></td></tr>
+            <tr><td><code>"10"</code> مع <code>"10"</code></td><td class="ok"><code>true</code></td><td class="ok"><code>true</code></td></tr>
+            <tr><td><code>7</code> مع <code>"8"</code></td><td class="no"><code>false</code></td><td class="no"><code>false</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note rise">القاعدة العملية: <strong>استخدم <code>===</code> دايماً</strong>. هى بتوريك الحقيقة، و<code>==</code> بتخبّى عنك فروق النوع لحد ما تتلخبط فى برنامج كبير.</p>
+    </div>
+  </section>
+
+  <!-- ١٢ boolean والمقارنات -->
+  <section class="sc" id="boolean" data-title="القيم المنطقية">
+    <div class="inner">
+      <span class="marker rise">مثال ٠٩</span>
+      <h3 class="rise">كل مقارنة بترجّع <code>true</code> أو <code>false</code></h3>
+      <pre class="code rise"><code>let mark = 72;
+
+console.log(mark &gt; 50);
+console.log(mark == 100);
+
+let passed = mark &gt;= 50;
+console.log(passed);
+console.log(typeof passed);</code></pre>
+      <button class="reveal rise" type="button">إظهار الناتج</button>
+      <div class="frag">
+        <div class="out"><span class="out-label">الناتج</span><span class="out-val">true
+false
+true
+boolean</span></div>
+        <p class="note">أى مقارنة — <code>&gt;</code> أو <code>&lt;</code> أو <code>&gt;=</code> أو <code>&lt;=</code> أو <code>==</code> أو <code>===</code> — بترجّع قيمة من نوع <code>boolean</code>، يعنى <code>true</code> أو <code>false</code> وبس.</p>
+        <p class="note">والقيمة دى قيمة زى أى قيمة: تقدر تخزّنها فى درج زى ما عملنا مع <code>passed</code>، وتقدر تطبعها، وتقدر تسأل عن نوعها.</p>
+      </div>
+      <p class="tiny rise" style="margin-block-start:1.4rem">وهنا بالظبط بتبدأ المحاضرة الجاية: الشروط بتاخد الـ<code>true</code> أو الـ<code>false</code> دى وتقرّر تنفّذ إيه.</p>
+    </div>
+  </section>
+
+  <!-- ١٣ الختام -->
+  <section class="sc" id="close" data-title="الختام">
+    <div class="inner">
+      <div class="quote rise">
+        <p class="statement">النوع هو اللى بيحدّد <em>سلوك العلامة</em>. مش العلامة.</p>
+      </div>
+      <p class="lead sub rise">نفس الـ<code>+</code> بتجمع مرة وتلزّق مرة. ونفس الـ<code>==</code> بتقول <code>true</code> مرة و<code>false</code> مرة. اللى اتغيّر مش الرمز — اللى اتغيّر نوع اللى حواليه.</p>
+      <hr class="hr rise">
+      <ul class="clean rise">
+        <li>ثلاثة أنواع: <code>number</code> و<code>string</code> و<code>boolean</code>.</li>
+        <li>أداة سؤال واحدة: <code>typeof</code>.</li>
+        <li>أداتا تحويل: <code>Number()</code> و<code>String()</code>.</li>
+        <li>ومقارنتان: <code>==</code> متساهلة و<code>===</code> صارمة.</li>
+      </ul>
+      <p class="lead rise">المحاضرة الجاية: الشروط — إزاى البرنامج ياخد قراراً بنفسه.</p>
+    </div>
+  </section>
+
+  <!-- ١٤ الواجب -->
+  <section class="sc" id="homework" data-title="الواجب">
+    <div class="inner wide">
+      <span class="label rise">الواجب</span>
+      <h2 class="rise">أربع تمارين — من ١٥ لـ٢٠ دقيقة</h2>
+      <p class="lead sub rise">يتسلّم مكتوباً بخط اليد فى أول المحاضرة الجاية. اكتب الحل على ورق، مش على التابلت.</p>
+
+      <div class="hw rise">
+        <article class="cell">
+          <span class="marker">٠١</span>
+          <h3>الناتج والنوع</h3>
+          <p>اكتب الناتج المطبوع لكل سطر، <strong>وجنبه نوع الناتج</strong>.</p>
+          <pre class="code"><code>console.log(<span class="st">"7"</span> + 2);
+console.log(7 + 2);
+console.log(Number(<span class="st">"7"</span>) + 2);
+console.log(String(7) + 2);</code></pre>
+        </article>
+
+        <article class="cell">
+          <span class="marker">٠٢</span>
+          <h3>اكتب كوداً</h3>
+          <p>عندك السطران دول زى ما هما، ممنوع تعدّل فيهما. كمّل الكود علشان يطبع <code>Total = 120</code>.</p>
+          <pre class="code"><code>let price = <span class="st">"40"</span>;
+let count = 3;</code></pre>
+        </article>
+
+        <article class="cell">
+          <span class="marker">٠٣</span>
+          <h3>فين الغلط؟</h3>
+          <p>فيه غلطتان. حدّدهما واكتب الصح، والناتج المطلوب <code>Total = 75</code>.</p>
+          <pre class="code"><code>let weight = <span class="st">"70"</span>;
+let extra = 5;
+let total = weight + extra;
+console.log(Total);</code></pre>
+        </article>
+
+        <article class="cell">
+          <span class="marker">٠٤</span>
+          <h3><code>==</code> ولا <code>===</code></h3>
+          <p>اكتب قدام كل مقارنة <code>true</code> أو <code>false</code>، وجملة واحدة تشرح ليه.</p>
+          <ul>
+            <li><code>5 == "5"</code></li>
+            <li><code>5 === "5"</code></li>
+            <li><code>"7" == 7</code></li>
+            <li><code>"7" === "7"</code></li>
+            <li><code>10 === "10"</code></li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="side rise">
+        <b>مهمة جانبية — دقيقتان، لا تُسلّم</b>
+        <p>افتح منصة <code>Qureo</code> على فصل ١٥، واقرا الأمثلة اللى فيه بس من غير ما تحلّ. هتلاقيها بقت مفهومة النهارده بشكل مختلف تماماً.</p>
+      </div>
+
+      <footer class="foot rise">
+        <span>المحاضرة الثانية · تأسيس البرمجة · إعداد يوسف زكريا التهامى</span>
+        <a href="index.html">← مركز المحاضرة</a>
+      </footer>
+    </div>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  var sections = Array.prototype.slice.call(document.querySelectorAll('section.sc'));
+  var rail = document.getElementById('rail');
+  var scrollFill = document.getElementById('scrollFill');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── سكة النقاط ───────────────────────────────── */
+  var dots = sections.map(function (s, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', s.getAttribute('data-title') || ('القسم ' + (i + 1)));
+    b.setAttribute('aria-current', 'false');
+    b.addEventListener('click', function () {
+      s.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    });
+    rail.appendChild(b);
+    return b;
+  });
+
+  function setCurrent(i) {
+    dots.forEach(function (d, k) { d.setAttribute('aria-current', k === i ? 'true' : 'false'); });
+  }
+  setCurrent(0);
+
+  /* ── شريط التقدّم ─────────────────────────────── */
+  var ticking = false;
+  function updateBar() {
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    var p = h > 0 ? (window.scrollY / h) * 100 : 0;
+    scrollFill.style.width = Math.max(0, Math.min(100, p)) + '%';
+    ticking = false;
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; window.requestAnimationFrame(updateBar); }
+  }, { passive: true });
+  updateBar();
+
+  /* ── دخول الأقسام: ظهور متدرّج ───────────────── */
+  function enter(section) {
+    if (section.classList.contains('in')) { return; }
+    var kids = Array.prototype.slice.call(section.querySelectorAll('.rise'));
+    kids.forEach(function (el, i) { el.style.transitionDelay = (i * 70) + 'ms'; });
+    section.classList.add('in');
+  }
+
+  if ('IntersectionObserver' in window) {
+    var ioEnter = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { enter(e.target); ioEnter.unobserve(e.target); }
+      });
+    }, { threshold: 0.15 });
+    sections.forEach(function (s) { ioEnter.observe(s); });
+
+    var ioCurrent = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) { return; }
+        var i = sections.indexOf(e.target);
+        if (i !== -1) { setCurrent(i); }
+      });
+    }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+    sections.forEach(function (s) { ioCurrent.observe(s); });
+  } else {
+    sections.forEach(enter);
+  }
+
+  /* ── إظهار الناتج ─────────────────────────────── */
+  Array.prototype.forEach.call(document.querySelectorAll('.reveal'), function (btn) {
+    var scope = btn.parentNode;
+    var frag = scope.querySelector('.frag');
+    if (!frag) { btn.hidden = true; return; }
+    btn.setAttribute('aria-expanded', 'false');
+    btn.addEventListener('click', function () {
+      frag.classList.add('shown');
+      btn.setAttribute('aria-expanded', 'true');
+      btn.hidden = true;
+    });
+  });
+
+  /* ── الدخول من رابط مباشر ─────────────────────── */
+  if (location.hash) {
+    var target = document.querySelector(location.hash);
+    if (target && target.classList.contains('sc')) { enter(target); }
+  }
+})();
+</script>
+
+</body>
+</html>

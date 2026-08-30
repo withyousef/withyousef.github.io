@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="يوسف زكريا التهامى — Yousef Zakaria El-Tohamy">
+<title>أسئلة البوصلة — المحاضرة الأولى</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../assets/lecture.css">
+<style>
+  /* التصميم المشترك فى ../assets/lecture.css — هنا الخاص بصفحة البوصلة فقط */
+  body{font-size:17px;}
+
+  .topbar .row{max-width:52rem;padding:.95rem 1.6rem .85rem;flex-wrap:wrap;}
+
+  .shell{position:relative;z-index:1;max-width:52rem;margin:0 auto;padding:2.6rem 1.6rem 4rem;}
+
+  .head{margin-block-end:2rem;}
+  .head p{margin:0 0 1rem;}
+
+  h2{font-size:1.15rem;font-weight:600;line-height:1.4;margin:0 0 .8rem;}
+
+  /* ── طقس الحصة ───────────────────────────────── */
+  .ritual{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));
+    gap:.9rem;
+    margin:0 0 2.2rem;
+  }
+  .step{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:1.1rem 1.25rem 1.2rem;
+    box-shadow:var(--shadow);
+  }
+  .step .n{
+    display:block;font-family:var(--mono);font-size:.82rem;font-weight:500;letter-spacing:.1em;
+    color:var(--accent);margin-block-end:.5rem;
+  }
+  .step h3{font-size:1rem;font-weight:600;line-height:1.45;margin:0 0 .35rem;}
+  .step p{margin:0;font-size:.94rem;line-height:1.7;color:var(--muted);}
+
+  .callout{margin:0 0 2.2rem;}
+
+  /* ── الورقة ──────────────────────────────────── */
+  .sheet{margin:0 0 1.4rem;}
+  .sheet-top h2{font-size:1.2rem;}
+
+  footer.foot{
+    position:relative;
+    z-index:1;
+    margin-block-start:2.6rem;
+    padding-block-start:1.3rem;
+  }
+
+  @media (max-width:560px){
+    .shell{padding:2rem 1.1rem 3rem;}
+    .topbar .row{padding:.8rem 1.1rem .7rem;}
+    .sheet{padding:1.3rem 1.2rem 1.6rem;}
+  }
+
+  /* ── الطباعة: الورقة لوحدها، أبيض وأسود ──────── */
+  @media print{
+    /* هامش صفر = المتصفح مش بيلاقى مكان يطبع فيه المسار والاسم والتاريخ */
+    @page{margin:0;}
+    html,body{background:#fff;color:#000;font-size:11pt;}
+    .bg-layer,.topbar,.head,.howto,.print-row,.timing,footer.foot{display:none !important;}
+    .shell{max-width:none;padding:0;}
+    .sheet{
+      background:#fff !important;color:#000 !important;
+      border:0;border-radius:0;box-shadow:none;margin:0;
+      padding:13mm 15mm;
+    }
+    .sheet-top{border-block-end:2px solid #000;}
+    .sheet-id{color:#444 !important;}
+    .idline span{border-block-end:1px dotted #000 !important;color:#000 !important;}
+    .ansline{border-block-end:1px dotted #000 !important;}
+    pre{background:#fff !important;color:#000 !important;border:1px solid #666 !important;}
+    pre code{background:#fff !important;color:#000 !important;border:0 !important;}
+    pre .st,pre .cm{color:#000 !important;}
+    code{background:#fff !important;color:#000 !important;border:1px solid #999 !important;}
+    .q{break-after:avoid;}
+    .qb{break-inside:avoid;page-break-inside:avoid;}
+    .sheet .q{margin-block:3.5mm 1.5mm;}
+    .sheet .ansline{margin-block:2.5mm;}
+    .sheet pre{margin-block:1.5mm;padding:2.5mm 4mm;font-size:10pt;line-height:1.55;}
+    .sheet > p{margin-block:2mm;line-height:1.6;}
+    .sheet-top h2{font-size:14pt;margin-block:0 1mm;}
+    .idline{margin-block:2.5mm;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-layer" aria-hidden="true">
+  <span class="glow" style="top:-14%;left:-10%;width:44rem;height:44rem"></span>
+  <span class="glow" style="top:42%;left:66%;width:38rem;height:38rem"></span>
+  <span class="glow" style="top:80%;left:6%;width:30rem;height:30rem"></span>
+  <span class="gl f" style="--r:-12deg;--d:16s;top:6%;left:5%;font-size:2.6rem">{ }</span>
+  <span class="gl" style="--r:8deg;top:12%;left:78%;font-size:2.1rem">&lt;/&gt;</span>
+  <span class="gl a" style="--r:-6deg;top:22%;left:22%;font-size:1.9rem">=&gt;</span>
+  <span class="gl" style="--r:0deg;top:30%;left:62%;font-size:2.8rem">;</span>
+  <span class="gl a f" style="--r:10deg;--d:19s;top:38%;left:8%;font-size:2.2rem">let</span>
+  <span class="gl" style="--r:-16deg;top:18%;left:44%;font-size:2.4rem">if</span>
+  <span class="gl" style="--r:14deg;top:47%;left:86%;font-size:2.5rem">( )</span>
+  <span class="gl a" style="--r:-8deg;top:55%;left:14%;font-size:2rem">==</span>
+  <span class="gl f" style="--r:6deg;--d:14s;top:63%;left:70%;font-size:2.3rem">//</span>
+  <span class="gl a" style="--r:18deg;top:72%;left:34%;font-size:2.7rem">{ }</span>
+  <span class="gl" style="--r:-10deg;top:80%;left:88%;font-size:1.8rem">&lt;/&gt;</span>
+  <span class="gl" style="--r:4deg;top:88%;left:18%;font-size:2.1rem">let</span>
+  <span class="gl a f" style="--r:-14deg;--d:17s;top:92%;left:56%;font-size:2.3rem">=&gt;</span>
+  <span class="gl" style="--r:12deg;top:8%;left:34%;font-size:2.2rem">;</span>
+  <span class="gl a" style="--r:-4deg;top:26%;left:92%;font-size:2rem">( )</span>
+  <span class="gl" style="--r:20deg;top:58%;left:48%;font-size:1.9rem">if</span>
+  <span class="gl f" style="--r:-18deg;--d:20s;top:36%;left:72%;font-size:2.4rem">==</span>
+  <span class="gl a" style="--r:8deg;top:44%;left:38%;font-size:2rem">//</span>
+  <span class="gl" style="--r:-6deg;top:66%;left:4%;font-size:2.2rem">{ }</span>
+  <span class="gl a" style="--r:16deg;top:76%;left:60%;font-size:1.9rem">let</span>
+  <span class="gl f" style="--r:-2deg;--d:13s;top:84%;left:44%;font-size:2.5rem">;</span>
+  <span class="gl a" style="--r:10deg;top:52%;left:26%;font-size:2.1rem">&lt;/&gt;</span>
+  <span class="gl a f" style="--r:-5deg;--d:18s;top:4%;left:58%;font-size:1.7rem">console.log()</span>
+  <span class="gl" style="--r:9deg;top:16%;left:10%;font-size:1.8rem">function</span>
+  <span class="gl a" style="--r:-12deg;top:33%;left:30%;font-size:1.9rem">return</span>
+  <span class="gl f" style="--r:7deg;--d:15s;top:41%;left:54%;font-size:2.4rem">[ ]</span>
+  <span class="gl a" style="--r:-9deg;top:60%;left:88%;font-size:2rem">===</span>
+  <span class="gl" style="--r:15deg;top:69%;left:20%;font-size:1.8rem">i++</span>
+  <span class="gl a f" style="--r:4deg;--d:21s;top:78%;left:76%;font-size:1.8rem">for</span>
+  <span class="gl" style="--r:-7deg;top:87%;left:34%;font-size:1.9rem">&amp;&amp;</span>
+  <span class="gl a" style="--r:11deg;top:95%;left:10%;font-size:1.7rem">"hello"</span>
+  <span class="gl" style="--r:-3deg;top:2%;left:88%;font-size:1.8rem">let x = 5;</span>
+  <span class="grain"></span>
+</div>
+
+<header class="topbar">
+  <div class="row">
+    <a class="back" href="index.html">← مركز المحاضرة</a>
+    <span class="mark">تأسيس البرمجة — بكالوريا ٢٠٢٧</span>
+    <img class="brand-logo" src="../assets/logo.png" width="520" height="361" alt="With Yousef — يوسف زكريا التهامى">
+  </div>
+</header>
+
+<div class="shell">
+
+  <div class="head">
+    <span class="eyebrow">للطباعة — أول ٥ دقايق</span>
+    <h1>أسئلة البوصلة</h1>
+    <p>ستة أسئلة تُوزّع فى أول خمس دقايق من الحصة، والطالب بيشوفها وهو مش عارف إجابة ولا واحد منها. ده مقصود: البوصلة بتخلّى الطالب يلاحظ لحظة ما يعرف حاجة كان جاهلها من ساعة.</p>
+  </div>
+
+  <details class="howto">
+    <summary>تعليمات الطقس — إزاى تستخدم الورقة</summary>
+
+    <section class="ritual" aria-label="خطوات الطقس">
+      <article class="step">
+        <span class="n">٠١</span>
+        <h3>وزّعها فى أول خمس دقايق</h3>
+        <p>قبل أى شرح وقبل الاختبار التشخيصى. الطالب يحطها قدامه على الترابيزة طول الحصة.</p>
+      </article>
+      <article class="step">
+        <span class="n">٠٢</span>
+        <h3>اقراها بصوت عالٍ</h3>
+        <p>مرة واحدة، من غير ما تجاوب على أى سؤال. لو طالب جاوب، قول له: «سيبها للآخر».</p>
+      </article>
+      <article class="step">
+        <span class="n">٠٣</span>
+        <h3>يكتب بالرصاص أثناء الحصة</h3>
+        <p>أول ما إجابة تتوضح، يسجّلها فى ساعتها. مش فى الآخر دفعة واحدة.</p>
+      </article>
+      <article class="step">
+        <span class="n">٠٤</span>
+        <h3>حُلّوها سوا فى الآخر</h3>
+        <p>بصوت الطلبة مش بصوتك. ده البلوك الوحيد اللى ما يتقطعش مهما ضاق الوقت.</p>
+      </article>
+    </section>
+
+    <div class="callout">
+      <b>الجملة اللى تتقال حرفياً</b>
+      <p>«الورقة دى مش امتحان ومش هتتصحح. دى بوصلة — لو فى آخر الحصة عرفت تجاوب على الستة، يبقى الحصة نجحت».</p>
+    </div>
+  </details>
+
+  <div class="print-row">
+    <button class="btn" type="button" id="printBtn">طباعة ورقة البوصلة</button>
+  </div>
+
+  <main>
+    <article class="sheet" id="sheet">
+      <div class="sheet-top">
+        <h2>أسئلة البوصلة — المحاضرة الأولى</h2>
+        <span class="sheet-id">إعداد: يوسف زكريا التهامى · تأسيس البرمجة · بكالوريا ٢٠٢٧</span>
+      </div>
+      <div class="idline"><span>الاسم</span><span>التاريخ</span></div>
+
+      <p><strong>الورقة دى مش امتحان ومش هتتصحح.</strong> دى بوصلة. كل سؤال فيها إجابته هتتوضح فى لحظة معينة من الحصة — أول ما تعرف الإجابة، اكتبها بالرصاص. وفى آخر الحصة هنحلّهم سوا.</p>
+
+      <div class="qb">
+      <p class="q">١) مادة البرمجة دى بتدخل مجموعك بكام درجة؟ وإنت اخترتها بدل إيه؟</p>
+      <div class="ansline"></div>
+      </div>
+
+      <div class="qb">
+      <p class="q">٢) إيه الفرق الجوهرى بين نظام المادة السنة اللى فاتت ونظامها السنة دى؟</p>
+      <div class="ansline"></div>
+      </div>
+
+      <div class="qb">
+      <p class="q">٣) إيه هو «المتغير»؟ اوصفه بجملة واحدة <strong>من غير ما تستخدم كلمة «متغير»</strong>.</p>
+      <div class="ansline"></div>
+      <div class="ansline"></div>
+      </div>
+
+      <div class="qb">
+      <p class="q">٤) إيه الفرق بين السطر <code>let score = 10;</code> والسطر <code>score = 10;</code>؟ وإمتى نستخدم كل واحد؟</p>
+      <div class="ansline"></div>
+      <div class="ansline"></div>
+      </div>
+
+      <div class="qb">
+      <p class="q">٥) بعد السطرين دول، الـ<code>a</code> بقى بكام؟ واشرح ليه بالترتيب.</p>
+<pre><code>let a = 4;
+a = a + 6;</code></pre>
+      <div class="ansline"></div>
+      <div class="ansline"></div>
+      </div>
+
+      <div class="qb">
+      <p class="q">٦) الكود ده بيطبع <code>25</code> مش <code>7</code>. ليه؟ وإيه <strong>أقل تعديل</strong> ممكن تعمله علشان يطبع <code>7</code>؟</p>
+<pre><code>let a = <span class="st">"2"</span>;
+let b = 5;
+console.log(a + b);</code></pre>
+      <div class="ansline"></div>
+      <div class="ansline"></div>
+      <div class="ansline"></div>
+      </div>
+    </article>
+  </main>
+
+  <p class="lede timing">توقيت وضوح الإجابات: السؤالان ١ و٢ بعد أول ١٥ دقيقة، و٣ و٤ فى بلوك الشرح، و٥ بعد التراكم، و٦ محتاج الحصة كلها.</p>
+
+  <footer class="foot">
+    <span>المحاضرة الأولى · أسئلة البوصلة · إعداد يوسف زكريا التهامى</span>
+    <a href="index.html">← مركز المحاضرة</a>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  var btn = document.getElementById('printBtn');
+  if (btn) { btn.addEventListener('click', function () { window.print(); }); }
+})();
+</script>
+
+</body>
+</html>

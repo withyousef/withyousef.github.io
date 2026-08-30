@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="يوسف زكريا التهامى — Yousef Zakaria El-Tohamy">
+<title>مركز المحاضرة الأولى — تأسيس البرمجة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../assets/lecture.css">
+<style>
+  /* التصميم المشترك فى ../assets/lecture.css — هنا الخاص بصفحة اللوحة فقط */
+  body{font-size:17px;}
+
+  /* ═══ شريط التقدّم العلوى ═════════════════════ */
+  .rail{
+    position:fixed;
+    inset-block-start:0;
+    inset-inline:0;
+    z-index:40;
+    height:3px;
+    background:var(--line);
+  }
+  .rail span{
+    display:block;
+    height:100%;
+    width:0%;
+    background:var(--accent);
+    transition:width 200ms ease;
+  }
+
+  /* ═══ التخطيط ═════════════════════════════════ */
+  .shell{position:relative;z-index:1;max-width:56rem;margin:0 auto;padding:3.6rem 1.4rem 4rem;}
+
+  header.top{margin-block-end:2.6rem;}
+  .wordmark{
+    display:block;
+    font-size:.74rem;
+    font-weight:600;
+    letter-spacing:.16em;
+    color:var(--accent);
+    margin-block-end:1rem;
+  }
+  header.top h1{
+    font-size:clamp(1.9rem,5.2vw,2.9rem);
+    font-weight:700;
+    line-height:1.22;
+    letter-spacing:-.01em;
+    margin:0 0 .9rem;
+    max-width:22ch;
+  }
+  header.top .summary{
+    color:var(--muted);
+    margin:0 0 1.5rem;
+    max-width:62ch;
+    font-size:1.02rem;
+  }
+  .status{
+    display:flex;
+    align-items:center;
+    gap:.9rem;
+    flex-wrap:wrap;
+    border-block-start:1px solid var(--line);
+    padding-block-start:1.1rem;
+  }
+  .status .count{
+    font-size:.82rem;
+    font-weight:600;
+    letter-spacing:.1em;
+    color:var(--accent);
+  }
+  .status .dur{
+    font-size:.82rem;
+    letter-spacing:.06em;
+    color:var(--muted);
+  }
+  .status .sep{width:1px;height:.9rem;background:var(--line);}
+
+  /* ═══ بطاقات البلوكات — شبكة ══════════════════ */
+  ol.blocks{
+    list-style:none;margin:0;padding:0;
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(15.5rem,1fr));
+    gap:1rem;
+    align-items:stretch;
+  }
+  .block{position:relative;transition:opacity 200ms ease;}
+
+  .block-link{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:.55rem;
+    height:100%;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:1.25rem 1.35rem 1.3rem;
+    padding-inline-end:3.6rem;
+    text-decoration:none;
+    color:inherit;
+    box-shadow:var(--shadow);
+    transition:transform 200ms ease, background 200ms ease, box-shadow 200ms ease;
+  }
+  .block-link:hover{background:var(--accent-soft);box-shadow:var(--shadow-md);transform:translateY(-2px);}
+  .block-link:active{transform:scale(.98);}
+  .block-link:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+
+  .ord{
+    font-family:var(--mono);
+    font-size:.84rem;
+    font-weight:500;
+    letter-spacing:.1em;
+    color:var(--accent);
+  }
+  .btitle{
+    display:block;
+    font-size:1.16rem;
+    font-weight:600;
+    line-height:1.4;
+    margin-block-end:.25rem;
+  }
+  .bdesc{
+    display:block;
+    color:var(--muted);
+    font-size:.96rem;
+    line-height:1.7;
+  }
+  code{font-size:.88em;}
+  .tag{
+    display:inline-block;
+    margin-block-start:auto;
+    font-size:.68rem;
+    font-weight:600;
+    letter-spacing:.14em;
+    color:var(--muted);
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:.2rem .7rem;
+  }
+  .btitle + .bdesc{margin-block-end:.35rem;}
+
+  /* البطاقة النجمة — بعرض الشبكة كلها */
+  .block.star{grid-column:1 / -1;}
+  .block.star .block-link{
+    border-color:#bfe3de;
+    box-shadow:var(--shadow-md), 0 0 0 4px rgb(15 118 110 / .05);
+    padding-block:1.7rem 1.8rem;
+  }
+  .block.star .btitle{font-size:1.5rem;}
+  .block.star .bdesc{font-size:1.02rem;max-width:58ch;}
+  .block.star .ord{color:var(--accent-hover);}
+
+  /* ═══ زرار الإنجاز ════════════════════════════ */
+  .check{
+    position:absolute;
+    inset-block-start:1rem;
+    inset-inline-end:1rem;
+    z-index:2;
+    width:2.4rem;
+    height:2.4rem;
+    display:grid;
+    place-items:center;
+    font:inherit;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:50%;
+    cursor:pointer;
+    transition:background 200ms ease, transform 200ms ease, border-color 200ms ease;
+  }
+  .check svg{width:1.1rem;height:1.1rem;fill:none;stroke:var(--muted);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+  .check svg path{
+    stroke-dasharray:22;
+    stroke-dashoffset:22;
+    transition:stroke-dashoffset 150ms ease;
+  }
+  .check:hover{background:var(--accent-soft);border-color:#bfe3de;}
+  .check:active{transform:scale(.98);}
+  .check:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+
+  .block.done .check{
+    background:var(--accent);
+    border-color:var(--accent);
+  }
+  .block.done .check svg{stroke:#fff;}
+  .block.done .check svg path{stroke-dashoffset:0;}
+  .block.done{opacity:.66;}
+  .block.done .block-link{filter:saturate(.35);}
+
+  /* ═══ رابط إضافى خارج البلوكات السبعة ═════════ */
+  .extra{
+    position:relative;
+    z-index:1;
+    margin-block-start:1.5rem;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+  }
+  .extra a{
+    display:flex;
+    align-items:baseline;
+    gap:.9rem;
+    padding:1.05rem 1.25rem;
+    text-decoration:none;
+    color:inherit;
+    border-radius:14px;
+    transition:background 200ms ease;
+  }
+  .extra a:hover{background:var(--accent-soft);}
+  .extra a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .extra .ord{
+    font-family:var(--mono);font-size:.82rem;font-weight:500;letter-spacing:.1em;
+    color:var(--accent);flex:none;
+  }
+  .extra .btitle{display:block;font-size:1.02rem;font-weight:600;line-height:1.4;}
+  .extra .bdesc{display:block;font-size:.93rem;line-height:1.7;color:var(--muted);margin-block-start:.2rem;}
+
+  /* ═══ التذييل ═════════════════════════════════ */
+  footer.foot{
+    position:relative;
+    z-index:1;
+    margin-block-start:2.8rem;
+    padding-block-start:1.3rem;
+  }
+
+  @media (max-width:520px){
+    .shell{padding:2.8rem 1rem 3rem;}
+    ol.blocks{grid-template-columns:1fr;}
+    .check{inset-inline-end:.85rem;width:2.3rem;height:2.3rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="rail" aria-hidden="true"><span id="railFill"></span></div>
+
+<div class="bg-layer" aria-hidden="true">
+  <span class="glow" style="top:-14%;left:-10%;width:44rem;height:44rem"></span>
+  <span class="glow" style="top:42%;left:66%;width:38rem;height:38rem"></span>
+  <span class="glow" style="top:80%;left:6%;width:30rem;height:30rem"></span>
+  <span class="gl f" style="--r:-12deg;--d:16s;top:6%;left:5%;font-size:2.6rem">{ }</span>
+  <span class="gl" style="--r:8deg;top:12%;left:78%;font-size:2.1rem">&lt;/&gt;</span>
+  <span class="gl a" style="--r:-6deg;top:22%;left:22%;font-size:1.9rem">=&gt;</span>
+  <span class="gl" style="--r:0deg;top:30%;left:62%;font-size:2.8rem">;</span>
+  <span class="gl a f" style="--r:10deg;--d:19s;top:38%;left:8%;font-size:2.2rem">let</span>
+  <span class="gl" style="--r:-16deg;top:18%;left:44%;font-size:2.4rem">if</span>
+  <span class="gl" style="--r:14deg;top:47%;left:86%;font-size:2.5rem">( )</span>
+  <span class="gl a" style="--r:-8deg;top:55%;left:14%;font-size:2rem">==</span>
+  <span class="gl f" style="--r:6deg;--d:14s;top:63%;left:70%;font-size:2.3rem">//</span>
+  <span class="gl a" style="--r:18deg;top:72%;left:34%;font-size:2.7rem">{ }</span>
+  <span class="gl" style="--r:-10deg;top:80%;left:88%;font-size:1.8rem">&lt;/&gt;</span>
+  <span class="gl" style="--r:4deg;top:88%;left:18%;font-size:2.1rem">let</span>
+  <span class="gl a f" style="--r:-14deg;--d:17s;top:92%;left:56%;font-size:2.3rem">=&gt;</span>
+  <span class="gl" style="--r:12deg;top:8%;left:34%;font-size:2.2rem">;</span>
+  <span class="gl a" style="--r:-4deg;top:26%;left:92%;font-size:2rem">( )</span>
+  <span class="gl" style="--r:20deg;top:58%;left:48%;font-size:1.9rem">if</span>
+  <span class="gl f" style="--r:-18deg;--d:20s;top:36%;left:72%;font-size:2.4rem">==</span>
+  <span class="gl a" style="--r:8deg;top:44%;left:38%;font-size:2rem">//</span>
+  <span class="gl" style="--r:-6deg;top:66%;left:4%;font-size:2.2rem">{ }</span>
+  <span class="gl a" style="--r:16deg;top:76%;left:60%;font-size:1.9rem">let</span>
+  <span class="gl f" style="--r:-2deg;--d:13s;top:84%;left:44%;font-size:2.5rem">;</span>
+  <span class="gl a" style="--r:10deg;top:52%;left:26%;font-size:2.1rem">&lt;/&gt;</span>
+  <span class="gl a f" style="--r:-5deg;--d:18s;top:4%;left:58%;font-size:1.7rem">console.log()</span>
+  <span class="gl" style="--r:9deg;top:16%;left:10%;font-size:1.8rem">function</span>
+  <span class="gl a" style="--r:-12deg;top:33%;left:30%;font-size:1.9rem">return</span>
+  <span class="gl f" style="--r:7deg;--d:15s;top:41%;left:54%;font-size:2.4rem">[ ]</span>
+  <span class="gl a" style="--r:-9deg;top:60%;left:88%;font-size:2rem">===</span>
+  <span class="gl" style="--r:15deg;top:69%;left:20%;font-size:1.8rem">i++</span>
+  <span class="gl a f" style="--r:4deg;--d:21s;top:78%;left:76%;font-size:1.8rem">for</span>
+  <span class="gl" style="--r:-7deg;top:87%;left:34%;font-size:1.9rem">&amp;&amp;</span>
+  <span class="gl a" style="--r:11deg;top:95%;left:10%;font-size:1.7rem">"hello"</span>
+  <span class="gl" style="--r:-3deg;top:2%;left:88%;font-size:1.8rem">let x = 5;</span>
+  <span class="grain"></span>
+</div>
+
+<div class="shell">
+
+  <header class="top">
+    <div class="top-brand">
+      <span class="wordmark">تأسيس البرمجة — بكالوريا ٢٠٢٧</span>
+      <img class="brand-logo" src="../assets/logo.png" width="520" height="361" alt="With Yousef — يوسف زكريا التهامى">
+    </div>
+    <h1>المحاضرة الأولى: البداية وأول كود حقيقى</h1>
+    <p class="summary">اللى فى المحاضرة دى: بوصلة تُوزّع فى الأول وتُحلّ فى الآخر، تحديد مستوى، ثم المتغير من الصفر لحد فخ الجمع.</p>
+    <div class="status">
+      <span class="count" id="countLabel" aria-live="polite">اكتمل ٠ من ٦</span>
+      <span class="sep" aria-hidden="true"></span>
+      <span class="dur">٦٠ دقيقة أساسى، زائد ٣٠ دقيقة بلوك مرن</span>
+    </div>
+  </header>
+
+  <main>
+    <ol class="blocks">
+
+
+      <li class="block" data-key="compass">
+        <a class="block-link" href="compass.html">
+          <span class="ord">٠١</span>
+          <span>
+            <span class="btitle">أسئلة البوصلة</span>
+            <span class="bdesc">ستة أسئلة تتوزّع فى أول خمس دقايق، وإجاباتها بتتوضح واحدة واحدة أثناء الحصة.</span>
+            <span class="tag">تسخين قبل الشرح</span>
+          </span>
+        </a>
+        <button class="check" type="button" data-check="compass" aria-pressed="false" aria-label="تعليم بلوك أسئلة البوصلة كمنتهى">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L9.5 17 L19 7"/></svg>
+        </button>
+      </li>
+
+      <li class="block" data-key="diagnostic">
+        <a class="block-link" href="diagnostic.html">
+          <span class="ord">٠٢</span>
+          <span>
+            <span class="btitle">تحديد المستوى</span>
+            <span class="bdesc">خمستاشر سؤالاً تعرف بيهم إنت واقف فين، ومعاها تصحيح بيشرح كل غلط شائع.</span>
+            <span class="tag">راجع نفسك — ومعاها التصحيح</span>
+          </span>
+        </a>
+        <button class="check" type="button" data-check="diagnostic" aria-pressed="false" aria-label="تعليم بلوك تحديد المستوى كمنتهى">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L9.5 17 L19 7"/></svg>
+        </button>
+      </li>
+
+      <li class="block star" data-key="lecture">
+        <a class="block-link" href="lecture.html">
+          <span class="ord">٠٣</span>
+          <span>
+            <span class="btitle">المحاضرة</span>
+            <span class="bdesc">من حقائق البكالوريا، لإعادة الضبط، للمتغير من الصفر، لحد فخ الجمع — أقسام بتتمرّر بالعادى.</span>
+          </span>
+        </a>
+        <button class="check" type="button" data-check="lecture" aria-pressed="false" aria-label="تعليم بلوك المحاضرة كمنتهى">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L9.5 17 L19 7"/></svg>
+        </button>
+      </li>
+
+      <li class="block" data-key="advanced">
+        <a class="block-link" href="advanced.html">
+          <span class="ord">٠٤</span>
+          <span>
+            <span class="btitle">تمارين المستوى المتقدم</span>
+            <span class="bdesc">ثلاثة تمارين ورق أصعب بحلولها، ومعاها الأربعة الأساسية علشان كل الورق فى مكان واحد.</span>
+            <span class="tag">للى خلّصوا بدرى</span>
+          </span>
+        </a>
+        <button class="check" type="button" data-check="advanced" aria-pressed="false" aria-label="تعليم بلوك تمارين المستوى المتقدم كمنتهى">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L9.5 17 L19 7"/></svg>
+        </button>
+      </li>
+
+      <li class="block" data-key="practice">
+        <a class="block-link" href="practice.html">
+          <span class="ord">٠٥</span>
+          <span>
+            <span class="btitle">تدريب التابلت</span>
+            <span class="bdesc">تمانية تمارين متدرّجة، كل واحد بخانة إجابة بتتحفظ على الجهاز وزرار مقارنة.</span>
+            <span class="tag">تدريب على التابلت</span>
+          </span>
+        </a>
+        <button class="check" type="button" data-check="practice" aria-pressed="false" aria-label="تعليم بلوك تدريب التابلت كمنتهى">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L9.5 17 L19 7"/></svg>
+        </button>
+      </li>
+
+      <li class="block" data-key="homework">
+        <a class="block-link" href="lecture.html#homework">
+          <span class="ord">٠٦</span>
+          <span>
+            <span class="btitle">الواجب</span>
+            <span class="bdesc">أربعة تمارين تتسلّم بخط اليد، ومهمة جانبية دقيقتين على منصة <code>Qureo</code>.</span>
+            <span class="tag">الواجب</span>
+          </span>
+        </a>
+        <button class="check" type="button" data-check="homework" aria-pressed="false" aria-label="تعليم بلوك الواجب كمنتهى">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L9.5 17 L19 7"/></svg>
+        </button>
+      </li>
+
+    </ol>
+
+    <div class="extra">
+      <a href="drill.html">
+        <span class="ord">إضافى</span>
+        <span>
+          <span class="btitle">ثلاثون تمريناً على المحاضرة</span>
+          <span class="bdesc">خمستاشر سؤال اختيار من متعدد وخمستاشر سؤال كتابة، وكل تمرين بزرار للإجابة وزرار لشرح بالخطوات مع رسمة لكل خطوة. وفى آخرها محرّر كود شغّال جوه الصفحة بكونسول بيعرض الناتج.</span>
+        </span>
+      </a>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <span>تأسيس البرمجة — بكالوريا ٢٠٢٧ · إعداد يوسف زكريا التهامى</span>
+    <a href="../">← كل المحاضرات</a>
+  </footer>
+
+</div>
+
+<script>
+(function () {
+  var AR = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+  function ar(n) { return String(n).replace(/\d/g, function (x) { return AR[+x]; }); }
+
+  function get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+
+  var blocks = Array.prototype.slice.call(document.querySelectorAll('.block'));
+  var label = document.getElementById('countLabel');
+  var fill = document.getElementById('railFill');
+  var total = blocks.length;
+
+  function paint() {
+    var done = 0;
+    blocks.forEach(function (b) { if (b.classList.contains('done')) { done++; } });
+    label.textContent = 'اكتمل ' + ar(done) + ' من ' + ar(total);
+    fill.style.width = (done / total * 100) + '%';
+  }
+
+  blocks.forEach(function (b) {
+    var key = 'l01-done-' + b.getAttribute('data-key');
+    var btn = b.querySelector('.check');
+    if (get(key) === '1') {
+      b.classList.add('done');
+      btn.setAttribute('aria-pressed', 'true');
+    }
+    btn.addEventListener('click', function () {
+      var on = b.classList.toggle('done');
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      if (on) { set(key, '1'); } else { del(key); }
+      paint();
+    });
+  });
+
+  paint();
+})();
+</script>
+
+</body>
+</html>

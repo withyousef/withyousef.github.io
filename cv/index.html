@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yousef Zakaria El-Tohamy — Software Developer</title>
+<meta name="description" content="Software developer in New Cairo. Owns the stack end to end — Flutter and Next.js clients, NestJS services over PostgreSQL, and Claude integrated into a live product.">
+<meta property="og:title" content="Yousef Zakaria El-Tohamy — Software Developer">
+<meta property="og:description" content="Owns the stack end to end — Flutter and Next.js clients, NestJS services over PostgreSQL, and Claude integrated into a live product.">
+<meta property="og:image" content="photo.jpg">
+<meta property="og:type" content="profile">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230C1219'/%3E%3Ctext x='16' y='22' font-family='Georgia,serif' font-size='15' font-weight='700' fill='%23B98F4D' text-anchor='middle'%3EYZ%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;500;600&family=Spectral:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    color-scheme: light dark;
+
+    /* page */
+    --field:#E8EBEF;
+    --card:#FFFFFF;
+    --ink:#0C1219;
+    --ink-2:#333C47;
+    --muted:#5E6875;
+    --faint:#8F98A5;
+    --rule:#D7DCE2;
+    --hair:#EAEDF1;
+
+    /* signature */
+    --brass:#9A7638;
+    --brass-lift:#C9A468;
+
+    /* hero (fixed dark in both themes) */
+    --night:#0C1219;
+    --night-2:#141C26;
+    --night-rule:#242E3A;
+    --night-ink:#F2F5F8;
+    --night-muted:#98A3B2;
+
+    --serif:"Spectral",Georgia,"Times New Roman",serif;
+    --sans:"Public Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+    --rail:8.9rem;
+    --pad:clamp(1.4rem,4.4vw,3.5rem);
+    --shadow:0 1px 2px rgba(12,18,25,.06), 0 16px 44px rgba(12,18,25,.10);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --field:#080B0F;
+      --card:#11161C;
+      --ink:#E9EDF2;
+      --ink-2:#BEC6D0;
+      --muted:#8A94A1;
+      --faint:#69727F;
+      --rule:#222A33;
+      --hair:#1A2027;
+      --brass:#C9A468;
+      --shadow:0 1px 2px rgba(0,0,0,.5), 0 18px 48px rgba(0,0,0,.4);
+    }
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;background:var(--field);color:var(--ink-2);
+    font-family:var(--sans);font-size:.94rem;line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--brass);text-underline-offset:.16em;text-decoration-thickness:.05em}
+  a:focus-visible{outline:2px solid var(--brass);outline-offset:3px;border-radius:2px}
+  strong{color:var(--ink);font-weight:600}
+
+  .sheet{
+    max-width:60rem;margin:clamp(0rem,3vw,2.5rem) auto;
+    background:var(--card);border:1px solid var(--rule);
+    box-shadow:var(--shadow);overflow:hidden;
+  }
+
+  /* ═══ hero ═══════════════════════════════ */
+  .hero{
+    background:var(--night);color:var(--night-muted);
+    padding:clamp(2rem,5.5vw,3.6rem) var(--pad) 0;
+    position:relative;
+  }
+  .hero::after{
+    content:"";position:absolute;left:0;right:0;bottom:0;height:1px;
+    background:linear-gradient(90deg,var(--brass) 0%,var(--brass) 18%,var(--night-rule) 18%);
+  }
+  .hero-grid{display:grid;grid-template-columns:1fr auto;gap:0 clamp(1.5rem,4vw,3.25rem);align-items:start}
+
+  .eyebrow{
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--brass-lift);margin:0 0 1.1rem;display:flex;align-items:center;gap:.7rem;
+  }
+  .eyebrow::after{content:"";flex:1;height:1px;background:var(--night-rule);max-width:9rem}
+
+  .name{
+    font-family:var(--serif);font-weight:300;
+    font-size:clamp(2.15rem,6vw,3.75rem);line-height:1.03;letter-spacing:-.022em;
+    color:var(--night-ink);margin:0 0 1rem;
+  }
+  .name b{font-weight:600;white-space:nowrap}
+
+  .thesis{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(1.05rem,2.3vw,1.28rem);line-height:1.52;
+    color:var(--night-ink);max-width:38ch;margin:0 0 1.5rem;
+  }
+  .thesis span{color:var(--brass-lift)}
+
+  .portrait{
+    width:clamp(7rem,17vw,11.5rem);aspect-ratio:4/5;overflow:hidden;
+    border:1px solid var(--night-rule);background:var(--night-2);display:block;
+    position:relative;
+  }
+  .portrait img{
+    width:100%;height:100%;display:block;
+    object-fit:cover;object-position:center 22%;
+    transform:scale(1.24);transform-origin:center 20%;
+    filter:contrast(1.04) saturate(.92);
+  }
+  .monogram{
+    width:clamp(7rem,17vw,11.5rem);aspect-ratio:4/5;display:none;place-items:center;
+    border:1px solid var(--night-rule);background:var(--night-2);color:var(--brass-lift);
+    font-family:var(--serif);font-weight:600;font-size:2.1rem;letter-spacing:.04em;
+  }
+
+  .hero-actions{display:flex;flex-wrap:wrap;align-items:center;gap:.85rem 1.4rem;margin-bottom:1.9rem}
+  .download{
+    display:inline-flex;align-items:center;gap:.6rem;
+    font-family:var(--sans);font-weight:600;font-size:.8rem;letter-spacing:.09em;text-transform:uppercase;
+    padding:.72rem 1.25rem;background:var(--night-ink);color:var(--night);
+    border:1px solid var(--night-ink);text-decoration:none;
+    transition:background .18s ease,color .18s ease,border-color .18s ease;
+  }
+  .download:hover{background:transparent;color:var(--brass-lift);border-color:var(--brass-lift)}
+  .download svg{width:.9em;height:.9em;flex:none}
+  .hero-links{display:flex;flex-wrap:wrap;gap:.35rem .95rem;font-family:var(--mono);font-size:.76rem}
+  .hero-links a{color:var(--night-muted);text-decoration-color:var(--night-rule)}
+  .hero-links a:hover{color:var(--brass-lift);text-decoration-color:currentColor}
+  .hero-links i{font-style:normal;color:var(--night-rule)}
+
+  .ledger{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(9rem,1fr));
+    border-top:1px solid var(--night-rule);
+  }
+  .ledger div{padding:1.05rem 1.4rem 1.15rem 0}
+  .ledger div + div{padding-left:1.4rem;border-left:1px solid var(--night-rule)}
+  .ledger dt{font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--brass-lift);margin:0 0 .3rem}
+  .ledger dd{margin:0;font-family:var(--serif);font-size:1.32rem;line-height:1.2;color:var(--night-ink)}
+  .ledger dd small{display:block;font-family:var(--sans);font-size:.74rem;color:var(--night-muted);margin-top:.22rem;letter-spacing:.01em}
+
+  /* ═══ stack diagram ══════════════════════ */
+  .architecture{padding:clamp(1.9rem,3.6vw,2.6rem) var(--pad);border-bottom:1px solid var(--hair);background:var(--card)}
+  .arch-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:.6rem 1.2rem;margin-bottom:1.5rem}
+  .arch-head h2{
+    font-family:var(--serif);font-weight:600;font-size:1.28rem;letter-spacing:-.008em;
+    color:var(--ink);margin:0;
+  }
+  .arch-head p{margin:0;font-size:.88rem;color:var(--muted);max-width:46ch}
+  .arch-frame{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:.35rem}
+  .arch-frame svg{display:block;min-width:38rem;width:100%;height:auto}
+
+  .d-box{fill:none;stroke:var(--faint);stroke-width:1}
+  .d-box-ai{fill:color-mix(in srgb, var(--brass) 7%, transparent);stroke:var(--brass);stroke-width:1.3}
+  .d-line{stroke:var(--faint);stroke-width:1;fill:none}
+  .d-line-ai{stroke:var(--brass);stroke-width:1.3;fill:none}
+  .d-node{fill:var(--card);stroke:var(--faint);stroke-width:1}
+  .d-node-ai{fill:var(--brass);stroke:none}
+  .d-tier{font-family:var(--mono);font-size:10px;letter-spacing:.16em;fill:var(--faint)}
+  .d-title{font-family:var(--sans);font-size:13.5px;font-weight:600;fill:var(--ink)}
+  .d-sub{font-family:var(--mono);font-size:10.5px;fill:var(--muted)}
+  .d-edge{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;fill:var(--faint)}
+  .d-title-ai{font-family:var(--sans);font-size:13.5px;font-weight:600;fill:var(--brass)}
+  .d-sub-ai{font-family:var(--mono);font-size:10.5px;fill:var(--brass)}
+
+  .draw{stroke-dasharray:var(--len,200);stroke-dashoffset:var(--len,200);animation:draw .85s cubic-bezier(.4,0,.2,1) forwards}
+  .fade{opacity:0;animation:fade .6s ease forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  @keyframes fade{to{opacity:1}}
+
+  /* ═══ document body ══════════════════════ */
+  .section{padding:clamp(1.55rem,3vw,2.1rem) var(--pad);border-bottom:1px solid var(--hair)}
+  .section:last-of-type{border-bottom:0}
+  .section > h2{
+    font-family:var(--sans);font-weight:600;font-size:.72rem;
+    letter-spacing:.18em;text-transform:uppercase;color:var(--ink);
+    margin:0 0 1.2rem;padding-bottom:.55rem;border-bottom:1px solid var(--rule);
+    position:relative;
+  }
+  .section > h2::after{content:"";position:absolute;left:0;bottom:-1px;width:2.75rem;height:1px;background:var(--brass)}
+
+  .entry{display:grid;grid-template-columns:var(--rail) 1fr;gap:0 1.75rem}
+  .entry + .entry{margin-top:1.45rem;padding-top:1.45rem;border-top:1px solid var(--hair)}
+  .when{
+    font-family:var(--mono);font-size:.73rem;line-height:1.5;letter-spacing:.01em;
+    color:var(--muted);padding-top:.3rem;
+  }
+  .when span{display:block;color:var(--faint);margin-top:.18rem}
+  .role{font-family:var(--serif);font-weight:600;font-size:1.14rem;letter-spacing:-.006em;color:var(--ink);margin:0 0 .08rem;line-height:1.28}
+  .org{font-family:var(--sans);font-size:.85rem;color:var(--muted);margin:0 0 .62rem}
+  .entry ul{margin:0;padding-left:1.05rem}
+  .entry li{margin-bottom:.3rem}
+  .entry li::marker{color:var(--brass)}
+  .entry li:last-child{margin-bottom:0}
+  .entry > div > p{margin:0 0 .5rem}
+  .entry > div > p:last-child{margin-bottom:0}
+
+  .skill{display:grid;grid-template-columns:var(--rail) 1fr;gap:0 1.75rem;align-items:baseline}
+  .skill + .skill{margin-top:.62rem;padding-top:.62rem;border-top:1px solid var(--hair)}
+  .skill dt{font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .skill dd{margin:0;color:var(--ink-2)}
+
+  .colophon{
+    padding:1.15rem var(--pad);background:var(--night);color:var(--night-muted);
+    font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;
+    display:flex;flex-wrap:wrap;gap:.35rem 1.25rem;justify-content:space-between;
+  }
+  .colophon a{color:var(--brass-lift)}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none!important;transition:none!important}
+    .draw{stroke-dashoffset:0}
+    .fade{opacity:1}
+  }
+
+  @media (max-width:46rem){
+    .entry,.skill{grid-template-columns:1fr;gap:0}
+    .when{padding-top:0;margin-bottom:.4rem}
+    .when span{display:inline;margin-left:.55rem;margin-top:0}
+    .skill dt{margin-bottom:.28rem}
+    .ledger div{padding-right:1.1rem;border-top:1px solid var(--night-rule)}
+    .ledger div + div{padding-left:0;border-left:0}
+  }
+  @media (max-width:34rem){
+    .hero-grid{grid-template-columns:1fr;gap:1.35rem 0}
+    .hero-grid > :first-child{order:2}
+    .hero-grid > :last-child{order:1}
+    .portrait,.monogram{width:7.5rem}
+    .thesis{max-width:none}
+    .hero-actions{margin-bottom:1.6rem}
+  }
+
+  @media print{
+    :root{--field:#fff;--card:#fff;--ink:#000;--ink-2:#1b1b1b;--muted:#454545;--faint:#6b6b6b;--rule:#b8b8b8;--hair:#dcdcdc;--brass:#5a4720;--shadow:none;
+          --night:#fff;--night-2:#fff;--night-rule:#c9c9c9;--night-ink:#000;--night-muted:#3a3a3a}
+    body{font-size:9.4pt;line-height:1.4}
+    .sheet{border:0;margin:0;max-width:none;box-shadow:none}
+    .download,.colophon{display:none}
+    .hero{padding-bottom:.5rem}
+    .section,.entry,.architecture{page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<article class="sheet">
+
+  <!-- ─────────── hero ─────────── -->
+  <header class="hero">
+    <div class="hero-grid">
+      <div>
+        <p class="eyebrow">Software Developer · New Cairo</p>
+        <h1 class="name">Yousef Zakaria <b>El-Tohamy</b></h1>
+        <p class="thesis">I build products end to end — the mobile app, the web client, the API and the database underneath — and I put <span>language models inside them</span>, in production, for real customers.</p>
+        <div class="hero-actions">
+          <a class="download" href="Yousef-Zakaria-CV.pdf" download>
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M8 2.5v7.5m0 0 3-3M8 10l-3-3M2.5 12v1.5h11V12"/>
+            </svg>
+            Download CV
+          </a>
+          <p class="hero-links">
+            <a href="mailto:youssefeltohamy.work@gmail.com">Email</a><i>/</i>
+            <a href="https://wa.me/201066893596">WhatsApp</a><i>/</i>
+            <a href="https://linkedin.com/in/yousef-eltohamy">LinkedIn</a><i>/</i>
+            <a href="https://github.com/Youssef-Eltohamy">GitHub</a><i>/</i>
+            <a href="https://gitlab.com/youssef-eltohamy">GitLab</a>
+          </p>
+        </div>
+      </div>
+      <div>
+        <div class="portrait" id="shot">
+          <img src="photo.jpg" alt="Yousef Zakaria El-Tohamy"
+               onerror="document.getElementById('shot').style.display='none';document.getElementById('mono').style.display='grid'">
+        </div>
+        <div class="monogram" id="mono" aria-hidden="true">YZ</div>
+      </div>
+    </div>
+
+    <dl class="ledger">
+      <div><dt>Currently</dt><dd>IT Plus<small>Developer, since May 2026</small></dd></div>
+      <div><dt>Focus</dt><dd>Full stack<small>Backend, mobile, and AI</small></dd></div>
+      <div><dt>Education</dt><dd>BEng<small>Computer &amp; Systems, 2025</small></dd></div>
+      <div><dt>Available</dt><dd>One week<small>Open to new roles</small></dd></div>
+    </dl>
+  </header>
+
+  <!-- ─────────── signature: the stack ─────────── -->
+  <section class="architecture">
+    <div class="arch-head">
+      <h2>What I own, end to end</h2>
+      <p>One product, four layers, one developer. This is the shape of the system I build and run at IT Plus.</p>
+    </div>
+    <div class="arch-frame">
+      <svg viewBox="0 0 900 356" role="img" aria-label="Architecture diagram: Flutter and Next.js clients call a NestJS service layer, which connects to Claude for Arabic replies and to PostgreSQL, Redis and BullMQ for data and queues.">
+        <!-- tier labels -->
+        <text class="d-tier fade" style="animation-delay:.05s" x="8" y="50">CLIENT</text>
+        <text class="d-tier fade" style="animation-delay:.35s" x="8" y="186">SERVICE</text>
+        <text class="d-tier fade" style="animation-delay:.65s" x="8" y="308">DATA</text>
+
+        <!-- client tier -->
+        <rect class="d-box draw" style="--len:660;animation-delay:.05s" x="96" y="22" width="300" height="58"/>
+        <text class="d-title fade" style="animation-delay:.2s" x="116" y="47">Flutter</text>
+        <text class="d-sub fade"   style="animation-delay:.2s" x="116" y="65">iOS &amp; Android · BLoC · Dio</text>
+
+        <rect class="d-box draw" style="--len:660;animation-delay:.12s" x="424" y="22" width="300" height="58"/>
+        <text class="d-title fade" style="animation-delay:.27s" x="444" y="47">Next.js</text>
+        <text class="d-sub fade"   style="animation-delay:.27s" x="444" y="65">Web · React · Tailwind · RTL</text>
+
+        <!-- client → bus -->
+        <path class="d-line draw" style="--len:40;animation-delay:.3s" d="M246 80 V 118"/>
+        <path class="d-line draw" style="--len:40;animation-delay:.3s" d="M574 80 V 118"/>
+        <path class="d-line draw" style="--len:330;animation-delay:.38s" d="M246 118 H 574"/>
+        <path class="d-line draw" style="--len:36;animation-delay:.48s" d="M410 118 V 152"/>
+        <text class="d-edge fade" style="animation-delay:.5s" x="410" y="108" text-anchor="middle">REST · JSON</text>
+        <circle class="d-node fade" style="animation-delay:.46s" cx="246" cy="118" r="3"/>
+        <circle class="d-node fade" style="animation-delay:.46s" cx="574" cy="118" r="3"/>
+        <circle class="d-node fade" style="animation-delay:.52s" cx="410" cy="118" r="3"/>
+
+        <!-- service tier -->
+        <rect class="d-box draw" style="--len:1180;animation-delay:.5s" x="96" y="152" width="628" height="58"/>
+        <text class="d-title fade" style="animation-delay:.62s" x="116" y="177">NestJS · Express · Prisma</text>
+        <text class="d-sub fade"   style="animation-delay:.62s" x="116" y="195">REST API design · clean architecture · OOP</text>
+
+        <!-- AI branch -->
+        <path class="d-line-ai draw" style="--len:60;animation-delay:.72s" d="M724 181 H 784"/>
+        <circle class="d-node-ai fade" style="animation-delay:.8s" cx="724" cy="181" r="3.2"/>
+        <rect class="d-box-ai draw" style="--len:400;animation-delay:.78s" x="784" y="152" width="108" height="58"/>
+        <text class="d-title-ai fade" style="animation-delay:.9s" x="800" y="177">Claude</text>
+        <text class="d-sub-ai fade"   style="animation-delay:.9s" x="800" y="195">Arabic replies</text>
+
+        <!-- service → data -->
+        <path class="d-line draw" style="--len:60;animation-delay:.85s" d="M186 210 V 268"/>
+        <path class="d-line draw" style="--len:60;animation-delay:.9s"  d="M410 210 V 268"/>
+        <path class="d-line draw" style="--len:60;animation-delay:.95s" d="M634 210 V 268"/>
+        <circle class="d-node fade" style="animation-delay:.95s" cx="186" cy="210" r="3"/>
+        <circle class="d-node fade" style="animation-delay:1s"   cx="410" cy="210" r="3"/>
+        <circle class="d-node fade" style="animation-delay:1.05s" cx="634" cy="210" r="3"/>
+
+        <!-- data tier -->
+        <rect class="d-box draw" style="--len:480;animation-delay:.95s" x="96" y="268" width="180" height="58"/>
+        <text class="d-title fade" style="animation-delay:1.08s" x="112" y="293">PostgreSQL</text>
+        <text class="d-sub fade"   style="animation-delay:1.08s" x="112" y="311">Schema · queries</text>
+
+        <rect class="d-box draw" style="--len:480;animation-delay:1s" x="320" y="268" width="180" height="58"/>
+        <text class="d-title fade" style="animation-delay:1.13s" x="336" y="293">Redis</text>
+        <text class="d-sub fade"   style="animation-delay:1.13s" x="336" y="311">Caching</text>
+
+        <rect class="d-box draw" style="--len:480;animation-delay:1.05s" x="544" y="268" width="180" height="58"/>
+        <text class="d-title fade" style="animation-delay:1.18s" x="560" y="293">BullMQ</text>
+        <text class="d-sub fade"   style="animation-delay:1.18s" x="560" y="311">Queues · jobs</text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ─────────── experience ─────────── -->
+  <section class="section">
+    <h2>Professional Experience</h2>
+
+    <div class="entry">
+      <div class="when">May 2026 — Present<span>Egypt</span></div>
+      <div>
+        <h3 class="role">Software Developer</h3>
+        <p class="org">IT Plus</p>
+        <ul>
+          <li>Design and build REST APIs and backend services with Node.js, NestJS and Prisma over PostgreSQL, with Redis for caching and BullMQ for queues and background job processing.</li>
+          <li>Integrate Claude into the product to generate Arabic conversational auto-replies for live customer conversations, covering prompt design, response quality and escalation to a human agent.</li>
+          <li>Develop the Next.js web client and the Flutter mobile client, with full right-to-left support and Arabic/English localisation.</li>
+          <li>Integrate the WhatsApp, Instagram, Messenger and Telegram messaging APIs, together with Paymob payments, invoicing and shareable payment links.</li>
+          <li>Own features from first commit through to production, then diagnose and tune them across the API, database and client layers once they are live.</li>
+          <li>Apply AI development tools across analysis, implementation, review and refactoring while retaining full ownership of the code that ships.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="when">Jul 2025 — Jul 2026<span>Fully remote</span></div>
+      <div>
+        <h3 class="role">Coordinator</h3>
+        <p class="org">iSchool</p>
+        <ul>
+          <li>Coordinated a distributed team of instructors across several tracks, raising delivery quality through weekly reviews and structured written feedback.</li>
+          <li>Ran onboarding, scheduling and performance evaluation for the team, and standardised remote working practices across tracks.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="when">Jun 2024 — Jul 2025<span>Remote &amp; onsite</span></div>
+      <div>
+        <h3 class="role">Coding Instructor</h3>
+        <p class="org">iSchool — DEMI Program</p>
+        <ul>
+          <li>Taught programming fundamentals and artificial intelligence basics to more than 1,000 students aged 10 to 12 across several intakes.</li>
+          <li>Mentored students individually through practical exercises and project feedback.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── projects ─────────── -->
+  <section class="section">
+    <h2>Selected Projects</h2>
+
+    <div class="entry">
+      <div class="when">2026 — Present<span>IT Plus product</span></div>
+      <div>
+        <h3 class="role">rplya</h3>
+        <p class="org">Arabic-first multi-channel messaging platform</p>
+        <p>A unified inbox that brings WhatsApp, Instagram, Messenger and Telegram into a single conversation view for small and medium businesses, with a built-in mini-CRM, invoicing and Paymob payment links, and Claude-generated Arabic replies. Built on NestJS and Prisma over PostgreSQL with Redis and BullMQ, delivered through a Next.js web client and a Flutter mobile client. I build the product end to end.</p>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="when">2025<span>Graduation project</span></div>
+      <div>
+        <h3 class="role">MedEase</h3>
+        <p class="org">AI-powered healthcare platform · graded Excellent</p>
+        <p>A multi-role application connecting patients, doctors and administrators, each with their own interfaces and flows. Includes an AI symptom checker served over REST APIs and a bilingual Arabic/English interface with full right-to-left support, built on a clean, scalable architecture.</p>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="when">2025<span>Personal project</span></div>
+      <div>
+        <h3 class="role">Open Market</h3>
+        <p class="org">E-commerce application</p>
+        <p>Product categories, intelligent search, cart and a complete checkout flow integrated over REST APIs, built on clean architecture with BLoC state management to keep the codebase maintainable.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─────────── competencies ─────────── -->
+  <section class="section">
+    <h2>Technical Competencies</h2>
+    <dl>
+      <div class="skill"><dt>Backend</dt><dd>Node.js, NestJS, Express, Prisma, REST API design, Redis, BullMQ, object-oriented design, clean architecture</dd></div>
+      <div class="skill"><dt>Databases</dt><dd>PostgreSQL, relational schema design, SQL, Prisma ORM</dd></div>
+      <div class="skill"><dt>Frontend</dt><dd>Next.js, React, Tailwind CSS, internationalisation and right-to-left layouts</dd></div>
+      <div class="skill"><dt>Mobile</dt><dd>Flutter, Dart, BLoC, Dio, clean architecture</dd></div>
+      <div class="skill"><dt>Applied AI</dt><dd>Claude and the Anthropic API, LLM integration, prompt design, agent memory, AI-assisted development</dd></div>
+      <div class="skill"><dt>Practice</dt><dd>Git and GitHub, pull request reviews, debugging, performance tuning, remote collaboration</dd></div>
+    </dl>
+  </section>
+
+  <!-- ─────────── education ─────────── -->
+  <section class="section">
+    <h2>Education &amp; Credentials</h2>
+
+    <div class="entry">
+      <div class="when">Oct 2020 — Jun 2025<span>Zagazig, Egypt</span></div>
+      <div>
+        <h3 class="role">Bachelor of Engineering, Computer and Systems</h3>
+        <p class="org">Zagazig University, Faculty of Engineering</p>
+        <p>Graduation project graded Excellent — MedEase, a multi-role AI-powered healthcare platform.</p>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="when">2026<span>Certification</span></div>
+      <div>
+        <h3 class="role">Code with AI</h3>
+        <p class="org">Omar Ahmed</p>
+        <p>Systematic use of Claude in software engineering: prompt design, agent memory, integrated workflows, and reviewing AI-assisted output before it ships.</p>
+      </div>
+    </div>
+
+    <div class="entry">
+      <div class="when">2023 — 2024<span>Zagazig University</span></div>
+      <div>
+        <h3 class="role">Leadership &amp; Volunteering</h3>
+        <p class="org">ZigZag Club · IEEE Zagazig Student Branch</p>
+        <p>HR Manager and, before that, Technical HR Head at ZigZag Club, responsible for recruitment and onboarding across a 500-member student community and for digitising the club's HR processes. Previously a Brand Ambassador for the IEEE Zagazig Student Branch.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="colophon">
+    <span>Yousef Zakaria El-Tohamy · Software Developer · New Cairo, Egypt</span>
+    <span>Arabic (native) · English (working) · <a href="mailto:youssefeltohamy.work@gmail.com">Get in touch</a></span>
+  </footer>
+
+</article>
+</body>
+</html>

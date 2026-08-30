@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="يوسف زكريا التهامى — Yousef Zakaria El-Tohamy">
+<title>تحديد المستوى — المحاضرة الأولى</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../assets/lecture.css">
+<style>
+  /* التصميم المشترك فى ../assets/lecture.css — هنا الخاص بالصفحة دى فقط */
+  body{font-size:17px;}
+
+  .topbar .row{max-width:56rem;padding:.95rem 1.6rem .85rem;flex-wrap:wrap;}
+
+  .shell{position:relative;z-index:1;max-width:56rem;margin:0 auto;padding:2.6rem 1.6rem 0;}
+
+  .head{margin-block-end:2rem;}
+  .head p{margin:0 0 1rem;}
+
+  h2{font-size:1.2rem;font-weight:600;line-height:1.4;margin:0 0 .8rem;}
+  h3{font-size:1.05rem;font-weight:600;line-height:1.45;margin:1.7rem 0 .6rem;}
+  h4{margin:2rem 0 .5rem;}
+
+  .zone-label{margin-block-end:1rem;}
+
+  /* ── ورقة الطالب ─────────────────────────────── */
+  .sheet{margin:0 0 3rem;}
+
+  .tbl-wrap{margin:0 0 1.4rem;}
+
+  footer.foot{
+    position:relative;z-index:1;max-width:56rem;margin:0 auto;
+    padding:1.3rem 1.6rem 2.6rem;
+  }
+
+  @media (max-width:560px){
+    .shell{padding:2rem 1.1rem 0;}
+    .teacher .inner{padding:2rem 1.1rem 2.6rem;}
+    .topbar .row{padding:.8rem 1.1rem .7rem;}
+    .sheet{padding:1.3rem 1.2rem 1.6rem;}
+  }
+
+  /* ── الطباعة: ورقة الطالب فقط ────────────────── */
+  @media print{
+    /* هامش صفر = ترويسات المتصفح (المسار والاسم والتاريخ) ملهاش مكان تتطبع فيه */
+    @page{margin:0;}
+    html,body{background:#fff;color:#000;font-size:11pt;}
+    .bg-layer,.topbar,.head,.print-row,.zone-label,.teacher,footer.foot{display:none !important;}
+    .shell{max-width:none;padding:0;}
+    .sheet{
+      background:#fff !important;color:#000 !important;
+      border:0;border-radius:0;box-shadow:none;margin:0;
+      padding:13mm 15mm;
+    }
+    .sheet-top{border-block-end:2px solid #000;}
+    .sheet-id{color:#444 !important;}
+    .idline span{border-block-end:1px dotted #000 !important;color:#000 !important;}
+    .opts li::before{color:#000 !important;}
+    h4{color:#000 !important;break-after:avoid;page-break-after:avoid;}
+    pre{background:#fff !important;color:#000 !important;border:1px solid #666 !important;}
+    pre code{background:#fff !important;color:#000 !important;border:0 !important;}
+    pre .st,pre .cm{color:#000 !important;}
+    code{background:#fff !important;color:#000 !important;border:1px solid #999 !important;}
+    .q{break-after:avoid;page-break-after:avoid;}
+    .sheet pre{break-inside:avoid;page-break-inside:avoid;break-after:avoid;page-break-after:avoid;}
+    .opts{break-inside:avoid;page-break-inside:avoid;break-before:avoid;page-break-before:avoid;}
+    .sheet .q{margin-block:3.5mm 1.5mm;}
+    .sheet pre{margin-block:1.5mm;padding:2.5mm 4mm;font-size:10pt;line-height:1.55;}
+    .opts li{padding-block:1mm;}
+    .opts{margin-block:1.5mm 3mm;}
+    .idline{margin-block:2.5mm;}
+    .sheet-top h2{font-size:14pt;margin-block:0 1mm;}
+    .sheet > p{margin-block:2mm;line-height:1.6;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-layer" aria-hidden="true">
+  <span class="glow" style="top:-14%;left:-10%;width:44rem;height:44rem"></span>
+  <span class="glow" style="top:42%;left:66%;width:38rem;height:38rem"></span>
+  <span class="glow" style="top:80%;left:6%;width:30rem;height:30rem"></span>
+  <span class="gl f" style="--r:-12deg;--d:16s;top:6%;left:5%;font-size:2.6rem">{ }</span>
+  <span class="gl" style="--r:8deg;top:12%;left:78%;font-size:2.1rem">&lt;/&gt;</span>
+  <span class="gl a" style="--r:-6deg;top:22%;left:22%;font-size:1.9rem">=&gt;</span>
+  <span class="gl" style="--r:0deg;top:30%;left:62%;font-size:2.8rem">;</span>
+  <span class="gl a f" style="--r:10deg;--d:19s;top:38%;left:8%;font-size:2.2rem">let</span>
+  <span class="gl" style="--r:-16deg;top:18%;left:44%;font-size:2.4rem">if</span>
+  <span class="gl" style="--r:14deg;top:47%;left:86%;font-size:2.5rem">( )</span>
+  <span class="gl a" style="--r:-8deg;top:55%;left:14%;font-size:2rem">==</span>
+  <span class="gl f" style="--r:6deg;--d:14s;top:63%;left:70%;font-size:2.3rem">//</span>
+  <span class="gl a" style="--r:18deg;top:72%;left:34%;font-size:2.7rem">{ }</span>
+  <span class="gl" style="--r:-10deg;top:80%;left:88%;font-size:1.8rem">&lt;/&gt;</span>
+  <span class="gl" style="--r:4deg;top:88%;left:18%;font-size:2.1rem">let</span>
+  <span class="gl a f" style="--r:-14deg;--d:17s;top:92%;left:56%;font-size:2.3rem">=&gt;</span>
+  <span class="gl" style="--r:12deg;top:8%;left:34%;font-size:2.2rem">;</span>
+  <span class="gl a" style="--r:-4deg;top:26%;left:92%;font-size:2rem">( )</span>
+  <span class="gl" style="--r:20deg;top:58%;left:48%;font-size:1.9rem">if</span>
+  <span class="gl f" style="--r:-18deg;--d:20s;top:36%;left:72%;font-size:2.4rem">==</span>
+  <span class="gl a" style="--r:8deg;top:44%;left:38%;font-size:2rem">//</span>
+  <span class="gl" style="--r:-6deg;top:66%;left:4%;font-size:2.2rem">{ }</span>
+  <span class="gl a" style="--r:16deg;top:76%;left:60%;font-size:1.9rem">let</span>
+  <span class="gl f" style="--r:-2deg;--d:13s;top:84%;left:44%;font-size:2.5rem">;</span>
+  <span class="gl a" style="--r:10deg;top:52%;left:26%;font-size:2.1rem">&lt;/&gt;</span>
+  <span class="gl a f" style="--r:-5deg;--d:18s;top:4%;left:58%;font-size:1.7rem">console.log()</span>
+  <span class="gl" style="--r:9deg;top:16%;left:10%;font-size:1.8rem">function</span>
+  <span class="gl a" style="--r:-12deg;top:33%;left:30%;font-size:1.9rem">return</span>
+  <span class="gl f" style="--r:7deg;--d:15s;top:41%;left:54%;font-size:2.4rem">[ ]</span>
+  <span class="gl a" style="--r:-9deg;top:60%;left:88%;font-size:2rem">===</span>
+  <span class="gl" style="--r:15deg;top:69%;left:20%;font-size:1.8rem">i++</span>
+  <span class="gl a f" style="--r:4deg;--d:21s;top:78%;left:76%;font-size:1.8rem">for</span>
+  <span class="gl" style="--r:-7deg;top:87%;left:34%;font-size:1.9rem">&amp;&amp;</span>
+  <span class="gl a" style="--r:11deg;top:95%;left:10%;font-size:1.7rem">"hello"</span>
+  <span class="gl" style="--r:-3deg;top:2%;left:88%;font-size:1.8rem">let x = 5;</span>
+  <span class="grain"></span>
+</div>
+
+<header class="topbar">
+  <div class="row">
+    <a class="back" href="index.html">← مركز المحاضرة</a>
+    <span class="mark">تأسيس البرمجة — بكالوريا ٢٠٢٧</span>
+    <img class="brand-logo" src="../assets/logo.png" width="520" height="361" alt="With Yousef — يوسف زكريا التهامى">
+  </div>
+</header>
+
+<div class="shell">
+
+  <div class="head">
+    <span class="eyebrow">ورقة الطلاب + مفتاح المعلم</span>
+    <h1>تحديد المستوى</h1>
+    <p>خمستاشر سؤالاً فى ١٢ دقيقة. الورقة مش داخلة فى أى درجة، والهدف الوحيد منها إنك تعرف القاعة واقفة فين قبل ما تبدأ تبنى. الطباعة بتطلّع ورقة الطالب لوحدها، والمفتاح مستبعد تماماً.</p>
+  </div>
+
+  <div class="print-row">
+    <button class="btn" type="button" id="printBtn">طباعة ورقة الطالب</button>
+  </div>
+
+  <main>
+    <span class="zone-label">ورقة الطالب</span>
+
+    <article class="sheet" id="sheet">
+      <div class="sheet-top">
+        <h2>اختبار تحديد المستوى — ١٥ سؤالاً</h2>
+        <span class="sheet-id">إعداد: يوسف زكريا التهامى · تأسيس البرمجة · بكالوريا ٢٠٢٧</span>
+      </div>
+      <div class="idline"><span>الاسم</span><span>التاريخ</span></div>
+
+      <p><strong>ده مش امتحان ومش داخل فى أى درجة.</strong> ده مقياس بداية علشان أعرف أبدأ منين معاكم بالظبط. لو مش عارف إجابة سؤال، سيبه فاضى — الفراغ ده معلومة مفيدة ليا أكتر من تخمين. الوقت: ١٢ دقيقة.</p>
+
+      <h4>القسم الأول — تتبّع الكود: إيه اللى هيتطبع؟</h4>
+
+      <p class="q">١) الكود ده هيطبع إيه؟</p>
+<pre><code>let fish = 0;
+fish = fish + 3;
+fish = fish + 3;
+console.log(fish);</code></pre>
+      <ul class="opts"><li>أ) 0</li><li>ب) 3</li><li>ج) 6</li><li>د) 33</li></ul>
+
+      <p class="q">٢) الكود ده هيطبع إيه؟</p>
+<pre><code>console.log(<span class="st">"The answer is "</span> + (2 * 5) + <span class="st">"."</span>);</code></pre>
+      <ul class="opts"><li>أ) The answer is 2 * 5.</li><li>ب) The answer is 10.</li><li>ج) The answer is 25.</li><li>د) رسالة خطأ</li></ul>
+
+      <p class="q">٣) الكود ده هيطبع إيه؟</p>
+<pre><code>let science = 70;
+if (science == 100) {
+  console.log(<span class="st">"Perfect"</span>);
+} else if (science &gt;= 50) {
+  console.log(<span class="st">"Pass"</span>);
+} else {
+  console.log(<span class="st">"Fail"</span>);
+}</code></pre>
+      <ul class="opts"><li>أ) Perfect</li><li>ب) Pass</li><li>ج) Fail</li><li>د) Pass ثم Fail</li></ul>
+
+      <p class="q">٤) الكود ده هيطبع إيه؟</p>
+<pre><code>for (let i = 1; i &lt;= 3; i++) {
+  console.log(i * 2);
+}</code></pre>
+      <ul class="opts"><li>أ) 1 ثم 2 ثم 3</li><li>ب) 2 ثم 4 ثم 6</li><li>ج) 2 ثم 4 ثم 6 ثم 8</li><li>د) 6</li></ul>
+
+      <p class="q">٥) الكود ده هيطبع إيه؟</p>
+<pre><code>let tempList = [36, 38, 26];
+console.log(tempList[1] + tempList.length);</code></pre>
+      <ul class="opts"><li>أ) 39</li><li>ب) 41</li><li>ج) 29</li><li>د) 363</li></ul>
+
+      <h4>القسم الثانى — إكمال الكود: إيه اللى ينزل مكان الفراغ؟</h4>
+
+      <p class="q">٦) علشان تعمل متغيراً اسمه <code>score</code> وتحط فيه القيمة ١٠، تكتب:</p>
+      <ul class="opts"><li>أ) <code>let score = 10;</code></li><li>ب) <code>score let = 10;</code></li><li>ج) <code>let score == 10;</code></li><li>د) <code>let = score 10;</code></li></ul>
+
+      <p class="q">٧) علشان الحلقة دى تلف خمس مرات بالظبط، الفراغ يتملى بإيه؟</p>
+<pre><code>for (let i = 0; i ______ 5; i++) { }</code></pre>
+      <ul class="opts"><li>أ) <code>&gt;</code></li><li>ب) <code>&lt;</code></li><li>ج) <code>&lt;=</code></li><li>د) <code>=</code></li></ul>
+
+      <p class="q">٨) علشان الشرط يتحقق لما يكون العمر أكبر من ١٢ <strong>و</strong> أصغر من ٢٠ فى نفس الوقت:</p>
+<pre><code>if (age &gt; 12 ______ age &lt; 20) { }</code></pre>
+      <ul class="opts"><li>أ) <code>||</code></li><li>ب) <code>&amp;&amp;</code></li><li>ج) <code>+</code></li><li>د) <code>==</code></li></ul>
+
+      <p class="q">٩) علشان الدالة ترجّع الناتج بدل ما تطبعه:</p>
+<pre><code>function double(n) {
+  ______ n * 2;
+}</code></pre>
+      <ul class="opts"><li>أ) <code>console.log</code></li><li>ب) <code>let</code></li><li>ج) <code>return</code></li><li>د) <code>print</code></li></ul>
+
+      <p class="q">١٠) علشان تطبع كل عنصر فى المصفوفة واحداً واحداً:</p>
+<pre><code>for (let degree ______ degreeList) {
+  console.log(degree);
+}</code></pre>
+      <ul class="opts"><li>أ) <code>in</code></li><li>ب) <code>of</code></li><li>ج) <code>from</code></li><li>د) <code>=</code></li></ul>
+
+      <h4>القسم الثالث — مفاهيم</h4>
+
+      <p class="q">١١) عناصر أمن المعلومات الثلاثة هى:</p>
+      <ul class="opts"><li>أ) السرعة والدقة والتخزين</li><li>ب) السرية والسلامة والتوافر</li><li>ج) الأصالة والثبات والانتشار</li><li>د) الإدخال والمعالجة والإخراج</li></ul>
+
+      <p class="q">١٢) عنوان <code>IPv4</code> بيتكوّن من:</p>
+      <ul class="opts"><li>أ) ٨ بت</li><li>ب) ١٦ بت</li><li>ج) ٣٢ بت</li><li>د) ١٢٨ بت</li></ul>
+
+      <p class="q">١٣) الـ<code>1 KB</code> بيساوى:</p>
+      <ul class="opts"><li>أ) ١٠٠٠ <code>byte</code></li><li>ب) ١٠٢٤ <code>byte</code></li><li>ج) ١٠٢٤ <code>bit</code></li><li>د) ٨ <code>byte</code></li></ul>
+
+      <p class="q">١٤) التصيّد <code>Phishing</code> معناه:</p>
+      <ul class="opts"><li>أ) برنامج بينسخ نفسه ويدمّر الملفات</li><li>ب) رسالة أو موقع مزيّف بينتحل جهة موثوقة علشان ياخد بياناتك</li><li>ج) تشفير ملفاتك وطلب فدية</li><li>د) تسجيل ضربات لوحة المفاتيح</li></ul>
+
+      <p class="q">١٥) فى قاعدة البيانات العلائقية، الأعمدة فى الجدول اسمها:</p>
+      <ul class="opts"><li>أ) سجلات <code>Records</code></li><li>ب) حقول <code>Fields</code></li><li>ج) استعلامات <code>Queries</code></li><li>د) علاقات <code>Relations</code></li></ul>
+    </article>
+  </main>
+
+</div>
+
+<section class="teacher" aria-label="منطقة المعلم">
+  <div class="inner">
+    <details class="tzone">
+      <summary>
+        <span class="band-tag">للمعلم</span>
+        <span class="ttl">مفتاح التصحيح وتفسير النتيجة</span>
+      </summary>
+    <p class="lede">الجزء ده مستبعد من الطباعة. صحّح بعد الحصة، ولا تعلن أى نتيجة قدام الفصل.</p>
+
+    <h3>مفتاح التصحيح</h3>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th style="width:3.2rem">#</th><th style="width:13rem">الإجابة</th><th>بيقيس إيه، وأشهر غلط</th></tr></thead>
+      <tbody>
+        <tr><td class="slot">١</td><td><strong>ج) 6</strong></td><td>التراكم <code>x = x + 3</code>. لو غلط فيه، هو محتاج بلوك المتغيرات كاملاً — وده متوقع من الأغلبية.</td></tr>
+        <tr><td class="slot">٢</td><td><strong>ب) The answer is 10.</strong></td><td>دمج نص مع أولوية الأقواس. فصل ٢ فى المنصة.</td></tr>
+        <tr><td class="slot">٣</td><td><strong>ب) Pass</strong></td><td><code>else if</code>. لو غلط فيه، المحاضرة ٣ لازم تبدأ من الصفر المطلق.</td></tr>
+        <tr><td class="slot">٤</td><td><strong>ب) 2 ثم 4 ثم 6</strong></td><td>حلقة <code>for</code> عدّادية مع الشرط <code>&lt;=</code>. أشهر غلط هنا هو (أ): الطالب فاكر الحلقة بتطبع العدّاد نفسه.</td></tr>
+        <tr><td class="slot">٥</td><td><strong>ب) 41</strong></td><td>الفهرسة من صفر مع <code>.length</code>. مَن يجيب (أ) خلط الفهرس بالترتيب. أصعب سؤال فى القسم.</td></tr>
+        <tr><td class="slot">٦</td><td><strong>أ)</strong> <code>let score = 10;</code></td><td>صياغة التصريح. لو غلط فيه، ابدأ معاه من قسم التصريح بهدوء شديد.</td></tr>
+        <tr><td class="slot">٧</td><td><strong>ب)</strong> <code>&lt;</code></td><td>حدود الحلقة — مفهوم «من صفر لأربعة يساوى خمس مرات».</td></tr>
+        <tr><td class="slot">٨</td><td><strong>ب)</strong> <code>&amp;&amp;</code></td><td>العوامل المنطقية. فصل ٩.</td></tr>
+        <tr><td class="slot">٩</td><td><strong>ج)</strong> <code>return</code></td><td>الدوال — أضعف منطقة متوقعة، كانت خارج امتحان الكتاب.</td></tr>
+        <tr><td class="slot">١٠</td><td><strong>ب)</strong> <code>of</code></td><td><code>for...of</code>. فصل ٢٨، آخر المنهج، فأعلى احتمال نسيان.</td></tr>
+        <tr><td class="slot">١١</td><td><strong>ب)</strong> السرية والسلامة والتوافر</td><td>درس ٣-١. الخيار (ج) فخ مقصود — دى خصائص المعلومات مش عناصر الأمن.</td></tr>
+        <tr><td class="slot">١٢</td><td><strong>ج)</strong> ٣٢ بت</td><td>درس ٨-٢.</td></tr>
+        <tr><td class="slot">١٣</td><td><strong>ب)</strong> ١٠٢٤ <code>byte</code></td><td>درس ٦-٢. الخيار (أ) هو الغلط الشائع.</td></tr>
+        <tr><td class="slot">١٤</td><td><strong>ب)</strong> رسالة أو موقع مزيّف ينتحل جهة موثوقة</td><td>درس ٣-٣.</td></tr>
+        <tr><td class="slot">١٥</td><td><strong>ب)</strong> حقول <code>Fields</code></td><td>درس ٩-٢. الصفوف <code>Records</code> والأعمدة <code>Fields</code>.</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>تفسير النتيجة</h3>
+    <p class="lede">دى المصححة الحقيقية، مش الأرقام على الورق.</p>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th style="width:6.5rem">الدرجة</th><th style="width:17rem">التفسير</th><th>إيه اللى تعمله</th></tr></thead>
+      <tbody>
+        <tr><td class="slot">٠ – ٤</td><td>بيبدأ من الصفر تماماً — <strong>وده طبيعى ومتوقع</strong>، ومش مؤشر ضعف بأى شكل.</td><td>ده الوضع الافتراضى للكورس أصلاً، والكورس كله متصمّم على أساس الطالب ده. ما تعملش معاه أى حاجة مختلفة، وما تقولّهوش إنه فى فئة.</td></tr>
+        <tr><td class="slot">٥ – ٩</td><td>فيه بقايا معرفة — بيفتكر لما يشوف، بس مش بينتج.</td><td>يستفيد أكتر من التمارين المتقدمة فى النص التانى من الكورس. خلّيه يشرح خطوة لزميله من وقت للتانى — بيثبّت عنده وبيرفع ثقته.</td></tr>
+        <tr><td class="slot">١٠ فأكتر</td><td>جاهز للمستوى المتقدم من التمارين من أول محاضرة.</td><td>ادّيه تمارين المستوى المتقدم كاملة فى كل حصة، ولو خلّص بدرى فى البلوك المرن استخدمه كمساعد. خد بالك: قوى فى التعرّف لا يعنى قوى فى الكتابة — اختبره فى الإنتاج بدرى.</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="card">
+      <div class="script">
+        <span class="who">يُقال بصوت عالٍ — قبل التوزيع وبعده</span>
+        <p>«الورقة دى <strong>مقياس بداية</strong> مش حكم على حد. أنا محتاج أعرف إحنا واقفين فين علشان أعرف أمشى إزاى. وبصراحة، اللى هيجيب درجة قليلة ده مش غلطته: السنة اللى فاتت المادة كانت نجاح ورسوب وخارج المجموع، فمنطقى إن محدش أخدها بجد. <strong>الكورس ده متصمّم أصلاً لطالب مش فاكر حاجة.</strong> واللى فاكر — كويس، هيمشى أسرع شوية وبس».</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>الاحتفاظ بخط الأساس</h3>
+      <p><strong>احتفظ بالأوراق دى.</strong> فى المحاضرة ٨ هتدّى نفس نمط الأسئلة تانى، والفرق بين الورقتين هو أقوى حاجة تعرضها لولى الأمر آخر الكورس، وأقوى حاجة يشوفها الطالب عن نفسه.</p>
+      <p>سجّل عندك رقمين بس لكل طالب: درجة القسم الأول (التتبع) ودرجة القسم التانى (الإكمال). القسم التالت معلومة عامة عن خلفية أولى ثانوى، مش عن استعداده للبرمجة.</p>
+    </div>
+    </details>
+  </div>
+</section>
+
+<footer class="foot">
+  <span>المحاضرة الأولى · تحديد المستوى · إعداد يوسف زكريا التهامى</span>
+  <a href="index.html">← مركز المحاضرة</a>
+</footer>
+
+<script>
+(function () {
+  var btn = document.getElementById('printBtn');
+  if (btn) { btn.addEventListener('click', function () { window.print(); }); }
+})();
+</script>
+
+</body>
+</html>

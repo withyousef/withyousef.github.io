@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="يوسف زكريا التهامى — Yousef Zakaria El-Tohamy">
+<title>تدريب المحاضرة الأولى — المتغيرات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --paper:#faf8f5;
+    --surface:#ffffff;
+    --ink:#1a1d21;
+    --muted:#6b6f76;
+    --line:#e7e3dc;
+    --accent:#0f766e;
+    --accent-hover:#115e59;
+    --accent-soft:#f0faf8;
+    --panel:#1b1e24;
+    --panel-ink:#e6e9ef;
+    --panel-muted:#8b93a3;
+    --panel-accent:#7dd3c8;
+    --shadow:0 1px 3px rgb(26 29 33 / .08);
+    --shadow-md:0 4px 14px rgb(26 29 33 / .07);
+    --sans:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;
+    --mono:"IBM Plex Mono",Consolas,"Segoe UI",Tahoma,monospace;
+  }
+
+  *,*::before,*::after{box-sizing:border-box;}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    min-height:100dvh;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:18px;
+    font-weight:400;
+    line-height:1.8;
+    font-variant-numeric:tabular-nums;
+    -webkit-tap-highlight-color:transparent;
+  }
+
+  /* ── طبقة الخلفية (شدة منخفضة) ───────────────── */
+  .bg-layer{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+  .bg-layer .gl{
+    position:absolute;font-family:var(--mono);font-weight:500;color:var(--ink);
+    opacity:.035;white-space:nowrap;line-height:1;transform:rotate(var(--r,0deg));
+  }
+  .bg-layer .gl.a{color:var(--accent);opacity:.045;}
+  .bg-layer .glow{position:absolute;border-radius:50%;background:radial-gradient(circle,#f0faf8 0%,rgba(240,250,248,0) 70%);}
+  @keyframes drift{
+    from{transform:translateY(-10px) rotate(var(--r,0deg));}
+    to{transform:translateY(10px) rotate(var(--r,0deg));}
+  }
+  .bg-layer .gl.f{animation:drift var(--d,16s) ease-in-out infinite alternate;}
+
+  /* ── شريط الصفحة ─────────────────────────────── */
+  .pagebar{position:relative;z-index:21;background:var(--surface);border-block-end:1px solid var(--line);}
+  .pagebar .row{
+    max-width:44rem;margin:0 auto;padding:.75rem 1.2rem .65rem;
+    display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+  }
+  .back{font-size:.86rem;font-weight:600;color:var(--accent);text-decoration:none;border-radius:8px;padding:.2rem .45rem;transition:background 200ms ease;}
+  .back:hover{background:var(--accent-soft);}
+  .back:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .mark{font-size:.7rem;font-weight:600;letter-spacing:.14em;color:var(--muted);}
+
+  /* ── الترويسة اللاصقة ────────────────────────── */
+  .topbar{
+    position:sticky;
+    inset-block-start:0;
+    z-index:20;
+    background:var(--paper);
+    background:color-mix(in srgb, var(--paper) 92%, transparent);
+    backdrop-filter:saturate(1.1) blur(8px);
+    border-block-end:1px solid var(--line);
+  }
+  .topbar .row{
+    max-width:44rem;
+    margin:0 auto;
+    padding:.9rem 1.2rem .75rem;
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:1rem;
+  }
+  .topbar h1{
+    font-size:1rem;
+    font-weight:600;
+    line-height:1.35;
+    margin:0;
+    letter-spacing:-.005em;
+  }
+  .progress{
+    font-size:.82rem;
+    font-weight:500;
+    letter-spacing:.05em;
+    color:var(--muted);
+    white-space:nowrap;
+  }
+  .track{height:2px;background:var(--line);}
+  .track .fill{
+    display:block;
+    height:100%;
+    width:12.5%;
+    background:var(--accent);
+    transition:width 200ms ease;
+  }
+
+  /* ── التخطيط ──────────────────────────────────── */
+  .wrap{position:relative;z-index:1;max-width:44rem;margin:0 auto;padding:1.6rem 1.2rem 4rem;}
+
+  .intro{margin:0 0 2.2rem;}
+  .eyebrow{
+    display:block;
+    font-size:.72rem;
+    font-weight:600;
+    letter-spacing:.16em;
+    color:var(--accent);
+    margin-block-end:.8rem;
+  }
+  .intro h2{
+    font-size:clamp(1.6rem,5vw,2.1rem);
+    font-weight:700;
+    line-height:1.25;
+    letter-spacing:-.01em;
+    margin:0 0 .8rem;
+  }
+  .intro p{color:var(--muted);margin:0 0 1rem;max-width:65ch;}
+
+  .rule{
+    border-inline-start:2px solid var(--accent);
+    background:var(--accent-soft);
+    border-radius:0 10px 10px 0;
+    padding:.95rem 1.2rem;
+    margin:0 0 2.4rem;
+    font-size:.98rem;
+    line-height:1.75;
+  }
+  .rule b{
+    display:block;
+    font-size:.7rem;
+    font-weight:600;
+    letter-spacing:.14em;
+    color:var(--accent);
+    margin-block-end:.35rem;
+  }
+  .rule p{margin:0;max-width:65ch;}
+
+  /* ── بطاقة التمرين ────────────────────────────── */
+  .ex{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:1.3rem 1.35rem 1.4rem;
+    margin:0 0 1.5rem;
+    box-shadow:var(--shadow);
+    scroll-margin-block-start:5rem;
+  }
+  .ex-head{
+    display:flex;
+    align-items:baseline;
+    gap:.9rem;
+    margin-block-end:.9rem;
+  }
+  .ex-num{
+    font-family:var(--mono);
+    font-size:.85rem;
+    font-weight:500;
+    letter-spacing:.1em;
+    color:var(--accent);
+    padding-block-end:.15rem;
+    border-block-end:1px solid var(--line);
+  }
+  .ex h3{
+    font-size:1.08rem;
+    font-weight:600;
+    line-height:1.45;
+    margin:0;
+  }
+
+  /* ── علامة إتمام التمرين ─────────────────────── */
+  .tick{
+    display:none;
+    place-items:center;
+    align-self:center;
+    margin-inline-start:auto;
+    flex:0 0 auto;
+    width:1.6rem;height:1.6rem;
+    border-radius:50%;
+    background:var(--accent);
+  }
+  .tick svg{width:.85rem;height:.85rem;fill:none;stroke:#fff;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round;}
+  .ex.done .tick{display:grid;}
+  .ex.done{border-color:#bfe3de;}
+
+  /* ── شريط أدوات الطالب ───────────────────────── */
+  .tools{
+    display:flex;flex-wrap:wrap;gap:.55rem;align-items:center;
+    margin:0 0 1.7rem;
+  }
+  .tool{
+    display:inline-flex;align-items:center;gap:.5rem;font:inherit;
+    font-size:.95rem;font-weight:600;
+    background:var(--surface);color:var(--accent);
+    border:1px solid var(--line);border-radius:999px;
+    padding:.6rem 1.2rem;min-height:2.9rem;cursor:pointer;
+    transition:background 200ms ease, transform 200ms ease, color 200ms ease;
+  }
+  .tool::before{content:"";width:.42rem;height:.42rem;border-radius:50%;background:var(--accent);}
+  .tool:hover{background:var(--accent-soft);}
+  .tool:active{transform:scale(.98);}
+  .tool:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+  .tool.warn{color:#9a3d2c;}
+  .tool.warn::before{background:#9a3d2c;}
+  .tool.warn:hover{background:#fdf3f1;}
+  .tool-msg{
+    font-size:.92rem;font-weight:600;color:var(--accent-hover);
+    opacity:0;transition:opacity 200ms ease;
+  }
+  .tool-msg.on{opacity:1;}
+
+  /* ── نَخْزة القاعدة ──────────────────────────── */
+  .nudge{
+    display:none;
+    margin-block-start:.7rem;
+    font-size:.96rem;line-height:1.7;
+    color:#9a3d2c;background:#fdf3f1;
+    border:1px solid #f0dcd6;border-radius:10px;
+    padding:.65rem .95rem;
+  }
+  .nudge.on{display:block;}
+
+  pre{
+    direction:ltr;
+    text-align:left;
+    background:var(--panel);
+    color:var(--panel-ink);
+    border-radius:10px;
+    padding:1rem 1.15rem;
+    margin:0 0 1.1rem;
+    overflow-x:auto;
+    font-family:var(--mono);
+    font-size:1.02rem;
+    font-weight:400;
+    line-height:1.75;
+  }
+  pre code{
+    background:transparent;
+    color:var(--panel-ink);
+    border:0;
+    padding:0;
+    font-family:inherit;
+    font-size:inherit;
+  }
+  pre .cm{color:var(--panel-muted);}
+  pre .st{color:var(--panel-accent);}
+
+  code{
+    font-family:var(--mono);
+    font-size:.9em;
+    direction:ltr;
+    unicode-bidi:embed;
+    background:var(--accent-soft);
+    color:var(--accent-hover);
+    border:1px solid var(--line);
+    border-radius:5px;
+    padding:.08em .34em;
+  }
+
+  /* ── خانة الإجابة ─────────────────────────────── */
+  .field{margin:0 0 .9rem;}
+  .field label{
+    display:block;
+    font-size:.72rem;
+    font-weight:600;
+    letter-spacing:.14em;
+    color:var(--muted);
+    margin-block-end:.45rem;
+  }
+  textarea{
+    display:block;
+    width:100%;
+    min-height:5.4rem;
+    resize:vertical;
+    background:var(--paper);
+    color:var(--ink);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:.7rem .85rem;
+    font-family:var(--mono);
+    font-size:1rem;
+    line-height:1.7;
+    transition:background 200ms ease;
+  }
+  textarea::placeholder{color:var(--muted);opacity:.7;font-family:var(--sans);}
+  textarea:hover{background:var(--surface);}
+  textarea:focus{background:var(--surface);outline:2px solid var(--accent);outline-offset:2px;}
+
+  .saved{
+    display:block;
+    min-height:1.1rem;
+    font-size:.76rem;
+    letter-spacing:.06em;
+    color:var(--muted);
+    margin-block-start:.35rem;
+    opacity:0;
+    transition:opacity 200ms ease;
+  }
+  .saved.on{opacity:1;}
+
+  /* ── زرار المقارنة ────────────────────────────── */
+  .compare{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:.6rem;
+    width:100%;
+    min-height:48px;
+    font:inherit;
+    font-size:1rem;
+    font-weight:600;
+    background:var(--accent);
+    color:#fff;
+    border:1px solid var(--accent);
+    border-radius:10px;
+    padding:.7rem 1rem;
+    cursor:pointer;
+    transition:background 200ms ease, transform 200ms ease;
+  }
+  .compare:hover{background:var(--accent-hover);border-color:var(--accent-hover);}
+  .compare:active{transform:scale(.98);}
+  .compare:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .compare.open{
+    background:var(--surface);
+    color:var(--accent);
+    border-color:var(--line);
+  }
+  .compare.open:hover{background:var(--accent-soft);}
+
+  /* ── الإجابة النموذجية ────────────────────────── */
+  .model{
+    display:none;
+    opacity:0;
+    transform:translateY(8px);
+    transition:opacity 200ms ease, transform 200ms ease;
+    margin-block-start:1rem;
+    border-inline-start:2px solid var(--accent);
+    padding-inline-start:1.1rem;
+  }
+  .model.open{display:block;}
+  .model.shown{opacity:1;transform:none;}
+  .model > :last-child{margin-block-end:0;}
+  .model p{margin:0 0 .7rem;font-size:.98rem;line-height:1.8;max-width:65ch;}
+
+  .out{
+    display:flex;
+    align-items:center;
+    gap:1rem;
+    flex-wrap:wrap;
+    background:var(--panel);
+    color:var(--panel-ink);
+    border-radius:10px;
+    padding:.8rem 1.1rem;
+    margin:0 0 .9rem;
+  }
+  .out .out-label{
+    font-size:.68rem;
+    font-weight:600;
+    letter-spacing:.16em;
+    color:var(--panel-muted);
+  }
+  .out .out-val{
+    direction:ltr;
+    text-align:left;
+    font-family:var(--mono);
+    font-size:1.05rem;
+    font-weight:500;
+    color:var(--panel-accent);
+    white-space:pre;
+  }
+
+  /* ── البونص والخاتمة ──────────────────────────── */
+  .bonus{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:1.3rem 1.35rem 1.4rem;
+    margin:2.4rem 0 1.4rem;
+    box-shadow:var(--shadow-md);
+  }
+  .bonus h2{
+    font-size:1.15rem;
+    font-weight:600;
+    line-height:1.4;
+    margin:0 0 .8rem;
+  }
+  .bonus p{margin:0 0 .8rem;max-width:65ch;font-size:.98rem;}
+  .bonus ol{margin:0 0 .9rem;padding-inline-start:1.3rem;font-size:.98rem;}
+  .bonus li{margin-block-end:.4rem;}
+  .bonus > :last-child{margin-block-end:0;}
+
+  .end{
+    text-align:center;
+    color:var(--muted);
+    font-size:.95rem;
+    line-height:1.8;
+    border-block-start:1px solid var(--line);
+    padding-block-start:1.6rem;
+    margin-block-start:2.4rem;
+    max-width:52ch;
+    margin-inline:auto;
+  }
+
+  footer.foot{
+    position:relative;
+    z-index:1;
+    max-width:44rem;
+    margin:0 auto;
+    border-block-start:1px solid var(--line);
+    padding:1.3rem 1.2rem 2.6rem;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:.8rem;
+    color:var(--muted);
+    font-size:.9rem;
+  }
+  footer.foot a{color:var(--muted);text-decoration:none;border-block-end:1px solid var(--line);padding-block-end:.1rem;transition:color 200ms ease;}
+  footer.foot a:hover{color:var(--accent);}
+  footer.foot a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px;}
+
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    *{transition:none !important;}
+    .bg-layer .gl.f{animation:none;transform:rotate(var(--r,0deg));}
+  }
+
+  @media (max-width:420px){
+    body{font-size:18px;}
+    .ex{padding:1.1rem 1rem 1.2rem;}
+    pre{font-size:.96rem;padding:.85rem .95rem;}
+  }
+  .pagebar .brand-logo,.topbar .brand-logo{height:1.7rem;width:auto;flex:none;opacity:.9;}
+  @media print{ .brand-logo{display:none !important;} }
+</style>
+</head>
+<body>
+
+<div class="bg-layer" aria-hidden="true">
+  <span class="glow" style="top:-12%;left:-10%;width:34rem;height:34rem"></span>
+  <span class="glow" style="top:66%;left:74%;width:30rem;height:30rem"></span>
+  <span class="gl f" style="--r:-10deg;--d:18s;top:10%;left:4%;font-size:2.1rem">{ }</span>
+  <span class="gl a" style="--r:10deg;top:26%;left:88%;font-size:1.9rem">let</span>
+  <span class="gl" style="--r:-4deg;top:44%;left:6%;font-size:2rem">;</span>
+  <span class="gl a f" style="--r:12deg;--d:16s;top:60%;left:86%;font-size:1.9rem">=&gt;</span>
+  <span class="gl" style="--r:-15deg;top:76%;left:5%;font-size:1.9rem">&lt;/&gt;</span>
+  <span class="gl a" style="--r:7deg;top:88%;left:80%;font-size:2.1rem">( )</span>
+  <span class="gl" style="--r:16deg;top:18%;left:72%;font-size:1.8rem">==</span>
+  <span class="gl a" style="--r:-7deg;top:52%;left:78%;font-size:1.9rem">//</span>
+</div>
+
+<div class="pagebar">
+  <div class="row">
+    <a class="back" href="index.html">← مركز المحاضرة</a>
+    <span class="mark">تأسيس البرمجة — بكالوريا ٢٠٢٧</span>
+    <img class="brand-logo" src="data:image/png;base64,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" width="520" height="361" alt="With Yousef — يوسف زكريا التهامى">
+  </div>
+</div>
+
+<header class="topbar">
+  <div class="row">
+    <h1>تدريب المحاضرة الأولى — المتغيرات</h1>
+    <span class="progress" id="progress" aria-live="polite">خلّصت ٠ من ٨</span>
+  </div>
+  <div class="track"><span class="fill" id="fill"></span></div>
+</header>
+
+<div class="wrap">
+
+  <section class="intro">
+    <span class="eyebrow">تأسيس البرمجة · بكالوريا ٢٠٢٧</span>
+    <h2>ثمانية تمارين على المتغيرات</h2>
+    <p>الصفحة شغّالة بدون إنترنت، بدون تسجيل دخول، وبدون تتبّع. إجاباتك بتتحفظ على جهازك أنت بس.</p>
+  </section>
+
+  <div class="rule">
+    <b>القاعدة الوحيدة</b>
+    <p>اكتب إجابتك فى الخانة الأول، وبعدين اضغط «قارن بالإجابة». لو ضغطت قبل ما تفكّر، التمرين بيبقى ملوش أى لازمة — إنت بتخدع نفسك مش المدرس.</p>
+  </div>
+
+  <div class="tools">
+    <button class="tool" type="button" id="copyAll">انسخ إجاباتى</button>
+    <button class="tool warn" type="button" id="clearAll">امسح إجاباتى</button>
+    <span class="tool-msg" id="toolMsg" role="status" aria-live="polite"></span>
+  </div>
+
+  <main>
+
+    <!-- ٠١ -->
+    <article class="ex" id="ex1">
+      <div class="ex-head"><span class="ex-num">٠١</span><h3>إيه اللى هيتطبع؟</h3></div>
+<pre><code>console.log(<span class="st">"5 + 3"</span>);
+console.log(5 + 3);</code></pre>
+      <div class="field">
+        <label for="t1">اكتب إجابتك</label>
+        <textarea id="t1" data-key="l01-ex1" dir="auto" placeholder="اكتب الناتج المتوقع هنا قبل ما تقارن"></textarea>
+        <span class="saved" data-saved="l01-ex1">اتحفظت</span>
+      </div>
+      <button class="compare" type="button" data-target="m1">قارن بالإجابة</button>
+      <div class="model" id="m1">
+        <div class="out"><span class="out-label">الناتج</span><span class="out-val">5 + 3
+8</span></div>
+        <p>السطر الأول بين <strong>علامتى تنصيص</strong>، فالكمبيوتر شايفه نصاً وبيطبعه حرفياً زى ما هو. والسطر التانى من غير تنصيص، فشايفه أرقاماً وبيحسبها.</p>
+      </div>
+    </article>
+
+    <!-- ٠٢ -->
+    <article class="ex" id="ex2">
+      <div class="ex-head"><span class="ex-num">٠٢</span><h3>إيه اللى هيتطبع؟</h3></div>
+<pre><code>let score = 10;
+console.log(score);
+console.log(<span class="st">"score"</span>);</code></pre>
+      <div class="field">
+        <label for="t2">اكتب إجابتك</label>
+        <textarea id="t2" data-key="l01-ex2" dir="auto" placeholder="اكتب الناتج المتوقع هنا قبل ما تقارن"></textarea>
+        <span class="saved" data-saved="l01-ex2">اتحفظت</span>
+      </div>
+      <button class="compare" type="button" data-target="m2">قارن بالإجابة</button>
+      <div class="model" id="m2">
+        <div class="out"><span class="out-label">الناتج</span><span class="out-val">10
+score</span></div>
+        <p>نفس القاعدة تانى: <code>score</code> من غير تنصيص معناها «افتح الدرج واطبع اللى جواه»، فبتطبع <code>10</code>. لكن <code>"score"</code> بين تنصيص نص عادى، فبتطبع الكلمة نفسها.</p>
+      </div>
+    </article>
+
+    <!-- ٠٣ -->
+    <article class="ex" id="ex3">
+      <div class="ex-head"><span class="ex-num">٠٣</span><h3>إيه اللى هيتطبع؟</h3></div>
+<pre><code>let color = <span class="st">"red"</span>;
+color = <span class="st">"blue"</span>;
+console.log(color);</code></pre>
+      <div class="field">
+        <label for="t3">اكتب إجابتك</label>
+        <textarea id="t3" data-key="l01-ex3" dir="auto" placeholder="اكتب الناتج المتوقع هنا قبل ما تقارن"></textarea>
+        <span class="saved" data-saved="l01-ex3">اتحفظت</span>
+      </div>
+      <button class="compare" type="button" data-target="m3">قارن بالإجابة</button>
+      <div class="model" id="m3">
+        <div class="out"><span class="out-label">الناتج</span><span class="out-val">blue</span></div>
+        <p>دى إعادة إسناد. الدرج <code>color</code> كان فيه <code>"red"</code>، وبعدين حطينا فيه <code>"blue"</code> — فالقديمة <strong>ضاعت خالص</strong>. ولاحظ إن السطر التانى من غير <code>let</code>، لأن الدرج موجود خلاص.</p>
+      </div>
+    </article>
+
+    <!-- ٠٤ -->
+    <article class="ex" id="ex4">
+      <div class="ex-head"><span class="ex-num">٠٤</span><h3>إيه اللى هيتطبع؟ ده أهم تمرين فى الصفحة.</h3></div>
+<pre><code>let fish = 0;
+fish = fish + 3;
+fish = fish + 3;
+console.log(fish);</code></pre>
+      <div class="field">
+        <label for="t4">اكتب إجابتك</label>
+        <textarea id="t4" data-key="l01-ex4" dir="auto" placeholder="اكتب قيمة الدرج بعد كل سطر، وبعدين الناتج"></textarea>
+        <span class="saved" data-saved="l01-ex4">اتحفظت</span>
+      </div>
+      <button class="compare" type="button" data-target="m4">قارن بالإجابة</button>
+      <div class="model" id="m4">
+        <div class="out"><span class="out-label">الناتج</span><span class="out-val">6</span></div>
+        <p><strong>القاعدة:</strong> احسب اللى على <strong>يمين</strong> علامة <code>=</code> الأول، وبعدين حُطّ الناتج فى الدرج اللى على شمالها.</p>
+        <p>السطر ٢: اليمين ٠ + ٣ = ٣، فالدرج بقى فيه <strong>٣</strong>. والسطر ٣: اليمين ٣ + ٣ = ٦، فالدرج بقى فيه <strong>٦</strong>.</p>
+      </div>
+    </article>
+
+    <!-- ٠٥ -->
+    <article class="ex" id="ex5">
+      <div class="ex-head"><span class="ex-num">٠٥</span><h3>إيه اللى هيتطبع؟</h3></div>
+<pre><code>let money = 100;
+money = money - 30;
+money = money * 2;
+console.log(money);</code></pre>
+      <div class="field">
+        <label for="t5">اكتب إجابتك</label>
+        <textarea id="t5" data-key="l01-ex5" dir="auto" placeholder="اكتب الناتج المتوقع هنا قبل ما تقارن"></textarea>
+        <span class="saved" data-saved="l01-ex5">اتحفظت</span>
+      </div>
+      <button class="compare" type="button" data-target="m5">قارن بالإجابة</button>
+      <div class="model" id="m5">
+        <div class="out"><span class="out-label">الناتج</span><span class="out-val">140</span></div>
+        <p>١٠٠ ناقص ٣٠ يبقى <strong>٧٠</strong>، وبعدين ٧٠ فى ٢ يبقى <strong>١٤٠</strong>. نفس قاعدة التراكم بالظبط، بس بعمليات مختلفة.</p>
+      </div>
+    </article>
+
+    <!-- ٠٦ -->
+    <article class="ex" id="ex6">
+      <div class="ex-head"><span class="ex-num">٠٦</span><h3>إيه اللى هيتطبع؟ خد بالك من الترتيب.</h3></div>
+<pre><code>let a = 5;
+let b = 2;
+a = a + b;
+b = a + b;
+console.log(a);
+console.log(b);</code></pre>
+      <div class="field">
+        <label for="t6">اكتب إجابتك</label>
+        <textarea id="t6" data-key="l01-ex6" dir="auto" placeholder="اكتب قيمة a وقيمة b بعد كل سطر"></textarea>
+        <span class="saved" data-saved="l01-ex6">اتحفظت</span>
+      </div>
+      <button class="compare" type="button" data-target="m6">قارن بالإجابة</button>
+      <div class="model" id="m6">
+        <div class="out"><span class="out-label">الناتج</span><span class="out-val">7
+9</span></div>
+        <p>السطر ٣: <code>a = 5 + 2 = 7</code>، فالـ<code>a</code> بقى <strong>٧</strong>. والسطر ٤: <code>b = a + b</code>، بس الـ<code>a</code> بقى <strong>٧</strong> مش ٥، يبقى ٧ + ٢ = <strong>٩</strong>.</p>
+        <p><strong>الفخ:</strong> معظم الناس بتستخدم قيمة <code>a</code> القديمة. الكمبيوتر بيقرا سطراً سطراً بالترتيب، ومش بيرجع لورا.</p>
+      </div>
+    </article>
+
+    <!-- ٠٧ -->
+    <article class="ex" id="ex7">
+      <div class="ex-head"><span class="ex-num">٠٧</span><h3>فين الغلط؟ فيه ثلاثة أغلاط — حاول تلاقيهم كلهم.</h3></div>
+<pre><code>let 2price = 30;
+let my price = 10;
+let money = 50;
+let money = money + 20;</code></pre>
+      <div class="field">
+        <label for="t7">اكتب إجابتك</label>
+        <textarea id="t7" data-key="l01-ex7" dir="auto" placeholder="اكتب الأغلاط الثلاثة والتصحيح لكل واحد"></textarea>
+        <span class="saved" data-saved="l01-ex7">اتحفظت</span>
+      </div>
+      <button class="compare" type="button" data-target="m7">قارن بالإجابة</button>
+      <div class="model" id="m7">
+        <p><strong>١)</strong> <code>let 2price</code> — اسم المتغير ما يبدأش برقم. الصح: <code>let price2 = 30;</code></p>
+        <p><strong>٢)</strong> <code>let my price</code> — فيه مسافة جوه الاسم. الصح: <code>let myPrice = 10;</code></p>
+        <p><strong>٣)</strong> السطر الأخير فيه <code>let</code> تانى لنفس المتغير، والدرج بيتعمل <strong>مرة واحدة بس</strong>. الصح: <code>money = money + 20;</code></p>
+      </div>
+    </article>
+
+    <!-- ٠٨ -->
+    <article class="ex" id="ex8">
+      <div class="ex-head"><span class="ex-num">٠٨</span><h3>إيه اللى هيتطبع؟ ده السؤال اللى قفلنا بيه الحصة.</h3></div>
+<pre><code>let a = <span class="st">"2"</span>;
+let b = 5;
+console.log(a + b);
+console.log(2 + 5);</code></pre>
+      <div class="field">
+        <label for="t8">اكتب إجابتك</label>
+        <textarea id="t8" data-key="l01-ex8" dir="auto" placeholder="اكتب الناتج، وليه طلع كده"></textarea>
+        <span class="saved" data-saved="l01-ex8">اتحفظت</span>
+      </div>
+      <button class="compare" type="button" data-target="m8">قارن بالإجابة</button>
+      <div class="model" id="m8">
+        <div class="out"><span class="out-label">الناتج</span><span class="out-val">25
+7</span></div>
+        <p>الـ<code>"2"</code> بين تنصيص، يعنى <strong>نص</strong> مش رقم. والعلامة <code>+</code> بتعمل حاجتين مختلفتين: لو الاتنين أرقام <strong>بتجمع</strong> (٢ + ٥ = ٧)، ولو فيه نص على أى ناحية <strong>بتلزّق</strong> (<code>"2"</code> و<code>5</code> يبقوا <code>"25"</code>).</p>
+        <p>وأقل تعديل يخلّى الناتج ٧: شيل علامتى التنصيص، يعنى <code>let a = 2;</code></p>
+      </div>
+    </article>
+
+  </main>
+
+  <section class="bonus">
+    <h2>جرّب الأكواد دى على متصفح حقيقى</h2>
+    <p>الأكواد اللى فوق تقدر تشغّلها بجد فى أى متصفح، من غير ما تنزّل أى برنامج:</p>
+    <ol>
+      <li>افتح <code>Chrome</code> على كمبيوتر، أو على تابلت فيه وضع سطح المكتب.</li>
+      <li>اضغط <code>F12</code>، أو من القائمة: المزيد من الأدوات ثم أدوات المطوّر.</li>
+      <li>اختار تبويب <code>Console</code>.</li>
+      <li>اكتب أى سطر من اللى فوق واضغط <code>Enter</code>، هتشوف الناتج فوراً.</li>
+    </ol>
+    <p><strong>تحدٍّ:</strong> غيّر الأرقام فى التمرين ٠٤ وتوقّع الناتج <strong>قبل</strong> ما تضغط <code>Enter</code>. لو توقّعك طلع صح خمس مرات ورا بعض، يبقى إنت فاهم المتغيرات فعلاً مش حافظ.</p>
+  </section>
+
+  <p class="end">خلّصت الثمانية؟ ارجع لتمارين الورق المتقدمة — أو ريّح شوية. إنت كتبت أول كود حقيقى النهارده.</p>
+
+</div>
+
+<footer class="foot">
+  <span>المحاضرة الأولى · تدريب التابلت · إعداد يوسف زكريا التهامى</span>
+  <a href="index.html">← مركز المحاضرة</a>
+</footer>
+
+<script>
+(function () {
+  var AR = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+  function ar(n) {
+    return String(n).replace(/\d/g, function (x) { return AR[+x]; });
+  }
+
+  /* ── حفظ الإجابات محلياً ──────────────────────── */
+  function store(key, val) {
+    try { localStorage.setItem(key, val); return true; } catch (e) { return false; }
+  }
+  function load(key) {
+    try { return localStorage.getItem(key); } catch (e) { return null; }
+  }
+
+  var exs = Array.prototype.slice.call(document.querySelectorAll('.ex'));
+  var areas = Array.prototype.slice.call(document.querySelectorAll('textarea[data-key]'));
+  var total = exs.length;
+
+  /* ── علامة إتمام لكل تمرين ────────────────────── */
+  var TICK = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.5 L9.5 17 L19 7"/></svg>';
+  exs.forEach(function (ex) {
+    var head = ex.querySelector('.ex-head');
+    if (!head) { return; }
+    var t = document.createElement('span');
+    t.className = 'tick';
+    t.setAttribute('aria-hidden', 'true');
+    t.innerHTML = TICK;
+    head.appendChild(t);
+  });
+
+  var label = document.getElementById('progress');
+  var fill = document.getElementById('fill');
+
+  function refresh() {
+    var done = 0;
+    areas.forEach(function (ta) {
+      var ex = ta.closest ? ta.closest('.ex') : null;
+      var filled = ta.value.trim().length > 0;
+      if (filled) { done++; }
+      if (ex) { ex.classList.toggle('done', filled); }
+    });
+    if (label) { label.textContent = 'خلّصت ' + ar(done) + ' من ' + ar(total); }
+    if (fill) { fill.style.width = (done / total * 100) + '%'; }
+  }
+
+  var timers = {};
+  areas.forEach(function (ta) {
+    var key = ta.getAttribute('data-key');
+    var saved = load(key);
+    if (saved !== null) { ta.value = saved; }
+
+    var flag = document.querySelector('[data-saved="' + key + '"]');
+    ta.addEventListener('input', function () {
+      refresh();
+      clearTimeout(timers[key]);
+      timers[key] = setTimeout(function () {
+        if (store(key, ta.value) && flag) {
+          flag.classList.add('on');
+          setTimeout(function () { flag.classList.remove('on'); }, 1400);
+        }
+      }, 350);
+    });
+  });
+  refresh();
+
+  /* ── نسخ الإجابات ومسحها ──────────────────────── */
+  var msg = document.getElementById('toolMsg');
+  var msgTimer;
+  function say(text) {
+    if (!msg) { return; }
+    msg.textContent = text;
+    msg.classList.add('on');
+    clearTimeout(msgTimer);
+    msgTimer = setTimeout(function () { msg.classList.remove('on'); }, 2600);
+  }
+
+  var copyBtn = document.getElementById('copyAll');
+  if (copyBtn) {
+    copyBtn.addEventListener('click', function () {
+      var lines = ['تدريب المحاضرة الأولى — المتغيرات', ''];
+      areas.forEach(function (ta, i) {
+        var v = ta.value.trim();
+        lines.push('التمرين ' + ar(i + 1) + ': ' + (v.length ? v : '—'));
+      });
+      var text = lines.join('\n');
+
+      function fallback() {
+        var tmp = document.createElement('textarea');
+        tmp.value = text;
+        tmp.setAttribute('readonly', '');
+        tmp.style.position = 'fixed';
+        tmp.style.insetInlineStart = '-9999px';
+        document.body.appendChild(tmp);
+        tmp.select();
+        try { document.execCommand('copy'); say('اتنسخت — تقدر تبعتها لمدرسك'); }
+        catch (e) { say('المتصفح ما سمحش بالنسخ'); }
+        document.body.removeChild(tmp);
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () {
+          say('اتنسخت — تقدر تبعتها لمدرسك');
+        }).catch(fallback);
+      } else {
+        fallback();
+      }
+    });
+  }
+
+  var clearBtn = document.getElementById('clearAll');
+  if (clearBtn) {
+    var armed = false, armTimer;
+    clearBtn.addEventListener('click', function () {
+      if (!armed) {
+        armed = true;
+        clearBtn.textContent = 'متأكد؟ اضغط تانى';
+        say('الضغطة الجاية هتمسح كل إجاباتك');
+        clearTimeout(armTimer);
+        armTimer = setTimeout(function () {
+          armed = false;
+          clearBtn.textContent = 'امسح إجاباتى';
+        }, 4000);
+        return;
+      }
+      clearTimeout(armTimer);
+      armed = false;
+      clearBtn.textContent = 'امسح إجاباتى';
+      areas.forEach(function (ta) {
+        ta.value = '';
+        try { localStorage.removeItem(ta.getAttribute('data-key')); } catch (e) {}
+      });
+      refresh();
+      say('اتمسحت — الصفحة جاهزة لطالب تانى');
+    });
+  }
+
+  /* ── كشف الإجابة النموذجية ────────────────────── */
+  Array.prototype.forEach.call(document.querySelectorAll('.compare'), function (btn) {
+    var box = document.getElementById(btn.getAttribute('data-target'));
+    if (!box) { return; }
+    btn.setAttribute('aria-expanded', 'false');
+    btn.setAttribute('aria-controls', box.id);
+
+    var host = btn.parentNode;
+    var ta = host ? host.querySelector('textarea[data-key]') : null;
+    var nudge = document.createElement('p');
+    nudge.className = 'nudge';
+    nudge.textContent = 'اكتب إجابتك الأول — حتى لو مش متأكد. اضغط تانى لو عايز تشوف الإجابة برضه.';
+    if (host && btn.nextSibling) { host.insertBefore(nudge, btn.nextSibling); }
+    var warned = false;
+
+    btn.addEventListener('click', function () {
+      var open = box.classList.contains('open');
+      if (!open && ta && ta.value.trim().length === 0 && !warned) {
+        warned = true;
+        nudge.classList.add('on');
+        ta.focus();
+        return;
+      }
+      nudge.classList.remove('on');
+      if (open) {
+        box.classList.remove('shown');
+        setTimeout(function () { box.classList.remove('open'); }, 200);
+        btn.textContent = 'قارن بالإجابة';
+        btn.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+      } else {
+        box.classList.add('open');
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () { box.classList.add('shown'); });
+        });
+        btn.textContent = 'إخفاء الإجابة';
+        btn.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+})();
+</script>
+
+</body>
+</html>

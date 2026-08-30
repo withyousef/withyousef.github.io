@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="author" content="يوسف زكريا التهامى — Yousef Zakaria El-Tohamy">
+<title>اختبار المحاضرة السابقة — المحاضرة الثالثة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../assets/lecture.css">
+<style>
+  /* التصميم المشترك فى ../assets/lecture.css — هنا الخاص بالصفحة دى فقط */
+  body{font-size:17px;}
+
+  .topbar .row{max-width:56rem;padding:.95rem 1.6rem .85rem;flex-wrap:wrap;}
+
+  .shell{position:relative;z-index:1;max-width:56rem;margin:0 auto;padding:2.6rem 1.6rem 0;}
+
+  .head{margin-block-end:2rem;}
+  .head p{margin:0 0 1rem;}
+
+  h2{font-size:1.2rem;font-weight:600;line-height:1.4;margin:0 0 .8rem;}
+  h3{font-size:1.05rem;font-weight:600;line-height:1.45;margin:1.7rem 0 .6rem;}
+  h4{margin:2rem 0 .5rem;}
+
+  .zone-label{margin-block-end:1rem;}
+
+  /* ── ورقة الطالب ─────────────────────────────── */
+  .sheet{margin:0 0 3rem;}
+
+  .tbl-wrap{margin:0 0 1.4rem;}
+
+  footer.foot{
+    position:relative;z-index:1;max-width:56rem;margin:0 auto;
+    padding:1.3rem 1.6rem 2.6rem;
+  }
+
+  @media (max-width:560px){
+    .shell{padding:2rem 1.1rem 0;}
+    .teacher .inner{padding:2rem 1.1rem 2.6rem;}
+    .topbar .row{padding:.8rem 1.1rem .7rem;}
+    .sheet{padding:1.3rem 1.2rem 1.6rem;}
+  }
+
+  /* ── الطباعة: ورقة الطالب فقط ────────────────── */
+  @media print{
+    /* هامش صفر = ترويسات المتصفح (المسار والاسم والتاريخ) ملهاش مكان تتطبع فيه */
+    @page{margin:0;}
+    html,body{background:#fff;color:#000;font-size:11pt;}
+    .bg-layer,.topbar,.head,.print-row,.zone-label,.teacher,footer.foot{display:none !important;}
+    .shell{max-width:none;padding:0;}
+    .sheet{
+      background:#fff !important;color:#000 !important;
+      border:0;border-radius:0;box-shadow:none;margin:0;
+      padding:13mm 15mm;
+    }
+    .sheet-top{border-block-end:2px solid #000;}
+    .sheet-id{color:#444 !important;}
+    .idline span{border-block-end:1px dotted #000 !important;color:#000 !important;}
+    .ansline{border-block-end:1px dotted #000 !important;}
+    h4{color:#000 !important;break-after:avoid;page-break-after:avoid;}
+    pre{background:#fff !important;color:#000 !important;border:1px solid #666 !important;}
+    pre code{background:#fff !important;color:#000 !important;border:0 !important;}
+    pre .st,pre .cm{color:#000 !important;}
+    code{background:#fff !important;color:#000 !important;border:1px solid #999 !important;}
+    .q{break-after:avoid;page-break-after:avoid;}
+    .qb{break-inside:avoid;page-break-inside:avoid;}
+    .sheet pre{break-inside:avoid;page-break-inside:avoid;break-after:avoid;page-break-after:avoid;}
+    .sheet .q{margin-block:3.5mm 1.5mm;}
+    .sheet .ansline{margin-block:2.5mm;}
+    .sheet pre{margin-block:1.5mm;padding:2.5mm 4mm;font-size:9.5pt;line-height:1.5;}
+    .idline{margin-block:2.5mm;}
+    .sheet-top h2{font-size:14pt;margin-block:0 1mm;}
+    .sheet > p{margin-block:2mm;line-height:1.6;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-layer" aria-hidden="true">
+  <span class="glow" style="top:-14%;left:-10%;width:44rem;height:44rem"></span>
+  <span class="glow" style="top:42%;left:66%;width:38rem;height:38rem"></span>
+  <span class="glow" style="top:80%;left:6%;width:30rem;height:30rem"></span>
+  <span class="gl f" style="--r:-12deg;--d:16s;top:6%;left:5%;font-size:2.6rem">{ }</span>
+  <span class="gl" style="--r:8deg;top:12%;left:78%;font-size:2.1rem">&lt;/&gt;</span>
+  <span class="gl a" style="--r:-6deg;top:22%;left:22%;font-size:1.9rem">=&gt;</span>
+  <span class="gl" style="--r:0deg;top:30%;left:62%;font-size:2.8rem">;</span>
+  <span class="gl a f" style="--r:10deg;--d:19s;top:38%;left:8%;font-size:2.2rem">let</span>
+  <span class="gl" style="--r:-16deg;top:18%;left:44%;font-size:2.4rem">if</span>
+  <span class="gl" style="--r:14deg;top:47%;left:86%;font-size:2.5rem">( )</span>
+  <span class="gl a" style="--r:-8deg;top:55%;left:14%;font-size:2rem">==</span>
+  <span class="gl f" style="--r:6deg;--d:14s;top:63%;left:70%;font-size:2.3rem">//</span>
+  <span class="gl a" style="--r:18deg;top:72%;left:34%;font-size:2.7rem">{ }</span>
+  <span class="gl" style="--r:-10deg;top:80%;left:88%;font-size:1.8rem">&lt;/&gt;</span>
+  <span class="gl" style="--r:4deg;top:88%;left:18%;font-size:2.1rem">let</span>
+  <span class="gl a f" style="--r:-14deg;--d:17s;top:92%;left:56%;font-size:2.3rem">=&gt;</span>
+  <span class="gl" style="--r:12deg;top:8%;left:34%;font-size:2.2rem">;</span>
+  <span class="gl a" style="--r:-4deg;top:26%;left:92%;font-size:2rem">( )</span>
+  <span class="gl" style="--r:20deg;top:58%;left:48%;font-size:1.9rem">if</span>
+  <span class="gl f" style="--r:-18deg;--d:20s;top:36%;left:72%;font-size:2.4rem">==</span>
+  <span class="gl a" style="--r:8deg;top:44%;left:38%;font-size:2rem">//</span>
+  <span class="gl" style="--r:-6deg;top:66%;left:4%;font-size:2.2rem">{ }</span>
+  <span class="gl a" style="--r:16deg;top:76%;left:60%;font-size:1.9rem">let</span>
+  <span class="gl f" style="--r:-2deg;--d:13s;top:84%;left:44%;font-size:2.5rem">;</span>
+  <span class="gl a" style="--r:10deg;top:52%;left:26%;font-size:2.1rem">&lt;/&gt;</span>
+  <span class="gl a f" style="--r:-5deg;--d:18s;top:4%;left:58%;font-size:1.7rem">console.log()</span>
+  <span class="gl" style="--r:9deg;top:16%;left:10%;font-size:1.8rem">function</span>
+  <span class="gl a" style="--r:-12deg;top:33%;left:30%;font-size:1.9rem">return</span>
+  <span class="gl f" style="--r:7deg;--d:15s;top:41%;left:54%;font-size:2.4rem">[ ]</span>
+  <span class="gl a" style="--r:-9deg;top:60%;left:88%;font-size:2rem">===</span>
+  <span class="gl" style="--r:15deg;top:69%;left:20%;font-size:1.8rem">i++</span>
+  <span class="gl a f" style="--r:4deg;--d:21s;top:78%;left:76%;font-size:1.8rem">for</span>
+  <span class="gl" style="--r:-7deg;top:87%;left:34%;font-size:1.9rem">&amp;&amp;</span>
+  <span class="gl a" style="--r:11deg;top:95%;left:10%;font-size:1.7rem">"hello"</span>
+  <span class="gl" style="--r:-3deg;top:2%;left:88%;font-size:1.8rem">let x = 5;</span>
+  <span class="grain"></span>
+</div>
+
+<header class="topbar">
+  <div class="row">
+    <a class="back" href="index.html">← مركز المحاضرة</a>
+    <span class="mark">تأسيس البرمجة — بكالوريا ٢٠٢٧</span>
+    <img class="brand-logo" src="../assets/logo.png" width="520" height="361" alt="With Yousef — يوسف زكريا التهامى">
+  </div>
+</header>
+
+<div class="shell">
+
+  <div class="head">
+    <span class="eyebrow">ورقة الطلاب + مفتاح المعلم</span>
+    <h1>اختبار المحاضرة السابقة</h1>
+    <p>سبعة أسئلة على الأنواع والتحويل، خمس دقائق حل وخمس تصحيح — بلوك الدقيقة ٥ إلى ١٥. الهدف تثبيت مش تقييم، والدرجة ما تتسجّلش عند حد. الطباعة بتطلّع ورقة الطالب لوحدها، والمفتاح مستبعد تماماً.</p>
+  </div>
+
+  <div class="print-row">
+    <button class="btn" type="button" id="printBtn">طباعة ورقة الطالب</button>
+  </div>
+
+  <main>
+    <span class="zone-label">ورقة الطالب</span>
+
+    <article class="sheet" id="sheet">
+      <div class="sheet-top">
+        <h2>اختبار المحاضرة الثانية — ٧ أسئلة</h2>
+        <span class="sheet-id">إعداد: يوسف زكريا التهامى · تأسيس البرمجة · بكالوريا ٢٠٢٧</span>
+      </div>
+      <div class="idline"><span>الاسم</span><span>التاريخ</span></div>
+
+      <p><strong>خمس دقائق، والدرجة مش هتتسجّل عند حد.</strong> ده تثبيت لمحاضرة الأنواع قبل ما نبنى عليها النهارده. لو مش عارف إجابة، سيبها فاضية وكمّل.</p>
+
+      <div class="qb">
+      <p class="q">١) <code>typeof "12"</code> بترجّع إيه بالظبط؟</p>
+      <div class="ansline"></div>
+      </div>
+
+      <div class="qb">
+      <p class="q">٢) إيه اللى هيتطبع؟ وليه؟</p>
+<pre><code>console.log(<span class="st">"6"</span> + 2);</code></pre>
+      <div class="ansline"></div>
+      <div class="ansline"></div>
+      </div>
+
+      <div class="qb">
+      <p class="q">٣) عدّل السطر اللى فوق علشان يطبع <code>8</code>.</p>
+      <div class="ansline"></div>
+      </div>
+
+      <div class="qb">
+      <p class="q">٤) <code>Number("abc")</code> بترجّع إيه؟ ويعنى إيه؟</p>
+      <div class="ansline"></div>
+      <div class="ansline"></div>
+      </div>
+
+      <div class="qb">
+      <p class="q">٥) <code>7 === "7"</code> بترجّع إيه؟ وليه؟</p>
+      <div class="ansline"></div>
+      <div class="ansline"></div>
+      </div>
+
+      <div class="qb">
+      <p class="q">٦) اكتب ناتج كل سطر من التلاتة.</p>
+<pre><code>let x = 3;
+let y = <span class="st">"3"</span>;
+
+console.log(typeof x);
+console.log(typeof y);
+console.log(x == y);</code></pre>
+      <div class="ansline"></div>
+      <div class="ansline"></div>
+      </div>
+
+      <div class="qb">
+      <p class="q">٧) الكود ده هيطبع إيه؟ وعدّله علشان يطبع <code>42</code>.</p>
+<pre><code>let price = <span class="st">"40"</span>;
+let count = 2;
+let total = price + count;
+console.log(total);</code></pre>
+      <div class="ansline"></div>
+      <div class="ansline"></div>
+      </div>
+    </article>
+  </main>
+
+</div>
+
+<section class="teacher" aria-label="منطقة المعلم">
+  <div class="inner">
+    <details class="tzone">
+      <summary>
+        <span class="band-tag">للمعلم</span>
+        <span class="ttl">مفتاح التصحيح وقراءة النتيجة</span>
+      </summary>
+    <p class="lede">الجزء ده مستبعد من الطباعة. صحّح شفوياً مع الطلبة فى الخمس دقائق اللى بعد الحل، ولا تجمّع الأوراق.</p>
+
+    <h3>مفتاح التصحيح</h3>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th style="width:3.2rem">#</th><th style="width:38%">الإجابة</th><th>الغلط الشائع وإيه تعمل</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="slot">١</td>
+          <td><code>string</code> — لأن الرقم بين تنصيص، فهو نص مش رقم.</td>
+          <td>الإجابة <code>number</code> معناها إنه بيبص للشكل مش للتنصيص. ارجع بسرعة للسبورة واكتب <code>12</code> و<code>"12"</code> جنب بعض.</td>
+        </tr>
+        <tr>
+          <td class="slot">٢</td>
+          <td><strong>62</strong> — طرف واحد نص، فالعلامة <code>+</code> لزقت بدل ما تجمع.</td>
+          <td>الإجابة <code>8</code> شائعة جداً. ما تصلّحش بسرعة — اسأله: النوع إيه؟ وسيبه هو يوصل.</td>
+        </tr>
+        <tr>
+          <td class="slot">٣</td>
+          <td><code>console.log(Number("6") + 2);</code> — ومقبول كمان شيل التنصيص لو الرقم تحت إيدك.</td>
+          <td>لو كتب <code>Number("6" + 2)</code>، ده بيلزّق الأول ويطلع <code>62</code>. اكتبها على السبورة وخلّيه يشوف بنفسه.</td>
+        </tr>
+        <tr>
+          <td class="slot">٤</td>
+          <td><code>NaN</code> يعنى <strong>Not a Number</strong>. ومش رسالة خطأ — البرنامج بيكمّل شغل عادى.</td>
+          <td>«بيطلع خطأ» إجابة شائعة وغلط. النقطة دى هى اللى بتخلّى <code>NaN</code> خطيرة، فوقّف عندها ثوانى.</td>
+        </tr>
+        <tr>
+          <td class="slot">٥</td>
+          <td><strong>false</strong> — القيمة واحدة بس النوع مختلف، وثلاث علامات بتقارن الاتنين.</td>
+          <td>ده السؤال المفصلى للنهارده. لو الأغلبية جابته صح، إنت جاهز تدخل الشروط من غير مراجعة.</td>
+        </tr>
+        <tr>
+          <td class="slot">٦</td>
+          <td><code>number</code> ثم <code>string</code> ثم <strong>true</strong>.</td>
+          <td>السطر التالت هو الفخ: <code>==</code> المتساهلة بتحوّل قبل ما تقارن. لو حد جاب <code>false</code>، هو خلط بينها وبين <code>===</code>.</td>
+        </tr>
+        <tr>
+          <td class="slot">٧</td>
+          <td>بيطبع <strong>402</strong>. والصح: <code>let total = Number(price) + count;</code></td>
+          <td>ده أقرب سؤال للحياة الحقيقية. لو نص القاعة جابه صح، اتنقّل للشروط فوراً — الأساس ثابت.</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>قراءة النتيجة — قرار قبل ما تبدأ</h3>
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th style="width:12rem">اللى شفته</th><th>التصرّف</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>أكتر من نص المجموعة غلط فى <strong>٢</strong> أو <strong>٧</strong></td>
+          <td>ارجع خمس دقائق لقاعدة «طرف واحد نص يكفى» قبل ما تبدأ الشروط. الشروط بتقارن قيماً، ومقارنة قيمتين نوعهما ملخبط بتدّى قرارات غلط من غير ما حد ياخد باله.</td>
+        </tr>
+        <tr>
+          <td>أكتر من نص المجموعة غلط فى <strong>٥</strong> أو <strong>٦</strong></td>
+          <td>خُد ثلاث دقائق زيادة فى قسم «المقارنة بترجّع قيمة» فى أول المحاضرة، وثبّت <code>===</code> قبل ما تدخل <code>if</code> خالص. الشرط مبنى على المقارنة، ومقارنة مهزوزة بتنهار جوه الشرط.</td>
+        </tr>
+        <tr>
+          <td>الأغلبية جابت ٥ فأكتر</td>
+          <td>امشِ فى الخطة زى ما هى، وخُد الوقت الزيادة من هنا وحطّه فى بلوك <code>else if</code> — هو أصعب بلوك فى الحصة وأكترهم أثراً.</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="card">
+      <div class="script">
+        <span class="who">يُقال بصوت عالٍ — قبل التوزيع</span>
+        <p>«الورقة دى خمس دقائق، ومحدش هياخد عليها درجة. أنا مش بختبركم — أنا بختبر نفسى: عايز أعرف الأسبوع اللى فات وصل ولا لأ. لو لقيت حاجة ما وصلتش، هرجعلها دلوقتى حالاً قبل ما نكمّل. فاللى مش عارف يسيبها فاضية بضمير مرتاح، ده بيساعدنى أكتر من التخمين».</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>ليه سبعة مش خمسة</h3>
+      <p>الخمسة الأصلية اتكتبت فى خطة المحاضرة اللى فاتت ومنقولة هنا حرفياً، وبتغطى <code>typeof</code> واللزق والتحويل و<code>NaN</code> و<code>===</code>. زوّدنا سؤالين: <strong>٦</strong> بيجمع النوع والمقارنة فى كود واحد — وهو التمرين الأقرب لشكل الشرط اللى هيتكتب النهارده. و<strong>٧</strong> بيحطّ الطالب فى موقف عملى كامل: يقرا، يكتشف الغلط، ويصلّحه.</p>
+      <p>لو الوقت ضيّق جداً، اقطع السؤال <strong>٤</strong> — <code>NaN</code> أقلهم أثراً على محتوى النهارده. ما تقطعش ٥ ولا ٦ أبداً، دول تمهيد مباشر للشرط.</p>
+    </div>
+    </details>
+  </div>
+</section>
+
+<footer class="foot">
+  <span>المحاضرة الثالثة · اختبار المحاضرة السابقة · إعداد يوسف زكريا التهامى</span>
+  <a href="index.html">← مركز المحاضرة</a>
+</footer>
+
+<script>
+(function () {
+  var btn = document.getElementById('printBtn');
+  if (btn) { btn.addEventListener('click', function () { window.print(); }); }
+})();
+</script>
+
+</body>
+</html>

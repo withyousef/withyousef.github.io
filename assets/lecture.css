@@ -1,0 +1,487 @@
+/* ══════════════════════════════════════════════════════════════════════
+   lecture.css — نظام التصميم المشترك لصفحات الدورة التأسيسية
+   ــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــــ
+   الملف ده هو المصدر الوحيد للتصميم المشترك بين صفحات المحاضرات
+   (index / plan / compass / quiz / diagnostic / lecture / advanced).
+   أى تعديل فى الهوية البصرية يتعمل هنا مرة واحدة، مش فى كل صفحة.
+
+   طريقة الاستعمال فى كل صفحة:
+     <link rel="stylesheet" href="../assets/lecture.css">
+     <style> ... القواعد الخاصة بالصفحة دى فقط ... </style>
+   الـ<style> بييجى بعد الـ<link>، فأى قاعدة جوّاه بتغلب القاعدة المشتركة.
+
+   استثناء مقصود: practice.html مالهاش <link> — لازم تفضل ملفاً واحداً
+   مستقلاً بالكامل عشان تشتغل أوفلاين على تابلت الطالب.
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ═══ الرموز التصميمية ══════════════════════════════════════════════ */
+:root{
+  --paper:#faf8f5;
+  --surface:#ffffff;
+  --ink:#1a1d21;
+  --muted:#6b6f76;
+  --line:#e7e3dc;
+  --accent:#0f766e;
+  --accent-hover:#115e59;
+  --accent-soft:#f0faf8;
+  --panel:#1b1e24;
+  --panel-ink:#e6e9ef;
+  --panel-muted:#8b93a3;
+  --panel-accent:#7dd3c8;
+  --shadow:0 1px 3px rgb(26 29 33 / .08);
+  --shadow-md:0 6px 20px rgb(26 29 33 / .07);
+  --shadow-lg:0 16px 44px rgb(26 29 33 / .10);
+  --sans:"IBM Plex Sans Arabic","Segoe UI",Tahoma,sans-serif;
+  --mono:"IBM Plex Mono",Consolas,"Segoe UI",Tahoma,monospace;
+}
+
+/* ═══ التصفير والأساس ═══════════════════════════════════════════════ */
+/* ملاحظة: font-size مش هنا — كل صفحة بتحدّد مقاسها بنفسها. */
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+body{
+  margin:0;
+  min-height:100dvh;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--sans);
+  line-height:1.8;
+  font-variant-numeric:tabular-nums;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* ═══ طبقة الخلفية المزخرفة ═════════════════════════════════════════ */
+.bg-layer{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.bg-layer .gl{
+  position:absolute;
+  font-family:var(--mono);
+  font-weight:600;
+  color:var(--ink);
+  opacity:.085;
+  white-space:nowrap;
+  line-height:1;
+  transform:rotate(var(--r,0deg));
+}
+.bg-layer .gl.a{color:var(--accent);opacity:.13;}
+.bg-layer .glow{
+  position:absolute;
+  border-radius:50%;
+  background:radial-gradient(circle,#f0faf8 0%,rgba(240,250,248,0) 70%);
+}
+.bg-layer .grain{
+  position:absolute;
+  inset:0;
+  opacity:.03;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:120px 120px;
+}
+@keyframes drift{
+  from{transform:translateY(-10px) rotate(var(--r,0deg));}
+  to{transform:translateY(10px) rotate(var(--r,0deg));}
+}
+.bg-layer .gl.f{animation:drift var(--d,16s) ease-in-out infinite alternate;}
+
+/* ═══ الترويسة العلوية ══════════════════════════════════════════════ */
+/* max-width والحشو بيتحدّدا فى كل صفحة (عرض العمود بيختلف). */
+.topbar{
+  position:relative;
+  z-index:2;
+  border-block-end:1px solid var(--line);
+  background:var(--surface);
+}
+.topbar .row{
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:1rem;
+}
+.back{
+  font-size:.9rem;
+  font-weight:600;
+  color:var(--accent);
+  text-decoration:none;
+  border-radius:8px;
+  padding:.2rem .45rem;
+  transition:background 200ms ease;
+}
+.back:hover{background:var(--accent-soft);}
+.back:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.mark{font-size:.74rem;font-weight:600;letter-spacing:.14em;color:var(--muted);}
+
+/* ═══ التيبوغرافيا ══════════════════════════════════════════════════ */
+.eyebrow{
+  display:inline-block;
+  font-size:.68rem;
+  font-weight:600;
+  letter-spacing:.14em;
+  color:var(--muted);
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:.2rem .75rem;
+  margin-block-end:1rem;
+}
+.head h1{
+  font-size:clamp(1.7rem,4.4vw,2.4rem);
+  font-weight:700;
+  line-height:1.24;
+  letter-spacing:-.01em;
+  margin:0 0 .8rem;
+}
+.head p{color:var(--muted);margin:0;max-width:66ch;}
+h4{font-size:.72rem;font-weight:600;letter-spacing:.14em;color:var(--muted);margin:1.5rem 0 .5rem;}
+p{margin:0 0 1rem;max-width:70ch;}
+.lede{color:var(--muted);}
+strong{font-weight:600;}
+
+/* ═══ الكود ═════════════════════════════════════════════════════════ */
+pre{
+  direction:ltr;
+  text-align:left;
+  background:var(--panel);
+  color:var(--panel-ink);
+  border-radius:10px;
+  padding:.95rem 1.15rem;
+  margin:.5rem 0 .9rem;
+  overflow-x:auto;
+  font-family:var(--mono);
+  font-size:1rem;
+  line-height:1.75;
+}
+pre code{background:transparent;color:var(--panel-ink);border:0;padding:0;font-family:inherit;font-size:inherit;}
+pre .cm{color:var(--panel-muted);}
+pre .st{color:var(--panel-accent);}
+code{
+  font-family:var(--mono);
+  font-size:.9em;
+  direction:ltr;
+  unicode-bidi:embed;
+  background:var(--accent-soft);
+  color:var(--accent-hover);
+  border:1px solid var(--line);
+  border-radius:5px;
+  padding:.08em .34em;
+}
+
+/* ═══ البطاقات واللوحات الجانبية ════════════════════════════════════ */
+.card{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:1.3rem 1.5rem;
+  margin:0 0 1.3rem;
+  box-shadow:var(--shadow);
+}
+.card > :last-child{margin-block-end:0;}
+.card h3:first-child{margin-block-start:0;}
+
+.callout{
+  border-inline-start:2px solid var(--accent);
+  background:var(--accent-soft);
+  border-radius:0 12px 12px 0;
+  padding:1.05rem 1.3rem;
+  margin:0 0 1.3rem;
+}
+.callout > :last-child{margin-block-end:0;}
+.callout b{display:block;font-size:.68rem;font-weight:600;letter-spacing:.14em;color:var(--accent);margin-block-end:.35rem;}
+
+/* ═══ الجداول ═══════════════════════════════════════════════════════ */
+/* الهامش السفلى للغلاف بيتحدّد فى كل صفحة. */
+.tbl-wrap{overflow-x:auto;}
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:.95rem;
+  line-height:1.7;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:12px;
+}
+th,td{text-align:start;vertical-align:top;padding:.7rem .9rem;border-block-end:1px solid var(--line);}
+thead th{font-size:.7rem;font-weight:600;letter-spacing:.14em;color:var(--muted);white-space:nowrap;}
+tbody tr:last-child td{border-block-end:0;}
+td.slot{font-family:var(--mono);font-size:.88rem;font-weight:500;white-space:nowrap;color:var(--accent);}
+
+/* ═══ لافتة المنطقة ═════════════════════════════════════════════════ */
+/* الهامش بيتحدّد فى كل صفحة. */
+.zone-label{
+  display:flex;
+  align-items:center;
+  gap:.9rem;
+  font-size:.7rem;
+  font-weight:600;
+  letter-spacing:.16em;
+  color:var(--accent);
+}
+.zone-label::after{content:"";flex:1;height:1px;background:var(--line);}
+
+/* ═══ ورقة الطالب القابلة للطباعة ═══════════════════════════════════ */
+/* الهامش السفلى للورقة بيتحدّد فى كل صفحة. */
+.sheet{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:1.7rem 1.9rem 2.1rem;
+  box-shadow:var(--shadow-md);
+}
+.sheet-top{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  gap:.6rem;
+  border-block-end:1px solid var(--line);
+  padding-block-end:.75rem;
+  margin-block-end:1.2rem;
+}
+.sheet-top h2{margin:0;}
+.sheet-id{font-size:.7rem;font-weight:600;letter-spacing:.14em;color:var(--muted);}
+.idline{display:flex;gap:2.5rem;flex-wrap:wrap;color:var(--muted);font-size:.94rem;margin-block-end:1.3rem;}
+.idline span{flex:1 1 12rem;border-block-end:1px dotted var(--muted);padding-block-end:.15rem;}
+.q{font-weight:600;margin:1.4rem 0 .45rem;max-width:70ch;}
+.ansline{border-block-end:1px dotted var(--muted);height:1.75rem;margin-block-end:.3rem;max-width:70ch;}
+.opts{list-style:none;padding:0;margin:.3rem 0 .7rem;max-width:70ch;}
+.opts li{margin-block-end:.22rem;}
+.opts li::before{content:"\25A2";color:var(--muted);margin-inline-end:.5rem;}
+
+/* ═══ الأزرار ═══════════════════════════════════════════════════════ */
+.print-row{margin:0 0 1.6rem;}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  font:inherit;
+  font-size:.92rem;
+  font-weight:600;
+  background:var(--accent);
+  color:#fff;
+  border:1px solid var(--accent);
+  border-radius:999px;
+  padding:.6rem 1.3rem;
+  cursor:pointer;
+  box-shadow:var(--shadow);
+  transition:background 200ms ease, transform 200ms ease;
+}
+.btn::before{content:"";width:.4rem;height:.4rem;border-radius:50%;background:#fff;}
+.btn:hover{background:var(--accent-hover);border-color:var(--accent-hover);}
+.btn:active{transform:scale(.98);}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+
+/* ═══ الأقسام القابلة للطى — شرح الطقس ══════════════════════════════ */
+details.howto{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:14px;
+  margin:0 0 2rem;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+}
+details.howto summary{
+  list-style:none;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:.7rem;
+  padding:1rem 1.3rem;
+  font-weight:600;
+  font-size:.98rem;
+  color:var(--accent-hover);
+  transition:background 200ms ease;
+}
+details.howto summary::-webkit-details-marker{display:none;}
+details.howto summary::before{
+  content:"";
+  width:.5rem;height:.5rem;
+  border-inline-start:2px solid var(--accent);
+  border-block-end:2px solid var(--accent);
+  transform:rotate(45deg);
+  transition:transform 200ms ease;
+  flex:0 0 auto;
+}
+details.howto[open] summary::before{transform:rotate(135deg);}
+details.howto summary:hover{background:var(--accent-soft);}
+details.howto summary:focus-visible{outline:2px solid var(--accent);outline-offset:-2px;}
+details.howto[open] summary{border-block-end:1px solid var(--line);}
+details.howto .inner-pad{padding:1.3rem 1.3rem .2rem;}
+details.howto .ritual{margin:0;padding:1.3rem 1.3rem 0;}
+details.howto .callout{margin:1.1rem 1.3rem 1.3rem;}
+
+/* ═══ الأقسام القابلة للطى — منطقة المعلم ═══════════════════════════ */
+details.tzone summary{
+  list-style:none;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  flex-wrap:wrap;
+  padding:.2rem 0;
+}
+details.tzone summary::-webkit-details-marker{display:none;}
+details.tzone summary .ttl{
+  font-size:clamp(1.25rem,2.8vw,1.7rem);
+  font-weight:700;
+  letter-spacing:-.005em;
+  color:var(--ink);
+  transition:color 200ms ease;
+}
+details.tzone summary::after{
+  content:"";
+  width:.5rem;height:.5rem;
+  flex:0 0 auto;
+  border-inline-start:2px solid var(--accent);
+  border-block-end:2px solid var(--accent);
+  transform:rotate(45deg);
+  transition:transform 200ms ease;
+}
+details.tzone[open] summary::after{transform:rotate(135deg);}
+details.tzone summary:hover .ttl{color:var(--accent-hover);}
+details.tzone summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px;}
+details.tzone[open] summary{margin-block-end:.9rem;}
+details.tzone > .lede{margin-block-start:.3rem;}
+
+/* ═══ منطقة المعلم — الشريط الملوّن ═════════════════════════════════ */
+.teacher{
+  position:relative;
+  z-index:1;
+  background:var(--accent-soft);
+  border-block:1px solid var(--line);
+  margin-block-start:1rem;
+}
+.teacher .inner{max-width:56rem;margin:0 auto;padding:2.6rem 1.6rem 3.4rem;}
+.teacher .band-tag{
+  display:inline-block;
+  font-size:.68rem;
+  font-weight:600;
+  letter-spacing:.16em;
+  color:#fff;
+  background:var(--accent);
+  border-radius:999px;
+  padding:.25rem .9rem;
+}
+.teacher h2{font-size:clamp(1.4rem,3vw,1.9rem);font-weight:700;letter-spacing:-.005em;margin:0 0 .7rem;}
+
+/* ═══ نصّ الحوار (سكريبت المعلم) ════════════════════════════════════ */
+.script{border-inline-start:2px solid var(--accent);padding-inline-start:1.2rem;margin:0 0 1rem;}
+.script .who{display:block;font-size:.68rem;font-weight:600;letter-spacing:.14em;color:var(--muted);margin-block-end:.4rem;}
+.script > :last-child{margin-block-end:0;}
+
+/* ═══ الفهرس الجانبى اللاصق ═════════════════════════════════════════ */
+nav.toc{
+  position:sticky;
+  inset-block-start:1.2rem;
+  margin-block-start:2.6rem;
+  max-height:calc(100dvh - 2.4rem);
+  overflow:auto;
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:.95rem .8rem 1rem;
+  box-shadow:var(--shadow);
+}
+.toc-title{
+  display:block;
+  font-size:.66rem;font-weight:600;letter-spacing:.14em;
+  color:var(--muted);
+  padding:0 .5rem .55rem;
+  border-block-end:1px solid var(--line);
+  margin-block-end:.5rem;
+}
+nav.toc a{
+  display:flex;align-items:baseline;gap:.55rem;
+  padding:.4rem .5rem;
+  border-radius:8px;
+  color:var(--muted);
+  text-decoration:none;
+  font-size:.88rem;line-height:1.5;
+  transition:background 200ms ease, color 200ms ease;
+}
+nav.toc a .n{font-family:var(--mono);font-size:.7rem;font-weight:500;color:var(--accent);}
+nav.toc a:hover{background:var(--accent-soft);color:var(--ink);}
+nav.toc a:active{transform:scale(.98);}
+nav.toc a:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+nav.toc a.on{background:var(--accent-soft);color:var(--accent-hover);font-weight:600;}
+
+/* ═══ الرسوم التوضيحية (SVG) ════════════════════════════════════════ */
+.ill{
+  display:block;
+  width:100%;
+  max-width:520px;
+  height:auto;
+  margin:0 0 1.6rem;
+}
+.ill .box{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2;}
+.ill .plate{fill:var(--surface);stroke:var(--accent);stroke-width:2;}
+.ill .ln{fill:none;stroke:var(--accent);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+.ill .thin{fill:none;stroke:var(--line);stroke-width:1.5;}
+.ill .ghost{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:5 5;}
+.ill .val{font-family:var(--mono);font-weight:600;fill:var(--ink);direction:ltr;unicode-bidi:isolate;}
+.ill .name{font-family:var(--mono);font-weight:600;fill:var(--accent-hover);direction:ltr;unicode-bidi:isolate;}
+.ill .name.ar{direction:rtl;font-family:var(--sans);}
+.ill .cap{font-family:var(--sans);font-weight:500;fill:var(--muted);font-size:16px;}
+.ill .cap.b{fill:var(--ink);font-weight:600;}
+.ill .fade{opacity:.32;}
+.ill .cab{fill:var(--surface);stroke:var(--line);stroke-width:2;}
+.ill .drawer{fill:var(--paper);stroke:var(--line);stroke-width:1.8;}
+.ill .handle{fill:none;stroke:var(--muted);stroke-width:3.5;stroke-linecap:round;opacity:.45;}
+.ill .handle.on{stroke:var(--accent);opacity:.75;}
+.ill .gone{fill:var(--muted);opacity:.8;}
+.ill .strike{fill:none;stroke:var(--muted);stroke-width:2.6;stroke-linecap:round;opacity:.9;}
+
+/* ═══ التذييل ═══════════════════════════════════════════════════════ */
+/* الموضع والهوامش بيتحدّدوا فى كل صفحة (التذييل جوّه أو برّه العمود). */
+footer.foot{
+  border-block-start:1px solid var(--line);
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:space-between;
+  gap:.8rem;
+  color:var(--muted);
+  font-size:.9rem;
+}
+footer.foot a{
+  color:var(--muted);
+  text-decoration:none;
+  border-block-end:1px solid var(--line);
+  padding-block-end:.1rem;
+  transition:color 200ms ease;
+}
+footer.foot a:hover{color:var(--accent);}
+footer.foot a:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px;}
+
+/* ═══ تقليل الحركة ══════════════════════════════════════════════════ */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto;}
+  *{transition:none !important;}
+  .bg-layer .gl.f{animation:none;transform:rotate(var(--r,0deg));}
+}
+
+/* ═══ الطباعة ═══════════════════════════════════════════════════════ */
+/* مفيش @media print هنا — عن قصد، لسببين:
+   ١) الصفحة بتحدّد body{font-size} جوّه <style> اللى بييجى بعد الملف ده،
+      فأى html,body{font-size:11pt} هنا هيتغلب وتطلع الطباعة بمقاس الشاشة.
+   ٢) index.html و lecture.html أصلاً مالهمش تنسيق طباعة، وأى أساس مشترك
+      هنا كان هيغيّر مخرجاتهما.
+   يبقى تنسيق الطباعة كامل جوّه <style> بتاع كل صفحة. */
+
+
+/* ── سطر الإعداد ──────────────────────────────────────
+   اسم مُعِدّ المادة. صغير وباهت على الشاشة، وبيطبع رمادى غامق
+   عشان يفضل مقروءاً على طابعة أبيض وأسود. */
+.by-line{
+  font-size:.72rem;font-weight:500;letter-spacing:.02em;
+  color:#555;margin:0 0 1rem;
+}
+footer .by-line{margin:0;}
+
+
+/* ── شعار المؤلف (WithYousef) ───────────────────────────
+   الشعار خط يدوى عريض، فبيتقرا لما يبقى مرتفعاً بما فيه الكفاية.
+   فى صفحات المراكز فيه متسع، وفى الشريط العلوى بيشتغل كختم صغير. */
+.brand-logo{display:block;width:auto;flex:none;}
+.top-brand{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:1rem;flex-wrap:wrap;margin-block-end:1rem;
+}
+.top-brand .wordmark{margin-block-end:0;}
+.top-brand .brand-logo{height:3.2rem;}
+.topbar .brand-logo{height:1.75rem;opacity:.9;}
