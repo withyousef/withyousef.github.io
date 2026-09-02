@@ -381,7 +381,11 @@ section{padding-block:clamp(5rem,11vw,8.5rem)}
 .card .go{display:inline-flex;align-items:center;gap:.4rem;color:var(--ink);font-weight:500;font-size:.9375rem;margin-top:.25rem}
 .card .go svg{transition:transform .25s var(--ease);transform:scaleX(var(--flip))}
 .card .go:hover svg{transform:scaleX(var(--flip)) translate(2px,-2px)}
-.card .go::after{content:"";position:absolute;inset:0}
+.card .go:not(.sub)::after{content:"";position:absolute;inset:0}
+.card .links{display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;margin-top:.25rem}
+.card .links .go{margin-top:0}
+.card .go.sub{position:relative;z-index:1;color:var(--mute)}
+.card .go.sub:hover{color:var(--ink)}
 @media (max-width:1100px){
   .card.big{grid-column:1 / span 12;grid-row:auto}
   .card.big .cover{flex:none;min-height:0;aspect-ratio:16/8}
@@ -804,13 +808,18 @@ footer a:hover{text-decoration-color:var(--acc)}
           <div class="word" data-i="mizan.word">Mizan</div>
         </div>
         <div class="body">
-          <h3><span data-i="mizan.name">Mizan</span> <span class="ctx" data-i="mizan.ctx">Personal project, 2026</span></h3>
+          <h3><span data-i="mizan.name">Mizan</span> <span class="ctx" data-i="mizan.ctx">Personal project, live with a demo account</span></h3>
           <p data-i="mizan.p1">An Arabic fat-loss, training and habit tracker that explains your numbers instead of counting them: 7-day moving averages, TDEE calibrated from real intake and weight change, plateau detection and weekly auto-reviews.</p>
           <p class="small" data-i="mizan.p2">Next.js 15 server components over Supabase Postgres with auth, 23 pages in Arabic RTL, and a verification script that replays 70 days of generated data through every algorithm.</p>
           <div class="tags"><span>Next.js 15</span><span>React 19</span><span>TypeScript</span><span>Supabase</span><span>PostgreSQL</span><span>Tailwind CSS</span><span>RTL</span></div>
-          <a class="go" href="https://github.com/Youssef-Eltohamy/mizan" target="_blank" rel="noopener"><span data-i="go.github">Code on GitHub</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
-          </a>
+          <div class="links">
+            <a class="go" href="https://mizan-tracker.vercel.app/login" target="_blank" rel="noopener"><span data-i="mizan.live">Open the live demo</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
+            </a>
+            <a class="go sub" href="https://github.com/Youssef-Eltohamy/mizan" target="_blank" rel="noopener"><span data-i="go.github">Code on GitHub</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg>
+            </a>
+          </div>
         </div>
       </article>
 
@@ -1074,7 +1083,8 @@ footer a:hover{text-decoration-color:var(--acc)}
     'rplya.p2': 'أبنيه من البداية إلى النهاية: واجهة NestJS ومخطط Prisma فوق PostgreSQL، وRedis وBullMQ لطابور الإرسال، وعميل Next.js للويب، وتطبيق Flutter.',
     'rplya.go': 'زيارة rplya.com',
     'mizan.word': 'ميزان', 'mizan.name': 'ميزان',
-    'mizan.ctx': 'مشروع شخصي، 2026',
+    'mizan.ctx': 'مشروع شخصي، مباشر بحساب تجريبي',
+    'mizan.live': 'افتح النسخة التجريبية',
     'mizan.p1': 'متتبّع عربي لفقدان الدهون والتدريب والعادات يفسّر أرقامك بدل أن يعدّها: متوسطات متحركة لسبعة أيام، ومعايرة TDEE من مدخولك وتغيّر وزنك الفعلي، وكشف الثبات، ومراجعات أسبوعية آلية.',
     'mizan.p2': 'مكوّنات خادم Next.js 15 فوق Supabase Postgres مع مصادقة، و23 صفحة عربية من اليمين إلى اليسار، وسكربت تحقق يمرّر 70 يومًا من بيانات مولّدة عبر كل خوارزمية.',
     'medease.ctx': 'مشروع التخرج، بتقدير امتياز',
